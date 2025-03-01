@@ -63,7 +63,7 @@ typedef VecObjectID::iterator VecObjectIDIt;
 typedef std::list<Object *> ListObjectPtr;
 typedef ListObjectPtr::iterator ListObjectPtrIt;
 
-#include "AITypes.h"
+#include "Common/AITypes.h"
 
 enum 
 {
