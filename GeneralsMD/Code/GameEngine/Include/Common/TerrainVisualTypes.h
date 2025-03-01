@@ -20,7 +20,7 @@ typedef enum _TerrainLOD
 
 } TerrainLOD;
 
-static char * TerrainLODNames[] = 
+static const char * TerrainLODNames[] = 
 {
 	"NONE",
 	"MIN",
