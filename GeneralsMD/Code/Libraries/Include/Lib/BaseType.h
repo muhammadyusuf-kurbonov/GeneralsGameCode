@@ -92,18 +92,9 @@
 #define NULL 0						// C++ doesn't like casting void *'s into other pointers
 #endif
 
-// MSVC math.h defines overloaded functions with this name...
-//#ifndef abs
-//#define abs(x) (((x) < 0) ? -(x) : (x))
-//#endif
-
-#ifndef min
-#define min(x,y) (((x)<(y)) ? (x) : (y))
-#endif
-
-#ifndef max
-#define max(x,y) (((x)>(y)) ? (x) : (y))
-#endif
+#include <algorithm>
+using std::min;
+using std::max;
 
 #ifndef TRUE
 #define TRUE true
@@ -118,6 +109,8 @@
 #define ELEMENTS_OF( x ) ( sizeof( x ) / sizeof( x[0] ) )
 #endif
 
+#include <stdint.h>
+
 //--------------------------------------------------------------------
 // Fundamental type definitions
 //--------------------------------------------------------------------
@@ -131,8 +124,8 @@ typedef char							Byte;							// 1 byte		USED TO BE "SignedByte"
 typedef char							Char;							// 1 byte of text
 typedef bool							Bool;							// 
 // note, the types below should use "long long", but MSVC doesn't support it yet
-typedef __int64						Int64;							// 8 bytes 
-typedef unsigned __int64	UnsignedInt64;	  	// 8 bytes 
+typedef int64_t						Int64;							// 8 bytes 
+typedef uint64_t	UnsignedInt64;	  	// 8 bytes 
 
 #include "Lib/Trig.h"
 
@@ -174,6 +167,10 @@ inline Real deg2rad(Real rad) { return rad * (PI/180); }
 #define BitClear( x, i ) ( (x ) &= ~(i) )
 #define BitToggle( x, i ) ( (x) ^= (i) )
 
+#ifndef __forceinline
+#define __forceinline
+#endif
+
 //-------------------------------------------------------------------------------------------------
 
 // note, this function depends on the cpu rounding mode, which we set to CHOP every frame, 
@@ -183,10 +180,15 @@ __forceinline long fast_float2long_round(float f)
 {
 	long i;
 
+#ifdef OLD_APPROACH
 	__asm {
 		fld [f]
 		fistp [i]
 	}
+#endif
+
+	// Use simple C code instead of inline assembly
+	i = (long)f;
 
 	return i;
 }
@@ -195,6 +197,7 @@ __forceinline long fast_float2long_round(float f)
 // code courtesy of Martin Hoffesommer (grin)
 __forceinline float fast_float_trunc(float f)
 {
+#ifdef OLD_APPROACH
   _asm
   {
     mov ecx,[f]
@@ -206,6 +209,22 @@ __forceinline float fast_float_trunc(float f)
     sar eax,cl
     and [f],eax
   }
+#else
+	// TODO: 
+	// I have no idea what the above code did, but I think this is equivalent
+	// Write a test to verify this
+	int ecx = *(int *)&f;
+	ecx >>= 23;
+	int eax = 0xff800000;
+	int ebx = 0;
+	int cl = ecx & 0xff;
+	if (cl < 127)
+		eax = ebx;
+	eax >>= cl;
+	*(int *)&f &= eax;
+#endif	
+
+
   return f;
 }
 
