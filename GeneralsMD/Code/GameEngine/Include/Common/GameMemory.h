@@ -755,12 +755,9 @@ public:
 
 	void deleteInstance() 
 	{	
-		if (this)
-		{
-			MemoryPool *pool = this->getObjectMemoryPool(); // save this, since the dtor will nuke our vtbl
-			this->~MemoryPoolObject();	// it's virtual, so the right one will be called.
-			pool->freeBlock((void *)this); 
-		}
+		MemoryPool *pool = this->getObjectMemoryPool(); // save this, since the dtor will nuke our vtbl
+		this->~MemoryPoolObject();	// it's virtual, so the right one will be called.
+		pool->freeBlock((void *)this); 
 	} 
 };
 
