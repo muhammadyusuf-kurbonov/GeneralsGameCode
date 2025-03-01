@@ -989,8 +989,10 @@ GlobalData::GlobalData()
 	const Int blockSize = 65536;
 	Char buffer[ _MAX_PATH ];
 	CRC exeCRC;
-	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
-	File *fp = TheFileSystem->openFile(buffer, File::READ | File::BINARY);
+	File *fp = NULL;
+#ifdef _WIN32
+	GetModuleFileName( NULL, buffer, sizeof( buffer ) );	
+	fp = TheFileSystem->openFile(buffer, File::READ | File::BINARY);
 	if (fp != NULL) {
 		unsigned char crcBlock[blockSize];
 		Int amtRead = 0;
@@ -1001,6 +1003,7 @@ GlobalData::GlobalData()
 		fp->close();
 		fp = NULL;
 	}
+#endif
 	if (TheVersion)
 	{
 		UnsignedInt version = TheVersion->getVersionNumber();
