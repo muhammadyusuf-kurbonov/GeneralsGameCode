@@ -59,6 +59,10 @@
 #include "GameLogic/SidesList.h"
 #include "GameLogic/TerrainLogic.h"
 
+#ifndef _WIN32
+#include <boost/filesystem.hpp>
+#endif
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -212,6 +216,7 @@ GameState::SnapshotBlock *GameState::findBlockInfoByToken( AsciiString token, Sn
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal) 
 {
+#ifdef _WIN32
 	// setup date buffer for local region date format
 	#define DATE_BUFFER_SIZE 256
 	OSVERSIONINFO	osvi;
@@ -240,10 +245,34 @@ UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 	displayDateBuffer.set(dateBuffer);
 	return displayDateBuffer;
 	//displayDateBuffer.format( L"%ls", dateBuffer );
+#else
+	// POSIX implementation
+	struct tm converted_time;
+	converted_time.tm_year = timeVal.wYear - 1900;
+	converted_time.tm_mon = timeVal.wMonth - 1;
+	converted_time.tm_mday = timeVal.wDay;
+	converted_time.tm_hour = timeVal.wHour;
+	converted_time.tm_min = timeVal.wMinute;
+	converted_time.tm_sec = timeVal.wSecond;
+	converted_time.tm_isdst = -1;
+	converted_time.tm_wday = timeVal.wDayOfWeek;
+	converted_time.tm_yday = 0;
+	converted_time.tm_gmtoff = 0;
+	converted_time.tm_zone = NULL;
+
+	UnicodeString displayTimeBuffer;
+	const size_t DATE_BUFFER_SIZE = 256;
+	char timeBuffer[ DATE_BUFFER_SIZE ];
+	strftime( timeBuffer, DATE_BUFFER_SIZE, "%c", &converted_time );
+	displayTimeBuffer.translate(timeBuffer);
+
+	return displayTimeBuffer;
+#endif
 }															
 
 UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal) 
 {
+#ifdef _WIN32
 	// setup time buffer for local region time format
 	UnicodeString displayTimeBuffer;
 	OSVERSIONINFO	osvi;
@@ -273,6 +302,29 @@ UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal)
 								 sizeof(timeBuffer) );
 	displayTimeBuffer.set(timeBuffer);
 	return displayTimeBuffer;
+#else
+	// POSIX implementation
+	struct tm converted_time;
+	converted_time.tm_year = timeVal.wYear - 1900;
+	converted_time.tm_mon = timeVal.wMonth - 1;
+	converted_time.tm_mday = timeVal.wDay;
+	converted_time.tm_hour = timeVal.wHour;
+	converted_time.tm_min = timeVal.wMinute;
+	converted_time.tm_sec = timeVal.wSecond;
+	converted_time.tm_isdst = -1;
+	converted_time.tm_wday = timeVal.wDayOfWeek;
+	converted_time.tm_yday = 0;
+	converted_time.tm_gmtoff = 0;
+	converted_time.tm_zone = NULL;
+
+	UnicodeString displayTimeBuffer;
+	const size_t TIME_BUFFER_SIZE = 256;
+	char timeBuffer[ TIME_BUFFER_SIZE ];
+	strftime( timeBuffer, TIME_BUFFER_SIZE, "%H:%M", &converted_time );
+	displayTimeBuffer.translate(timeBuffer);
+
+	return displayTimeBuffer;
+#endif
 }
 
 
@@ -508,8 +560,13 @@ AsciiString GameState::findNextSaveFilename( UnicodeString desc )
 			fullPath = getFilePathInSaveDirectory(filename);
 
 			// if file does not exist we're all good
+#ifdef _WIN32
 			if( _access( fullPath.str(), 0 ) == -1 )
 				return filename;
+#else
+			if( boost::filesystem::exists(fullPath.str()) == FALSE )
+				return filename;
+#endif
 
 			// test the text filename
 			i++;
@@ -555,7 +612,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	}  // end if
 
 	// make absolutely sure the save directory exists
-	CreateDirectory( getSaveDirectory().str(), NULL );
+	boost::filesystem::create_directory(getSaveDirectory().str());
 
 	// construct path to file
 	AsciiString filepath = getFilePathInSaveDirectory(filename);
@@ -789,7 +846,7 @@ Bool GameState::isInSaveDirectory(const AsciiString& path) const
 // ------------------------------------------------------------------------------------------------
 AsciiString GameState::getMapLeafName(const AsciiString& in) const
 {
-	char* p = strrchr(in.str(), '\\');
+	const char* p = strrchr(in.str(), '\\');
 	if (p)
 	{
 		//
@@ -1253,6 +1310,7 @@ void GameState::iterateSaveFiles( IterateSaveFileCallback callback, void *userDa
 	if( callback == NULL )
 		return;
 
+#ifdef _WIN32
 	// save the current directory
 	char currentDirectory[ _MAX_PATH ];
 	GetCurrentDirectory( _MAX_PATH, currentDirectory );
@@ -1313,7 +1371,23 @@ void GameState::iterateSaveFiles( IterateSaveFileCallback callback, void *userDa
 
 	// restore the current directory
 	SetCurrentDirectory( currentDirectory );
-
+#else
+	// iterate all items in the directory
+	boost::filesystem::directory_iterator end_itr;
+	for (boost::filesystem::directory_iterator itr(getSaveDirectory().str()); itr != end_itr; ++itr)
+	{
+		if (boost::filesystem::is_regular_file(itr->status()))
+		{
+			// see if this is a file, and therefore a possible save file
+			AsciiString filename = itr->path().filename().c_str();
+			if (filename.endsWithNoCase(SAVE_GAME_EXTENSION))
+			{
+				// call the callback
+				callback( filename, userData );
+			}
+		}
+	}
+#endif
 }  // end iterateSaveFiles
 
 // ------------------------------------------------------------------------------------------------
@@ -1554,6 +1628,22 @@ void GameState::gameStatePostProcessLoad( void )
 
 }  // end loadPostProcess
 
+#ifndef _WIN32
+static void GetLocalTime(SYSTEMTIME* st)
+{
+	time_t t = time(NULL);
+	struct tm* tm = localtime(&t);
+	st->wYear = tm->tm_year + 1900;
+	st->wMonth = tm->tm_mon + 1;
+	st->wDayOfWeek = tm->tm_wday;
+	st->wDay = tm->tm_mday;
+	st->wHour = tm->tm_hour;
+	st->wMinute = tm->tm_min;
+	st->wSecond = tm->tm_sec;
+	st->wMilliseconds = 0;
+}
+#endif
+
 // ------------------------------------------------------------------------------------------------
 /** Xfer method for the game state itself 
 	* Version Info:
@@ -1616,6 +1706,9 @@ void GameState::xfer( Xfer *xfer )
 	// if no label was found, we'll use the map name (just filename, no directory info)
 	if( exists == FALSE || saveGameInfo->mapLabel == AsciiString::TheEmptyString )
 	{
+		#ifndef _MAX_PATH
+			#define _MAX_PATH 1024
+		#endif
 		char string[ _MAX_PATH ];
 
 		strcpy( string, TheGlobalData->m_mapName.str() );
