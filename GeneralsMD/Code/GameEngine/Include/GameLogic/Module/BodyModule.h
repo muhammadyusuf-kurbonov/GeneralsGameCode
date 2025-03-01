@@ -50,7 +50,7 @@ class WeaponTemplate;
 	* enumeration being in sequential order
 	*/
 //-------------------------------------------------------------------------------------------------
-#include "BodyModuleTypes.h"
+#include "Common/BodyModuleTypes.h"
 
 #ifdef DEFINE_BODYDAMAGETYPE_NAMES
 static const char* TheBodyDamageTypeNames[] =

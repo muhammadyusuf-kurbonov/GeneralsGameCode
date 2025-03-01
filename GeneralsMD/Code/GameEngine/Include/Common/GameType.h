@@ -156,7 +156,7 @@ enum Scorches
 };
 
 //-------------------------------------------------------------------------------------------------
-enum WeaponSlotType
+enum WeaponSlotType : int
 {
 	PRIMARY_WEAPON = 0,
 	SECONDARY_WEAPON,
