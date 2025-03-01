@@ -32,7 +32,12 @@
 #define _CRC_H_
 
 #include "Lib/BaseType.h"
+#ifdef _WIN32
 #include "winsock2.h" // for htonl
+#else
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#endif
 
 #ifdef _DEBUG
 
@@ -66,7 +71,7 @@ public:
     if (!buf||len<1)
       return;
     
-    /* C++ version left in for reference purposes
+#if 1 // C++ version
 	  for (UnsignedByte *uintPtr=(UnsignedByte *)buf;len>0;len--,uintPtr++)
     {
     	int hibit;
@@ -83,8 +88,7 @@ public:
 	    crc += *uintPtr;
 	    crc += hibit;
     }
-    */
-
+#else
     // ASM version, verified by comparing resulting data with C++ version data
     unsigned *crcPtr=&crc;
     _asm
@@ -104,6 +108,7 @@ public:
       jns lp
       mov dword ptr [edi],ebx
     };
+#endif
   }
 
   /// Clears the CRC to 0
