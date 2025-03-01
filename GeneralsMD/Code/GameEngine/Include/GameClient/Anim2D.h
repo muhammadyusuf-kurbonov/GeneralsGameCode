@@ -128,6 +128,8 @@ enum Anim2DStatus
 	ANIM_2D_STATUS_COMPLETE = 0x04,	 // set when uni-directional things reach their last frame
 };
 
+class Anim2DCollection;
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 class Anim2D : public MemoryPoolObject,
