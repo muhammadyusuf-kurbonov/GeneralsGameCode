@@ -55,6 +55,10 @@
 
 #include "GameNetwork/FirewallHelper.h"
 
+#ifndef _WIN32
+#include <boost/filesystem.hpp>
+#endif
+
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 GlobalData* TheWritableGlobalData = NULL;				///< The global data singleton
 
@@ -1060,6 +1064,7 @@ GlobalData::GlobalData()
   // Set user data directory based on registry settings instead of INI parameters. This allows us to 
   // localize the leaf name.
   char temp[_MAX_PATH + 1];
+#ifdef _WIN32
   if (::SHGetSpecialFolderPath(NULL, temp, CSIDL_PERSONAL, true))
   {
     AsciiString myDocumentsDirectory = temp;
@@ -1083,6 +1088,17 @@ GlobalData::GlobalData()
     CreateDirectory(myDocumentsDirectory.str(), NULL);
     m_userDataDir = myDocumentsDirectory;
   }
+#else
+	// Get the user data directory according to the XDG Base Directory Specification
+	boost::filesystem::path userDataDir;
+	const char* xdgDataHome = getenv("XDG_DATA_HOME");
+	if (xdgDataHome)
+		userDataDir = boost::filesystem::path(xdgDataHome);
+	else
+		userDataDir = boost::filesystem::path(getenv("HOME")) / ".local" / "share" / "generals_zh";
+	boost::filesystem::create_directories(userDataDir);
+	m_userDataDir = userDataDir.string().c_str();
+#endif
 	
 	//-allAdvice feature
 	//m_allAdvice = FALSE;
