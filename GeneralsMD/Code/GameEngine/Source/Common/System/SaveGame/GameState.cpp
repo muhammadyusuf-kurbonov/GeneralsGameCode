@@ -1706,9 +1706,6 @@ void GameState::xfer( Xfer *xfer )
 	// if no label was found, we'll use the map name (just filename, no directory info)
 	if( exists == FALSE || saveGameInfo->mapLabel == AsciiString::TheEmptyString )
 	{
-		#ifndef _MAX_PATH
-			#define _MAX_PATH 1024
-		#endif
 		char string[ _MAX_PATH ];
 
 		strcpy( string, TheGlobalData->m_mapName.str() );
