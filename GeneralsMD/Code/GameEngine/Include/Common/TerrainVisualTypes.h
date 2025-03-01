@@ -19,7 +19,7 @@ typedef enum _TerrainLOD
 	TERRAIN_LOD_NUM_TYPES								// keep this last
 
 } TerrainLOD;
-#ifdef DEFINE_TERRAIN_LOD_NAMES
+
 static char * TerrainLODNames[] = 
 {
 	"NONE",
@@ -35,4 +35,3 @@ static char * TerrainLODNames[] =
 
 	NULL
 };
-#endif  // end DEFINE_TERRAIN_LOD_NAMES
