@@ -33,7 +33,7 @@
 
 #include "Common/GameType.h"
 #include "Common/GlobalData.h"
-#include "Common/STLTypeDefs.h"
+#include "Common/STLTypedefs.h"
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/CollideModule.h"
 #include "GameLogic/Module/UpdateModule.h"
