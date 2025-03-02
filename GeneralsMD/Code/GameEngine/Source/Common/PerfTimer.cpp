@@ -35,8 +35,9 @@
 #include "GameClient/Display.h"
 #include "GameClient/GraphDraw.h"
 
-__forceinline void ProfileGetTime(__int64 &t)
+__forceinline void ProfileGetTime(int64_t &t)
 {
+#ifdef OLD_APPROACH
   _asm
   {
     mov ecx,[t]
@@ -48,6 +49,10 @@ __forceinline void ProfileGetTime(__int64 &t)
     pop edx
     pop eax
   };
+#else
+	// This is probably only supported by Clang, but is portable otherwise
+	t = __builtin_readcyclecounter();
+#endif
 }
 
 #ifdef _INTERNAL
