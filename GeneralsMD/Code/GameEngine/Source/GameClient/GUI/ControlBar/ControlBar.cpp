@@ -3281,9 +3281,7 @@ void ControlBar::populateSpecialPowerShortcut( Player *player)
 {
 	const CommandSet *commandSet;
 	Int i;
-	if(!player || !player->getPlayerTemplate() 
-			|| !player->isLocalPlayer() || m_currentlyUsedSpecialPowersButtons == 0
-			|| m_specialPowerShortcutButtons == NULL || m_specialPowerShortcutButtonParents == NULL)
+	if (!player || !player->getPlayerTemplate() || !player->isLocalPlayer() || m_currentlyUsedSpecialPowersButtons == 0)
 		return;
 	for( i = 0; i < MAX_SPECIAL_POWER_SHORTCUTS; ++i )
 	{
@@ -3534,8 +3532,7 @@ Bool ControlBar::hasAnyShortcutSelection() const
 //-------------------------------------------------------------------------------------------------
 void ControlBar::updateSpecialPowerShortcut( void )
 {
-	if(!m_specialPowerShortcutParent || !m_specialPowerShortcutButtons 
-	   || !ThePlayerList || !ThePlayerList->getLocalPlayer())
+	if (!m_specialPowerShortcutParent || !ThePlayerList || !ThePlayerList->getLocalPlayer())
 		return;
 
 	Bool hasShortcutSelectionButtons = hasAnyShortcutSelection();
@@ -3742,8 +3739,7 @@ void ControlBar::animateSpecialPowerShortcut( Bool isOn )
 
 void ControlBar::showSpecialPowerShortcut( void )
 {
-	if(TheScriptEngine->isGameEnding() || !m_specialPowerShortcutParent 
-		||!m_specialPowerShortcutButtons || !ThePlayerList || !ThePlayerList->getLocalPlayer())
+	if (TheScriptEngine->isGameEnding() || !m_specialPowerShortcutParent || !ThePlayerList || !ThePlayerList->getLocalPlayer())
 		return;
 	Bool dontAnimate = TRUE;
 	for( Int i = 0; i < m_currentlyUsedSpecialPowersButtons; ++i )
