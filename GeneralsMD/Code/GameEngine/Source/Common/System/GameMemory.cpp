@@ -2190,7 +2190,7 @@ void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes 
 				thePeakWastedDMA = theWastedDMA;
 		}
 	}
-#endif MEMORYPOOL_DEBUG
+#endif // MEMORYPOOL_DEBUG
 	}
 	else
 	{
@@ -2234,7 +2234,7 @@ void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes 
 	}
 #endif
 }
-#endif MEMORYPOOL_DEBUG
+#endif // MEMORYPOOL_DEBUG
 
 	++m_usedBlocksInDma;
 	DEBUG_ASSERTCRASH(m_usedBlocksInDma >= 0, ("negative count for m_usedBlocksInDma"));
@@ -2298,7 +2298,7 @@ void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
 		const char* tagString = block->debugGetLiteralTagString();
 	#endif
 	}
-#endif MEMORYPOOL_DEBUG
+#endif // MEMORYPOOL_DEBUG
 
 	if (block->getOwningBlob()) 
 	{
@@ -2316,7 +2316,7 @@ void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
 					thePeakWastedDMA = theWastedDMA;
 			}
 		}
-#endif MEMORYPOOL_DEBUG
+#endif // MEMORYPOOL_DEBUG
 		block->getOwningBlob()->getOwningPool()->freeBlock(pBlockPtr);
 	}
 	else
@@ -3294,7 +3294,7 @@ void *operator new[](size_t size)
 /**
 	overload for global operator delete; send requests to TheDynamicMemoryAllocator.
 */
-void operator delete(void *p)
+void operator delete(void *p) noexcept
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
@@ -3306,7 +3306,7 @@ void operator delete(void *p)
 /**
 	overload for global operator delete[]; send requests to TheDynamicMemoryAllocator.
 */
-void operator delete[](void *p)
+void operator delete[](void *p) noexcept
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
@@ -3334,7 +3334,7 @@ void* operator new(size_t size, const char * fname, int)
 /**
 	overload for global operator delete (MFC debug version); send requests to TheDynamicMemoryAllocator.
 */
-void operator delete(void * p, const char *, int)
+void operator delete(void * p, const char *, int) noexcept
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
@@ -3362,7 +3362,7 @@ void* operator new[](size_t size, const char * fname, int)
 /**
 	overload for global operator delete (MFC debug version); send requests to TheDynamicMemoryAllocator.
 */
-void operator delete[](void * p, const char *, int)
+void operator delete[](void * p, const char *, int) noexcept
 {
 	++theLinkTester;
 	preMainInitMemoryManager();
