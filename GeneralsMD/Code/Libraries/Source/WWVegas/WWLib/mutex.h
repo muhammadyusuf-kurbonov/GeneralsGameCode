@@ -117,7 +117,11 @@ public:
 
 class FastCriticalSectionClass
 {
+	#ifdef _WIN32
 	unsigned Flag;
+	#else
+	std::atomic<unsigned> Flag;
+	#endif
 
 public:
 	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
@@ -129,6 +133,7 @@ public:
 	public:
 		__forceinline LockClass(FastCriticalSectionClass& critical_section) : cs(critical_section)
 		{
+			#ifdef _WIN32
 		  unsigned& nFlag=cs.Flag;
 
 		  #define ts_lock _emit 0xF0
@@ -159,6 +164,13 @@ public:
 
       BitSet:
         ;
+			#else
+			unsigned nFlag=0;
+			while (cs.Flag.compare_exchange_strong(nFlag, 1) == false)
+			{
+				ThreadClass::Switch_Thread();
+			}
+			#endif
 		}
 
 		~LockClass()
