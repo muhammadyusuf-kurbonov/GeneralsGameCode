@@ -58,7 +58,7 @@ class Squad;
  * Each of these constants will be associated with an instance of a State class
  * in a given StateMachine.
  */
-enum AIStateType
+enum AIStateType : int
 {
 	AI_IDLE,
 	AI_MOVE_TO,																///< move to the GoalObject or GoalPosition

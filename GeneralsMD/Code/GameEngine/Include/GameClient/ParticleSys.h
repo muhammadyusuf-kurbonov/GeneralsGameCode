@@ -56,7 +56,7 @@ class INI;
 class DebugWindowDialog;		// really ParticleEditorDialog
 class RenderInfoClass;			// ick
 
-enum ParticleSystemID
+enum ParticleSystemID : int
 {
 	INVALID_PARTICLE_SYSTEM_ID = 0
 };

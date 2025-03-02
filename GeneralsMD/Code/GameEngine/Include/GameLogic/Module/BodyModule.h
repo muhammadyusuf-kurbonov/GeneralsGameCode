@@ -64,7 +64,7 @@ static const char* TheBodyDamageTypeNames[] =
 };
 #endif
 
-enum MaxHealthChangeType
+enum MaxHealthChangeType : int
 {
 	SAME_CURRENTHEALTH,
 	PRESERVE_RATIO,
