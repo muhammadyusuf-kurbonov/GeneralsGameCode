@@ -926,7 +926,7 @@ ControlBar::ControlBar( void )
 	m_rightHUDWindow = NULL;
 	m_rightHUDCameoWindow = NULL;
 	for( i = 0; i < MAX_RIGHT_HUD_UPGRADE_CAMEOS; i++ )
-		m_rightHUDUpgradeCameos[i];
+		m_rightHUDUpgradeCameos[i] = NULL;
 	m_rightHUDUnitSelectParent = NULL;
 	m_communicatorButton = NULL;
 	m_currentSelectedDrawable = NULL;
