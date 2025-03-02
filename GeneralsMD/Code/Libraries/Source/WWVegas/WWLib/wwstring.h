@@ -46,7 +46,9 @@
 #include "win.h"
 #include <string.h>
 #include <stdarg.h>
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 #include "trim.h"
 #include "wwdebug.h"
 #ifdef _UNIX
@@ -121,8 +123,8 @@ public:
 	bool			Is_Empty (void) const;
 
 	void			Erase (int start_index, int char_count);
-	int _cdecl  Format (const TCHAR *format, ...);
-	int _cdecl  Format_Args (const TCHAR *format, const va_list & arg_list );
+	int __cdecl  Format (const TCHAR *format, ...);
+	int __cdecl  Format_Args (const TCHAR *format, const va_list & arg_list );
 
 	// Trim leading and trailing whitespace characters (values <= 32)
 	void Trim(void);
