@@ -28,15 +28,31 @@ target_include_directories(zi_main INTERFACE "Main")
 # Contains internal libraries
 add_subdirectory(Libraries)
 
-# Base GameEngine library
-add_subdirectory(GameEngine)
-
-# Platform specific GameEngine code
-add_subdirectory(GameEngineDevice)
-
-# Contains the main game exe target.
-add_subdirectory(Main)
-
-if (GENZH_BUILD_ZEROHOUR_TOOLS)
-    add_subdirectory(Tools)
+# Remove Debug.cpp from the common sources for UNIX
+if(UNIX)
+    list(REMOVE_ITEM SOURCES_COMMON ${CMAKE_CURRENT_SOURCE_DIR}/GameEngine/Source/Common/System/Debug.cpp)
+    list(REMOVE_ITEM SOURCES_COMMON ${CMAKE_CURRENT_SOURCE_DIR}/GameEngine/Source/Common/System/registry.cpp)
+else()
+    list(REMOVE_ITEM SOURCES_COMMON ${CMAKE_CURRENT_SOURCE_DIR}/GameEngine/Source/Common/System/DebugUnix.cpp)
+    list(REMOVE_ITEM SOURCES_COMMON ${CMAKE_CURRENT_SOURCE_DIR}/GameEngine/Source/Common/System/RegistryUnix.cpp)
 endif()
+
+add_library(cnc-zero-hour-common STATIC ${SOURCES_COMMON})
+
+target_include_directories(cnc-zero-hour-common PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/Libraries/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameEngine/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameEngine/Include/Precompiled
+    # Used in Thing.h via WWMath
+    ${CMAKE_CURRENT_SOURCE_DIR}/Libraries/Source/WWVegas
+    # Also pulls WWLib
+    ${CMAKE_CURRENT_SOURCE_DIR}/Libraries/Source/WWVegas/WWLib
+    # Pulled by wwstring.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Libraries/Source/WWVegas/WWDebug
+    # Required by DataChunk.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Libraries/Source/Compression
+    ${CMAKE_CURRENT_SOURCE_DIR}/extern/dxvk-native/usr/include/dxvk
+    ${CMAKE_CURRENT_SOURCE_DIR}/extern/compat
+)
+
+target_compile_options(cnc-zero-hour-common PRIVATE -Wno-invalid-offsetof)
