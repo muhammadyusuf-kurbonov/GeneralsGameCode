@@ -107,6 +107,10 @@
 
 #include "Common/Version.h"
 
+#ifndef _WIN32
+#include <boost/filesystem.hpp>
+#endif
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -307,7 +311,14 @@ void GameEngine::init( int argc, char *argv[] )
 		//I was unable to resolve the RTPatch method of deleting a shipped file. English, Chinese, and Korean
 		//SKU's shipped with two INIZH.big files. One properly in the Run directory and the other in Run\INI\Data.
 		//We need to toast the latter in order for the game to patch properly.
+#ifdef _WIN32
 		DeleteFile( "Data\\INI\\INIZH.big" );
+#else
+		boost::filesystem::path p = "Data";
+		p /= "INI";
+		p /= "INIZH.big";
+		boost::filesystem::remove( p );
+#endif
 
 		// not part of the subsystem list, because it should normally never be reset!
 		TheNameKeyGenerator = MSGNEW("GameEngineSubsystem") NameKeyGenerator;
@@ -1004,4 +1015,8 @@ void updateTGAtoDDS()
 // If we're using the Wide character version of MessageBox, then there's no additional
 // processing necessary. Please note that this is a sleazy way to get this information,
 // but pending a better one, this'll have to do.
-extern const Bool TheSystemIsUnicode = (((void*) (::MessageBox)) == ((void*) (::MessageBoxW)));
+#ifdef UNICODE
+extern const Bool TheSystemIsUnicode = TRUE;
+#else
+extern const Bool TheSystemIsUnicode = FALSE;
+#endif
