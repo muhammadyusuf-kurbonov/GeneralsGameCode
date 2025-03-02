@@ -92,9 +92,7 @@
 #define NULL 0						// C++ doesn't like casting void *'s into other pointers
 #endif
 
-#include <algorithm>
-using std::min;
-using std::max;
+#include "always.h"
 
 #ifndef TRUE
 #define TRUE true
