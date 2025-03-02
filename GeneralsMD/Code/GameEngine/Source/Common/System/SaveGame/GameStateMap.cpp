@@ -42,6 +42,10 @@
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/GameInfo.h"
 
+#ifndef _WIN32
+#include <boost/filesystem.hpp>
+#endif
+
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
 GameStateMap *TheGameStateMap = NULL;
 
@@ -459,7 +463,7 @@ void GameStateMap::xfer( Xfer *xfer )
 // ------------------------------------------------------------------------------------------------
 void GameStateMap::clearScratchPadMaps( void )
 {
-
+#ifdef _WIN32
 	// remember the current directory
 	char currentDirectory[ _MAX_PATH ];
 	GetCurrentDirectory( _MAX_PATH, currentDirectory );
@@ -523,5 +527,18 @@ void GameStateMap::clearScratchPadMaps( void )
 
 	// restore our directory to the current directory
 	SetCurrentDirectory( currentDirectory );
-
+#else
+	boost::filesystem::path saveDir = TheGameState->getSaveDirectory().str();
+	boost::filesystem::directory_iterator end_itr;
+	for( boost::filesystem::directory_iterator itr( saveDir ); itr != end_itr; ++itr )
+	{
+		if( boost::filesystem::is_regular_file( *itr ) )
+		{
+			if( boost::filesystem::extension( *itr ) == ".map" )
+			{
+				boost::filesystem::remove( *itr );
+			}
+		}
+	}
+#endif
 }  // end clearScratchPadMaps
