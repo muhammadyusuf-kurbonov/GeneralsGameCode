@@ -27,7 +27,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "PreRTS.h"
-#include "Compression.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -44,6 +43,7 @@
 
 //#define TEST_COMPRESSION
 #ifdef TEST_COMPRESSION
+#include "Compression.h"
 
 #include "GameClient/MapUtil.h"
 #include "Common/FileSystem.h"
