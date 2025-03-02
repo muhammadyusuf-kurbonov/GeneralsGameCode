@@ -257,7 +257,7 @@ Bool WSYS_String::isEmpty(void) const
 // WSYS_String::format
 //============================================================================
 
-Int _cdecl WSYS_String::format(const Char *format, ...)
+Int __cdecl WSYS_String::format(const Char *format, ...)
 {
 	Int result = 0;
 	char *buffer = MSGNEW("WSYS_String") char[100*1024];
