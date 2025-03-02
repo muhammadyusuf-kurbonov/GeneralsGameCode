@@ -137,4 +137,120 @@ class STLSpecialAlloc;
 #include "Common/Thing.h"
 #include "Common/UnicodeString.h"
 
+#ifndef _WIN32
+struct SYSTEMTIME
+{
+	UnsignedShort wYear;
+	UnsignedShort wMonth;
+	UnsignedShort wDayOfWeek;
+	UnsignedShort wDay;
+	UnsignedShort wHour;
+	UnsignedShort wMinute;
+	UnsignedShort wSecond;
+	UnsignedShort wMilliseconds;
+};
+
+typedef void *HANDLE;
+typedef HANDLE HWND;
+typedef HANDLE HINSTANCE;
+typedef HANDLE HKEY;
+
+class CComModule
+{
+  public:
+    void Init(void*, HINSTANCE hInstance)
+    {
+      m_hInstance = hInstance;
+    }
+    void Term() {}
+
+  private:
+    HINSTANCE m_hInstance;
+};
+
+typedef int MMRESULT;
+
+#define TIMERR_NOERROR 0
+static MMRESULT timeBeginPeriod(int) { return TIMERR_NOERROR; }
+static MMRESULT timeEndPeriod(int) { return TIMERR_NOERROR; }
+
+// Same as in windows_base.h of DXVK-Native
+// Consider using that instead, but for now, we don't want this as a constant dependency
+typedef uint32_t DWORD;
+static DWORD timeGetTime(void)
+{
+  // Boost could be used but is slow
+  struct timespec ts;
+  clock_gettime(CLOCK_BOOTTIME, &ts);
+  DWORD diff = ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
+  return diff;
+}
+
+static void Sleep(DWORD ms)
+{
+  struct timespec ts;
+  ts.tv_sec = ms / 1000;
+  ts.tv_nsec = (ms % 1000) * 1000000;
+  nanosleep(&ts, NULL);
+}
+
+static void GetLocalTime(SYSTEMTIME* st)
+{
+	time_t t = time(NULL);
+	struct tm* tm = localtime(&t);
+	st->wYear = tm->tm_year + 1900;
+	st->wMonth = tm->tm_mon + 1;
+	st->wDayOfWeek = tm->tm_wday;
+	st->wDay = tm->tm_mday;
+	st->wHour = tm->tm_hour;
+	st->wMinute = tm->tm_min;
+	st->wSecond = tm->tm_sec;
+	st->wMilliseconds = 0;
+}
+
+static bool GetModuleFileName(HINSTANCE hInstance, char* buffer, int size)
+{
+  ssize_t count = readlink("/proc/self/exe", buffer, size);
+  if (count == -1)
+    return false;
+  buffer[count] = '\0';
+  return true;
+}
+
+#include <pthread.h>
+typedef pthread_t THREAD_ID;
+
+THREAD_ID GetCurrentThreadId()
+{
+	pthread_t thread_id = pthread_self();
+	return thread_id;
+}
+
+static int _vsnwprintf(wchar_t* buffer, size_t count, const wchar_t* format, va_list args)
+{
+  return vswprintf(buffer, count, format, args);
+}
+
+#define GMEM_FIXED 0
+
+static void *GlobalAlloc(int, size_t size)
+{
+  return malloc(size);
+}
+
+static void GlobalFree(void *ptr)
+{
+  free(ptr);
+}
+
+typedef char TCHAR;
+#define _tcslen strlen
+#define _tcscmp strcmp
+#define _tcsicmp strcasecmp
+#define _tcsclen strlen
+
+
+
+#endif
+
 #endif /* __PRERTS_H__ */

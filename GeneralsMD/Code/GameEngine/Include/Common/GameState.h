@@ -239,20 +239,6 @@ private:
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern GameState *TheGameState;	
 
-#ifndef _WIN32
-struct SYSTEMTIME
-{
-	UnsignedShort wYear;
-	UnsignedShort wMonth;
-	UnsignedShort wDayOfWeek;
-	UnsignedShort wDay;
-	UnsignedShort wHour;
-	UnsignedShort wMinute;
-	UnsignedShort wSecond;
-	UnsignedShort wMilliseconds;
-};
-#endif
-
 UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal); 
 UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal); 
 
