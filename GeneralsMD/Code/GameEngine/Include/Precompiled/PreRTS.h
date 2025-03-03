@@ -50,7 +50,11 @@ class STLSpecialAlloc;
 #include <sys/timeb.h>
 #include <sys/types.h>
 #include <time.h>
+#if _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #ifdef _WIN32
 // We actually don't use Windows for much other than timeGetTime, but it was included in 40 
@@ -64,11 +68,11 @@ class STLSpecialAlloc;
 
 #include <direct.h>
 #include <EXCPT.H>
-#include <fstream.h>
+//#include <fstream.h>
 #include <imagehlp.h>
 #include <io.h>
 #include <lmcons.h>
-#include <mapicode.h>
+//#include <mapicode.h>
 
 #include <mmsystem.h>
 #include <objbase.h>
