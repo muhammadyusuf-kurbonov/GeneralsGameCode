@@ -146,8 +146,8 @@ WindowMsgHandledType InGamePopupMessageInput( GameWindow *window, UnsignedInt ms
 			// --------------------------------------------------------------------------------------------
 			case GWM_CHAR:
 			{
-				UnsignedByte key = mData1;
-				UnsignedByte state = mData2;
+				UnsignedByte key = (UnsignedByte)(uintptr_t)mData1;
+				UnsignedByte state = (UnsignedByte)(uintptr_t)mData2;
 	//			if (buttonPushed)
 	//				break;
 	
@@ -166,7 +166,7 @@ WindowMsgHandledType InGamePopupMessageInput( GameWindow *window, UnsignedInt ms
 						if( BitTest( state, KEY_STATE_UP ) )
 						{
 							TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																								(WindowMsgData)buttonOk, buttonOkID );
+																								(WindowMsgData)buttonOk, (WindowMsgData)buttonOkID );
 	
 						}  // end if
 	
@@ -214,7 +214,7 @@ WindowMsgHandledType InGamePopupMessageSystem( GameWindow *window, UnsignedInt m
 		{
 
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
-			if( mData1 == TRUE )
+			if( (Bool)(uintptr_t)mData1 == TRUE )
 				*(Bool *)mData2 = TRUE;
 
 			break;
