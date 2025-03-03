@@ -123,8 +123,8 @@ WindowMsgHandledType WOLLadderScreenInput( GameWindow *window, UnsignedInt msg,
 		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
-			UnsignedByte key = mData1;
-			UnsignedByte state = mData2;
+			UnsignedByte key = (UnsignedByte)(uintptr_t)mData1;
+			UnsignedByte state = (UnsignedByte)(uintptr_t)mData2;
 
 			switch( key )
 			{
@@ -192,7 +192,7 @@ WindowMsgHandledType WOLLadderScreenSystem( GameWindow *window, UnsignedInt msg,
 		{
 
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
-			if( mData1 == TRUE )
+			if((Bool)(uintptr_t)mData1 == TRUE )
 				*(Bool *)mData2 = TRUE;
 
 			return MSG_HANDLED;

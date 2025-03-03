@@ -95,7 +95,7 @@ void ControlBar::updateContextBeacon( void )
 WindowMsgHandledType BeaconWindowInput( GameWindow *window, UnsignedInt msg,
 																			 WindowMsgData mData1, WindowMsgData mData2 )
 {
-	if (msg == GWM_CHAR && mData1 == KEY_ESC)
+	if (msg == GWM_CHAR && (uintptr_t)mData1 == KEY_ESC)
 	{
 		TheInGameUI->deselectAllDrawables(TRUE); // there should only be one beacon and nothing else selected
 		return MSG_HANDLED;
