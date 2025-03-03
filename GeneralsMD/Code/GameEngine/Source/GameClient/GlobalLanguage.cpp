@@ -55,7 +55,11 @@
 #include "Common/INI.h"
 #include "Common/Registry.h"
 #include "GameClient/GlobalLanguage.h"
-#include "Common/Filesystem.h"
+#include "Common/FileSystem.h"
+
+#ifndef _WIN32
+#include <boost/filesystem.hpp>
+#endif
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -123,6 +127,7 @@ GlobalLanguage::GlobalLanguage()
 
 GlobalLanguage::~GlobalLanguage()
 {
+#ifdef WIN32
 	StringListIt it = m_localFonts.begin();
 	while( it != m_localFonts.end())
 	{
@@ -131,11 +136,12 @@ GlobalLanguage::~GlobalLanguage()
 		//SendMessage( HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
 		++it;
 	}
+#endif
 }
 
 void GlobalLanguage::init( void ) 
 {
-
+#ifdef _WIN32
 	INI ini;
 	AsciiString fname;
 	fname.format("Data\\%s\\Language.ini", GetRegistryLanguage().str());
@@ -168,6 +174,13 @@ void GlobalLanguage::init( void )
 		}
 		++it;
 	}
+#else
+	INI ini;
+	boost::filesystem::path languageIni("Data");
+	languageIni /= GetRegistryLanguage().str();
+	languageIni /= "Language.ini";
+	ini.load(languageIni.string().c_str(), INI_LOAD_OVERWRITE, NULL);
+#endif
 
 	
 }
