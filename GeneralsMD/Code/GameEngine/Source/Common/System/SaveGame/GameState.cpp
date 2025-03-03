@@ -612,7 +612,11 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	}  // end if
 
 	// make absolutely sure the save directory exists
+#ifdef _WIN32
+	CreateDirectory(getSaveDirectory().str(), NULL);
+#else
 	boost::filesystem::create_directory(getSaveDirectory().str());
+#endif
 
 	// construct path to file
 	AsciiString filepath = getFilePathInSaveDirectory(filename);

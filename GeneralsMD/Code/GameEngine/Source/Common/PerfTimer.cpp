@@ -37,7 +37,7 @@
 
 __forceinline void ProfileGetTime(int64_t &t)
 {
-#ifdef OLD_APPROACH
+#ifdef _WIN32 
   _asm
   {
     mov ecx,[t]

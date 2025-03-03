@@ -178,7 +178,7 @@ __forceinline long fast_float2long_round(float f)
 {
 	long i;
 
-#ifdef OLD_APPROACH
+#ifdef _WIN32 
 	__asm {
 		fld [f]
 		fistp [i]
@@ -195,7 +195,7 @@ __forceinline long fast_float2long_round(float f)
 // code courtesy of Martin Hoffesommer (grin)
 __forceinline float fast_float_trunc(float f)
 {
-#ifdef OLD_APPROACH
+#ifdef _WIN32 
   _asm
   {
     mov ecx,[f]
