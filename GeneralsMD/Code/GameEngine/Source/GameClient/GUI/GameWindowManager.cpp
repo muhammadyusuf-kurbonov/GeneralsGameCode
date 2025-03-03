@@ -2208,7 +2208,7 @@ GameWindow *GameWindowManager::gogoGadgetListBox( GameWindow *parent,
 
 	// If ScrollBar was requested ... create it.
 	if( listboxData->scrollBar )
-		GadgetListboxCreateScrollbar( listbox );
+		GadgetListBoxCreateScrollbar( listbox );
 	//
 	// Setup listbox Columns
 	//

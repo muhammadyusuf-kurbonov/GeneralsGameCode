@@ -2298,10 +2298,10 @@ void GadgetListBoxSetFont( GameWindow *g, GameFont *font )
 
 }  // end GadgetListBoxSetFont
 
-// GadgetListboxCreateScrollbar ===============================================
+// GadgetListBoxCreateScrollbar ===============================================
 /** Create the scroll bar using a slider and two buttons for a listbox */
 //=============================================================================
-void GadgetListboxCreateScrollbar( GameWindow *listbox )
+void GadgetListBoxCreateScrollbar( GameWindow *listbox )
 {
 	ListboxData *listData = (ListboxData *)listbox->winGetUserData();
 	WinInstanceData winInstData;

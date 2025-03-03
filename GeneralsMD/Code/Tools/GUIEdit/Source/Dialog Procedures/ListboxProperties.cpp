@@ -76,7 +76,7 @@ static void addScrollbar( GameWindow *listbox )
 {
 
 	// create scrollbar stuffs
-	GadgetListboxCreateScrollbar( listbox );
+	GadgetListBoxCreateScrollbar( listbox );
 
 	//
 	// get the colors for the listbox and reset them to recolor the
