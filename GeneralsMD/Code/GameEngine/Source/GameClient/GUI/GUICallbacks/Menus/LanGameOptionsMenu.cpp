@@ -1077,8 +1077,8 @@ WindowMsgHandledType LanGameOptionsMenuInput( GameWindow *window, UnsignedInt ms
 		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
-			UnsignedByte key = (UnsignedByte)(uintptr_t)mData1;
-			UnsignedByte state = (UnsignedByte)(uintptr_t)mData2;
+			UnsignedByte key = mData1;
+			UnsignedByte state = mData2;
 			if (LANbuttonPushed)
 				break;
 
@@ -1129,7 +1129,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 		case GWM_INPUT_FOCUS:
 			{	
 				// if we're givin the opportunity to take the keyboard focus we must say we want it
-				if((Bool)(uintptr_t)mData1 == TRUE )
+				if( mData1 == TRUE )
 					*(Bool *)mData2 = TRUE;
 
 				return MSG_HANDLED;

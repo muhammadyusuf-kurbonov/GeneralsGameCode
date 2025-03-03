@@ -249,7 +249,7 @@ WindowMsgHandledType ExtendedMessageBoxSystem( GameWindow *window, UnsignedInt m
 		{
 
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
-			if((Bool)(uintptr_t)mData1 == TRUE )
+			if( mData1 == TRUE )
 				*(Bool *)mData2 = TRUE;
 
 			break;

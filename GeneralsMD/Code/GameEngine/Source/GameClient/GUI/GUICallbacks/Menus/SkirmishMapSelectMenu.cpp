@@ -352,8 +352,8 @@ WindowMsgHandledType SkirmishMapSelectMenuInput( GameWindow *window, UnsignedInt
 		// --------------------------------------------------------------------------------------------
 		case GWM_CHAR:
 		{
-			UnsignedByte key = (UnsignedByte)(uintptr_t)mData1;
-			UnsignedByte state = (UnsignedByte)(uintptr_t)mData2;
+			UnsignedByte key = mData1;
+			UnsignedByte state = mData2;
 
 			switch( key )
 			{
@@ -422,7 +422,7 @@ WindowMsgHandledType SkirmishMapSelectMenuSystem( GameWindow *window, UnsignedIn
 		{
 
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
-			if((Bool)(uintptr_t)mData1 == TRUE )
+			if( mData1 == TRUE )
 				*(Bool *)mData2 = TRUE;
 
 			return MSG_HANDLED;
