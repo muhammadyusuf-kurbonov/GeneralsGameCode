@@ -285,10 +285,19 @@ void reallySaveReplay(void)
 
 	if (TheLocalFileSystem->doesFileExist(filename.str()))
 	{
+#ifdef _WIN32
 		if(DeleteFile(filename.str()) == 0)
 		{
 			wchar_t buffer[1024];
 			FormatMessageW ( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, sizeof(buffer), NULL);
+#else
+		if(unlink(filename.str()) == -1)
+		{
+			char abuffer[1024];
+			strerror_r(errno, abuffer, sizeof(abuffer));
+			wchar_t buffer[1024];
+			mbstowcs(buffer, abuffer, sizeof(buffer));
+#endif
 			UnicodeString errorStr;
 			errorStr.set(buffer);
 			errorStr.trim();
@@ -310,10 +319,19 @@ void reallySaveReplay(void)
 	}
 
 	// copy the replay to the right place
+#ifdef _WIN32
 	if(CopyFile(oldFilename.str(),filename.str(), FALSE) == 0)
 	{
 		wchar_t buffer[1024];
 		FormatMessageW( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, sizeof(buffer), NULL);
+#else
+	if(link(oldFilename.str(), filename.str()) == -1)
+	{
+		char abuffer[1024];
+		strerror_r(errno, abuffer, sizeof(abuffer));
+		wchar_t buffer[1024];
+		mbstowcs(buffer, abuffer, sizeof(buffer));
+#endif
 		UnicodeString errorStr;
 		errorStr.set(buffer);
 		errorStr.trim();
