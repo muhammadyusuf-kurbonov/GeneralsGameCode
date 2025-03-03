@@ -504,7 +504,7 @@ WindowMsgHandledType KeyboardOptionsMenuInput( GameWindow *window, UnsignedInt m
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																								(WindowMsgData)button, buttonID );
+																								(WindowMsgData)button, (WindowMsgData)buttonID );
 
 					}  // end if
 
@@ -703,8 +703,10 @@ WindowMsgHandledType KeyboardOptionsMenuSystem( GameWindow *window, UnsignedInt 
 /** Handle input for text entry field */
 //=============================================================================
 WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg,
-													 WindowMsgData mData1, WindowMsgData mData2 )
+													 WindowMsgData mData1Orig, WindowMsgData mData2Orig )
 {
+	UnsignedInt mData1 = (UnsignedInt)(uintptr_t)mData1Orig;
+	UnsignedInt mData2 = (UnsignedInt)(uintptr_t)mData2Orig;
 	EntryData *e = (EntryData *)window->winGetUserData();
 
 	WinInstanceData *instData = window->winGetInstanceData();
