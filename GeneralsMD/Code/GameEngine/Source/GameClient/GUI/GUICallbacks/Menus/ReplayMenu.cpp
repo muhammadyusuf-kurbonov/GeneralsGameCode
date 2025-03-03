@@ -48,6 +48,10 @@
 #include "GameClient/GameText.h"
 #include "GameClient/GameWindowTransitions.h"
 
+#ifndef _WIN32
+#include <boost/filesystem.hpp>
+#endif
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -628,6 +632,7 @@ void deleteReplay( void )
 	filename = TheRecorder->getReplayDir();
 	translate.translate(GetReplayFilenameFromListbox(listboxReplayFiles, selected));
 	filename.concat(translate);
+#ifdef _WIN32
 	if(DeleteFile(filename.str()) == 0)
 	{
 		char buffer[1024];
@@ -637,6 +642,19 @@ void deleteReplay( void )
 		errorStr.translate(translate);
 		MessageBoxOk(TheGameText->fetch("GUI:Error"),errorStr, NULL);
 	}
+#else
+	boost::filesystem::path replayPath(filename.str());
+	try
+	{
+		boost::filesystem::remove(replayPath);
+	}
+	catch (boost::filesystem::filesystem_error &e)
+	{
+		UnicodeString errorStr;
+		errorStr.translate(e.what());
+		MessageBoxOk(TheGameText->fetch("GUI:Error"), errorStr, NULL);
+	}
+#endif
 	//Load the listbox shiznit
 	GadgetListBoxReset(listboxReplayFiles);
 	PopulateReplayFileListbox(listboxReplayFiles);
@@ -659,6 +677,7 @@ void copyReplay( void )
 	filename.concat(translate);
 	
 	char path[1024];
+#ifdef _WIN32
 	LPITEMIDLIST pidl;
 	SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOPDIRECTORY, &pidl);
 	SHGetPathFromIDList(pidl,path);
@@ -675,6 +694,30 @@ void copyReplay( void )
 		errorStr.trim();
 		MessageBoxOk(TheGameText->fetch("GUI:Error"),errorStr, NULL);
 	}
+#else
+	// More or less defacto standard for implementors of the XDG standard
+	boost::filesystem::path newFilename;
+	const char *xdgDesktopDir = getenv("XDG_DESKTOP_DIR");
+	if (xdgDesktopDir)
+	{
+		newFilename = boost::filesystem::path(xdgDesktopDir);
+	}
+	else
+	{
+		newFilename = boost::filesystem::path(getenv("HOME")) / "Desktop";
+	}
+	newFilename /= translate.str();
+	try
+	{
+		boost::filesystem::copy_file(filename.str(), newFilename.string());
+	}
+	catch (boost::filesystem::filesystem_error &e)
+	{
+		UnicodeString errorStr;
+		errorStr.translate(e.what());
+		MessageBoxOk(TheGameText->fetch("GUI:Error"), errorStr, NULL);
+	}
+#endif
 
 }
 
