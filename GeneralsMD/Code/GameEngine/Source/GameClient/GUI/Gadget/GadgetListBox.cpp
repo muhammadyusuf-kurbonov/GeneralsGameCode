@@ -400,7 +400,7 @@ static Int moveRowsDown(ListboxData *list, Int startingRow)
 	char *buf = NEW char[copyLen];
 	memcpy(buf, list->listData + startingRow, copyLen);
 	memcpy(list->listData + startingRow + 1, buf, copyLen );
-	delete buf;
+	delete[] buf;
 
 	list->endPos ++;
 	list->insertPos = list->endPos;
@@ -716,7 +716,8 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 								
 								ListEntryCell *cell = NULL;
 								// go through the columns until we find a column with text
-								for(Int j = 0; j < list->columns; ++j)
+								Int j;
+								for(j = 0; j < list->columns; ++j)
 								{
 									cell = &list->listData[position].cell[j];
 									if(cell && cell->cellType == LISTBOX_TEXT && cell->data)
@@ -1290,7 +1291,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			if(pos->x >= list->columns || pos->y >= list->listLength || 
 					list->listData[pos->y].cell[pos->x].cellType != LISTBOX_TEXT)
 			{
-				tAndC->string = UnicodeString.TheEmptyString;
+				tAndC->string = UnicodeString::TheEmptyString;
 				tAndC->color = 0;				
 			}
 			else
@@ -1633,7 +1634,8 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			if( list->multiSelect )
 			{
 				// forced selections override the entire selection list.
-				for (Int i=0; i<selectCount && i<list->endPos; ++i)
+				Int i;
+				for (i=0; i<selectCount && i<list->endPos; ++i)
 				{
 					// don't select off the end
 					if (list->listLength <= selectList[i])
@@ -1716,7 +1718,8 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			// the position mData1 contains
 			//
 			ListEntryCell *cells = NULL;
-			for (Int i = 0; i < (Int)mData1; i++)
+			Int i;
+			for (i = 0; i < (Int)mData1; i++)
 			{
 				cells = list->listData[i].cell;
 				
@@ -1793,7 +1796,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 		{
 			
 			if( list->multiSelect )
-				*(Int*)mData2 = (Int)list->selections;
+				*(Int**)mData2 = list->selections;
 			else
 				*(Int*)mData2 = list->selectPos;
 
