@@ -51,8 +51,19 @@ target_include_directories(cnc-zero-hour-common PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Libraries/Source/WWVegas/WWDebug
     # Required by DataChunk.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Libraries/Source/Compression
-    ${CMAKE_CURRENT_SOURCE_DIR}/extern/dxvk-native/usr/include/dxvk
-    ${CMAKE_CURRENT_SOURCE_DIR}/extern/compat
 )
 
-target_compile_options(cnc-zero-hour-common PRIVATE -Wno-invalid-offsetof)
+if(WIN32)
+    add_subdirectory(extern/d3d8)
+    target_link_libraries(cnc-zero-hour-common PRIVATE d3d8)
+else()
+    target_include_directories(cnc-zero-hour-common PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/dxvk-native/usr/include/dxvk
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/compat
+    )
+endif()
+
+if(CMAKE_GENERATOR MATCHES "Visual Studio")    
+else()
+    target_compile_options(cnc-zero-hour-common PRIVATE -Wno-invalid-offsetof)
+endif()

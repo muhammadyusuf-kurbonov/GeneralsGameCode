@@ -31,7 +31,11 @@
 #ifndef __BEZIERSEGMENT_H__
 #define __BEZIERSEGMENT_H__
 
+#if _WIN32
+#include <d3dx8math.h>
+#else
 #include <d3dx9math.h>
+#endif
 #include "Common/STLTypedefs.h"
 
 #define USUAL_TOLERANCE 1.0f
