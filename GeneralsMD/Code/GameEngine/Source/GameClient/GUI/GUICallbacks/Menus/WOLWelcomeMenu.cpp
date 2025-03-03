@@ -731,7 +731,7 @@ WindowMsgHandledType WOLWelcomeMenuInput( GameWindow *window, UnsignedInt msg,
 					if( BitTest( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																							(WindowMsgData)buttonBack, buttonBackID );
+																							(WindowMsgData)buttonBack, (WindowMsgData)buttonBackID );
 
 					}  // end if
 

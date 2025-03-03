@@ -1358,7 +1358,7 @@ WindowMsgHandledType WOLLobbyMenuInput( GameWindow *window, UnsignedInt msg,
 					if( BitTest( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																							(WindowMsgData)buttonBack, buttonBackID );
+																							(WindowMsgData)buttonBack, (WindowMsgData)buttonBackID );
 
 					}  // end if
 
@@ -1709,7 +1709,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonJoinID );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																								(WindowMsgData)button, buttonJoinID );
+																								(WindowMsgData)button, (WindowMsgData)buttonJoinID );
 					}
 				}
 				break;

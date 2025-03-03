@@ -5683,7 +5683,7 @@ WindowMsgHandledType IdleWorkerSystem( GameWindow *window, UnsignedInt msg,
 		case GWM_INPUT_FOCUS:
 		{	
 			// if we're givin the opportunity to take the keyboard focus we must say we don't want it
-			if( mData1 == TRUE )
+			if((Bool)(uintptr_t)mData1 == TRUE )
 				*(Bool *)mData2 = FALSE;
 		}
 		//---------------------------------------------------------------------------------------------

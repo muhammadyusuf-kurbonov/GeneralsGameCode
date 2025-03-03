@@ -62,9 +62,11 @@ WindowLayout *popupCommunicatorLayout = NULL;
 /** Input procedure for the left HUD */
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
-																	 WindowMsgData mData1, WindowMsgData mData2 )
+																	 WindowMsgData mData1Orig, WindowMsgData mData2Orig )
 {
-	
+	UnsignedInt mData1 = (uintptr_t)mData1Orig;
+	UnsignedInt mData2 = (uintptr_t)mData2Orig;
+
 	// get player
 	Player *player = ThePlayerList->getLocalPlayer();
 

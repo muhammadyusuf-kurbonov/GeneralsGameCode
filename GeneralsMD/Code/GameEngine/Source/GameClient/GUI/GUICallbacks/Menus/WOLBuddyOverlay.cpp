@@ -827,7 +827,7 @@ WindowMsgHandledType WOLBuddyOverlayInput( GameWindow *window, UnsignedInt msg,
 					if( BitTest( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																							(WindowMsgData)buttonHide, buttonHideID );
+																							(WindowMsgData)buttonHide, (WindowMsgData)buttonHideID );
 
 					}  // end if
 

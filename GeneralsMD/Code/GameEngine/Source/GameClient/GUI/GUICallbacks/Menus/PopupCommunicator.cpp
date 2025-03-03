@@ -121,7 +121,7 @@ WindowMsgHandledType PopupCommunicatorInput( GameWindow *window, UnsignedInt msg
 					{
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																								(WindowMsgData)buttonOk, buttonOkID );
+																								(WindowMsgData)buttonOk, (WindowMsgData)buttonOkID );
 
 					}  // end if
 

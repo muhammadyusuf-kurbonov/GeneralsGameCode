@@ -134,7 +134,7 @@ WindowMsgHandledType WOLStatusMenuInput( GameWindow *window, UnsignedInt msg,
 					if( BitTest( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																							(WindowMsgData)buttonDisconnect, buttonDisconnectID );
+																							(WindowMsgData)buttonDisconnect, (WindowMsgData)buttonDisconnectID );
 
 					}  // end if
 

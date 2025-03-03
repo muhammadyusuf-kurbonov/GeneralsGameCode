@@ -128,7 +128,7 @@ WindowMsgHandledType WOLMessageWindowInput( GameWindow *window, UnsignedInt msg,
 					if( BitTest( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																							(WindowMsgData)buttonCancel, buttonCancelID );
+																							(WindowMsgData)buttonCancel, (WindowMsgData)buttonCancelID );
 
 					}  // end if
 

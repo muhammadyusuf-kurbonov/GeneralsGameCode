@@ -141,7 +141,7 @@ WindowMsgHandledType WOLLadderScreenInput( GameWindow *window, UnsignedInt msg,
 					{
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																								(WindowMsgData)buttonBack, buttonBackID );
+																								(WindowMsgData)buttonBack, (WindowMsgData)buttonBackID );
 
 					}  // end if
 

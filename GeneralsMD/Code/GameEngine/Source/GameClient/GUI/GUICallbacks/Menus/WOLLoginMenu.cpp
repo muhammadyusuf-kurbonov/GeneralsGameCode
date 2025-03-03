@@ -704,7 +704,7 @@ void WOLLoginMenuInit( WindowLayout *layout, void *userData )
 	if (!optionPref.getBool("SawTOS", TRUE))
 	{
 		TheWindowManager->winSendSystemMsg( parentWOLLogin, GBM_SELECTED, 
-																			(WindowMsgData)buttonTOS, buttonTOSID );
+																			(WindowMsgData)buttonTOS, (WindowMsgData)buttonTOSID );
 	}
 	TheTransitionHandler->setGroup("GameSpyLoginProfileFade");
 
@@ -914,7 +914,7 @@ WindowMsgHandledType WOLLoginMenuInput( GameWindow *window, UnsignedInt msg,
 					if( BitTest( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																							(WindowMsgData)buttonBack, buttonBackID );
+																							(WindowMsgData)buttonBack, (WindowMsgData)buttonBackID );
 
 					}  // end if
 

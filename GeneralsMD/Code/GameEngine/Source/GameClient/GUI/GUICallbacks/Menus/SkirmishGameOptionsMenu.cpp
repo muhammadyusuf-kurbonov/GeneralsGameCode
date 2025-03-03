@@ -1539,7 +1539,7 @@ WindowMsgHandledType SkirmishGameOptionsMenuInput( GameWindow *window, UnsignedI
 					if( BitTest( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																							(WindowMsgData)buttonExit, buttonExitID );
+																							(WindowMsgData)buttonExit, (WindowMsgData)buttonExitID );
 					}  // end if
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;

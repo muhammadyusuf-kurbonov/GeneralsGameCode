@@ -1395,7 +1395,7 @@ WindowMsgHandledType GameSpyPlayerInfoOverlayInput( GameWindow *window, Unsigned
 					if( BitTest( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																							(WindowMsgData)buttonClose, buttonCloseID );
+																							(WindowMsgData)buttonClose, (WindowMsgData)buttonCloseID );
 
 					}  // end if
 
