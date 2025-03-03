@@ -197,7 +197,7 @@ enum
 	SHOW_FRAMES_LIMIT = 20
 };
 
-static showFade = FALSE;
+static Bool showFade = FALSE;
 static Int dropDown = DROPDOWN_NONE;
 static Int pendingDropDown = DROPDOWN_NONE;
 static AnimateWindowManager *localAnimateWindowManager = NULL;
@@ -214,7 +214,8 @@ static Bool launchChallengeMenu = FALSE;
 static Bool dontAllowTransitions = FALSE;
 
 //Added by Saad
-const /*Int TIME_OUT = 15,*/ CORNER = 10;
+/*const Int TIME_OUT = 15;*/ 
+const Int CORNER = 10;
 void AcceptResolution();
 void DeclineResolution();
 GameWindow *resAcceptMenu = NULL;
@@ -322,7 +323,7 @@ static MessageBoxReturnType checkCDCallback( void *userData )
 	}
 	else
 	{
-		prepareCampaignGame((GameDifficulty)(Int)(Int *)userData);
+		prepareCampaignGame((GameDifficulty)(uintptr_t)(Int *)userData);
 		return MB_RETURN_CLOSE;
 	}
 }
@@ -546,7 +547,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	dropDownWindows[DROPDOWN_MAIN] = TheWindowManager->winGetWindowFromId( parentMainMenu, TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:MapBorder2") ) );
 	dropDownWindows[DROPDOWN_LOADREPLAY] = TheWindowManager->winGetWindowFromId( parentMainMenu, TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:MapBorder3") ) );
 	dropDownWindows[DROPDOWN_DIFFICULTY] = TheWindowManager->winGetWindowFromId( parentMainMenu, TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:MapBorder4") ) );
-	for(i = 1; i < DROPDOWN_COUNT; ++i)
+	for(int i = 1; i < DROPDOWN_COUNT; ++i)
 		dropDownWindows[i]->winHide(TRUE);
 
 	initialHide();
@@ -622,7 +623,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 		getUpdate->winHide( TRUE );
 		//getUpdate->winEnable( FALSE );
 	}
-	/**/
+	*/
 
 	if (TheGameSpyPeerMessageQueue && !TheGameSpyPeerMessageQueue->isConnected())
 	{
@@ -992,8 +993,8 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 		case GWM_MOUSE_POS:
 		{
 			ICoord2D mouse;
-			mouse.x = mData1 & 0xFFFF;
-			mouse.y = mData1 >> 16;
+			mouse.x = (uintptr_t)mData1 & 0xFFFF;
+			mouse.y = (uintptr_t)mData1 >> 16;
 			if( mouse.x == 0 && mouse.y == 0)
 				break;
 
