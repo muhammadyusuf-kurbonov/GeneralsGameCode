@@ -243,6 +243,20 @@ static void GlobalFree(void *ptr)
   free(ptr);
 }
 
+#include <sstream>
+
+static char* itoa(int value, char* str, int base)
+{
+  // Create stringbuf from str
+  std::stringbuf buf;
+  buf.pubsetbuf(str, 32);
+  std::ostream os(&buf);
+  os << value;
+  // Null terminate, just in case
+  str[32] = '\0';
+  return str;
+}
+
 typedef char TCHAR;
 #define _tcslen strlen
 #define _tcscmp strcmp
