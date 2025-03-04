@@ -165,10 +165,6 @@ inline Real deg2rad(Real rad) { return rad * (PI/180); }
 #define BitClear( x, i ) ( (x ) &= ~(i) )
 #define BitToggle( x, i ) ( (x) ^= (i) )
 
-#ifndef __forceinline
-#define __forceinline
-#endif
-
 //-------------------------------------------------------------------------------------------------
 
 // note, this function depends on the cpu rounding mode, which we set to CHOP every frame, 

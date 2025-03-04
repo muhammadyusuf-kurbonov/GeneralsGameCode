@@ -45,6 +45,16 @@
 // Disable warning about exception handling not being enabled. It's used as part of STL - in a part of STL we don't use.
 #pragma warning(disable : 4530)
 
+#ifndef _WIN32
+// Attribute gets ignored anyways by compiler
+#define __cdecl //__attribute((cdecl))
+#include <stddef.h>
+#endif
+
+#ifndef __forceinline
+#define __forceinline
+#endif
+
 /*
 ** Define for debug memory allocation to include __FILE__ and __LINE__ for every memory allocation.
 ** This helps find leaks.

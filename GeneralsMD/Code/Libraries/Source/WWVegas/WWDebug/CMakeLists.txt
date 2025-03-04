@@ -12,7 +12,13 @@ target_include_directories(WWDebug PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../WWLib
 )
 
-target_compile_definitions(WWDebug PUBLIC
-    -DWINVER=0x400
-    -D_WIN32_WINNT=0x0400
-)
+if(UNIX)
+    target_compile_definitions(WWDebug PUBLIC
+        -D_UNIX
+    )
+else()
+    target_compile_definitions(WWDebug PUBLIC
+        -DWINVER=0x400
+        -D_WIN32_WINNT=0x0400
+    )
+endif()
