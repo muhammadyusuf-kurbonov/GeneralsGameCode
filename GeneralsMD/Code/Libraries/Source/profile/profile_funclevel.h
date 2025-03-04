@@ -22,7 +22,7 @@
 // $Revision: #3 $
 // $DateTime: 2003/07/09 10:57:23 $
 //
-// ©2003 Electronic Arts
+// ï¿½2003 Electronic Arts
 //
 // Function level profiling
 //////////////////////////////////////////////////////////////////////////////
@@ -31,6 +31,8 @@
 #endif
 #ifndef PROFILE_FUNCLEVEL_H // Include guard
 #define PROFILE_FUNCLEVEL_H
+
+#include <stdint.h>
 
 /**
   \brief The function level profiler.
@@ -127,7 +129,7 @@ public:
       \param frame number of recorded frame, or Total
       \return number of calls
     */
-    unsigned _int64 GetCalls(unsigned frame) const;
+   int64_t GetCalls(unsigned frame) const;
 
     /**
       \brief Determine time spend in this function and its children.
@@ -135,7 +137,7 @@ public:
       \param frame number of recorded frame, or Total
       \return time spend (in CPU ticks)
     */
-    unsigned _int64 GetTime(unsigned frame) const;
+   int64_t GetTime(unsigned frame) const;
 
     /**
       \brief Determine time spend in this function only (exclude
@@ -144,7 +146,7 @@ public:
       \param frame number of recorded frame, or Total
       \return time spend in this function alone (in CPU ticks)
     */
-    unsigned _int64 GetFunctionTime(unsigned frame) const;
+   int64_t GetFunctionTime(unsigned frame) const;
 
     /**
       \brief Determine the list of caller Ids.
@@ -183,9 +185,9 @@ public:
 
       \return profile thread ID
     */
-    unsigned GetId(void) const
+    uintptr_t GetId(void) const
     {
-      return unsigned(m_threadID);
+      return (uintptr_t)m_threadID;
     }
 
   private:

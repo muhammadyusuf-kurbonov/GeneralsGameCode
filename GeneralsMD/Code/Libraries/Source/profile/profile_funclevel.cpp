@@ -22,7 +22,7 @@
 // $Revision: #4 $
 // $DateTime: 2003/08/14 13:43:29 $
 //
-// ©2003 Electronic Arts
+// ï¿½2003 Electronic Arts
 //
 // Function level profiling
 //////////////////////////////////////////////////////////////////////////////
@@ -191,7 +191,7 @@ void ProfileFuncLevelTracer::Enter(unsigned addr, unsigned esp, unsigned ret)
 unsigned ProfileFuncLevelTracer::Leave(unsigned esp)
 {
   // get current "time"
-  __int64 cur;
+  int64_t cur;
   ProfileGetTime(cur);
 
   while (usedStack>0)
@@ -215,7 +215,7 @@ unsigned ProfileFuncLevelTracer::Leave(unsigned esp)
     f->glob.callCount++;
 
     // add total time
-    __int64 delta=cur-s.tickEnter;
+    int64_t delta=cur-s.tickEnter;
     if (!f->depth)
       f->glob.tickTotal+=delta;
 
@@ -610,7 +610,7 @@ unsigned ProfileFuncLevel::Id::GetLine(void) const
   return func->funcLine;
 }
 
-unsigned _int64 ProfileFuncLevel::Id::GetCalls(unsigned frame) const
+int64_t ProfileFuncLevel::Id::GetCalls(unsigned frame) const
 {
   if (!m_funcPtr)
     return 0;
@@ -627,7 +627,7 @@ unsigned _int64 ProfileFuncLevel::Id::GetCalls(unsigned frame) const
   }
 }
 
-unsigned _int64 ProfileFuncLevel::Id::GetTime(unsigned frame) const
+int64_t ProfileFuncLevel::Id::GetTime(unsigned frame) const
 {
   if (!m_funcPtr)
     return 0;
@@ -644,7 +644,7 @@ unsigned _int64 ProfileFuncLevel::Id::GetTime(unsigned frame) const
   }
 }
 
-unsigned _int64 ProfileFuncLevel::Id::GetFunctionTime(unsigned frame) const
+int64_t ProfileFuncLevel::Id::GetFunctionTime(unsigned frame) const
 {
   if (!m_funcPtr)
     return 0;
@@ -747,17 +747,17 @@ unsigned ProfileFuncLevel::Id::GetLine(void) const
   return 0;
 }
 
-unsigned _int64 ProfileFuncLevel::Id::GetCalls(unsigned frame) const
+int64_t ProfileFuncLevel::Id::GetCalls(unsigned frame) const
 {
   return 0;
 }
 
-unsigned _int64 ProfileFuncLevel::Id::GetTime(unsigned frame) const
+int64_t ProfileFuncLevel::Id::GetTime(unsigned frame) const
 {
   return 0;
 }
 
-unsigned _int64 ProfileFuncLevel::Id::GetFunctionTime(unsigned frame) const
+int64_t ProfileFuncLevel::Id::GetFunctionTime(unsigned frame) const
 {
   return 0;
 }

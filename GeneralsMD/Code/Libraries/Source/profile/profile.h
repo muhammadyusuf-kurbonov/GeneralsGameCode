@@ -22,7 +22,7 @@
 // $Revision: #4 $
 // $DateTime: 2003/08/14 13:43:29 $
 //
-// ©2003 Electronic Arts
+// ï¿½2003 Electronic Arts
 //
 // Profiling module
 //////////////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ public:
 
     \return number of CPU clock cycles per second
   */
-  static _int64 GetClockCyclesPerSecond(void);
+  static int64_t GetClockCyclesPerSecond(void);
   
   /**
     \brief Add the given result function interface.
@@ -219,7 +219,7 @@ private:
   static FrameName *m_frameNames;
 
   /// CPU clock cycles/second
-  static _int64 m_clockCycles;
+  static int64_t m_clockCycles;
 };
 
 #endif // PROFILE_H

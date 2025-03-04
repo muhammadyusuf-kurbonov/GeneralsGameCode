@@ -22,7 +22,7 @@
 // $Revision: #6 $
 // $DateTime: 2003/08/14 13:43:29 $
 //
-// ©2003 Electronic Arts
+// ï¿½2003 Electronic Arts
 //
 // Profile module main code
 //////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ void ProfileFreeMemory(void *ptr)
 
 //////////////////////////////////////////////////////////////////////////////
 
-static _int64 GetClockCyclesFast(void)
+static int64_t GetClockCyclesFast(void)
 {
   // this is where we're adding our internal result functions
   Profile::AddResultFunction(ProfileResultFileCSV::Create,
@@ -101,7 +101,7 @@ static _int64 GetClockCyclesFast(void)
   
   // measure clock cycles 3 times for 20 msec each
   // then take the 2 counts that are closest, average
-  _int64 n[3];
+  int64_t n[3];
   for (int k=0;k<3;k++)
   {
     // wait for end of current tick
@@ -109,7 +109,7 @@ static _int64 GetClockCyclesFast(void)
     while (timeGetTime()<timeEnd);
 
     // get cycles
-    _int64 start,startQPC,endQPC;
+    int64_t start,startQPC,endQPC;
     QueryPerformanceCounter((LARGE_INTEGER *)&startQPC);
     ProfileGetTime(start);
     timeEnd+=20;
@@ -120,7 +120,7 @@ static _int64 GetClockCyclesFast(void)
     // convert to 1 second
     if (QueryPerformanceCounter((LARGE_INTEGER *)&endQPC))
     {
-      _int64 freq;
+      int64_t freq;
       QueryPerformanceFrequency((LARGE_INTEGER *)&freq);
       n[k]=(n[k]*freq)/(endQPC-startQPC);
     }
@@ -131,11 +131,11 @@ static _int64 GetClockCyclesFast(void)
   }
 
   // find two closest values
-  _int64 d01=n[1]-n[0],d02=n[2]-n[0],d12=n[2]-n[1];
+  int64_t d01=n[1]-n[0],d02=n[2]-n[0],d12=n[2]-n[1];
   if (d01<0) d01=-d01;
   if (d02<0) d02=-d02;
   if (d12<0) d12=-d12;
-  _int64 avg;
+  int64_t avg;
   if (d01<d02)
   {
     avg=d01<d12?n[0]+n[1]:n[1]+n[2];
@@ -154,7 +154,7 @@ unsigned Profile::m_rec;
 char **Profile::m_recNames;
 unsigned Profile::m_names;
 Profile::FrameName *Profile::m_frameNames;
-_int64 Profile::m_clockCycles=GetClockCyclesFast();
+int64_t Profile::m_clockCycles=GetClockCyclesFast();
 Profile::PatternListEntry *Profile::firstPatternEntry;
 Profile::PatternListEntry *Profile::lastPatternEntry;
 
@@ -332,7 +332,7 @@ void Profile::ClearTotals(void)
   ProfileId::ClearTotals();
 }
 
-_int64 Profile::GetClockCyclesPerSecond(void)
+int64_t Profile::GetClockCyclesPerSecond(void)
 {
   return m_clockCycles;
 }
