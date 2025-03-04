@@ -31,6 +31,8 @@ target_include_directories(GameEngine PRIVATE
     ${CMAKE_SOURCE_DIR}/Libraries/Source/Compression
 )
 
+target_link_libraries(GameEngine PRIVATE WWLib)
+
 if(WIN32)
     target_link_libraries(GameEngine PRIVATE d3d8 gamespy BrowserDispatch)
 else()

@@ -1,20 +1,18 @@
-# Set source files
-set(WWDEBUG_SRC
+set(SOURCE_WWDEBUG
     wwdebug.cpp
     wwmemlog.cpp
     wwprofile.cpp
-    wwdebug.h
-    wwhack.h
-    wwmemlog.h
-    wwprofile.h
 )
 
-# Targets to build.
-add_library(z_wwdebug STATIC)
-set_target_properties(z_wwdebug PROPERTIES OUTPUT_NAME wwdebug)
+add_library(WWDebug STATIC ${SOURCE_WWDEBUG})
 
-target_sources(z_wwdebug PRIVATE ${WWDEBUG_SRC})
+target_include_directories(WWDebug PUBLIC 
+    #${CMAKE_SOURCE_DIR}/GameEngine/Include 
+    ${CMAKE_CURRENT_SOURCE_DIR} 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../WWLib
+)
 
-target_link_libraries(z_wwdebug PRIVATE
-    z_wwcommon
+target_compile_definitions(WWDebug PUBLIC
+    -DWINVER=0x400
+    -D_WIN32_WINNT=0x0400
 )
