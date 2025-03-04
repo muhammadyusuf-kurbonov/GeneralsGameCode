@@ -1137,14 +1137,14 @@ static void saveOptions( void )
 	GadgetComboBoxGetSelectedPos(comboBoxLANIP, &index);
 	if (index>=0 && TheGlobalData)
 	{
-		ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxLANIP, index);
+		ip = (uintptr_t)GadgetComboBoxGetItemData(comboBoxLANIP, index);
 		TheWritableGlobalData->m_defaultIP = ip;
 		pref->setLANIPAddress(ip);
 	}
 	GadgetComboBoxGetSelectedPos(comboBoxOnlineIP, &index);
 	if (index>=0)
 	{
-		ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxOnlineIP, index);
+		ip = (uintptr_t)GadgetComboBoxGetItemData(comboBoxOnlineIP, index);
 		pref->setOnlineIPAddress(ip);
 	}
 

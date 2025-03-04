@@ -135,7 +135,7 @@ static void populateLadderListBox( void )
 	GadgetListBoxGetSelected(listboxLadderSelect, &selIndex);
 	if (selIndex < 0)
 		return;
-	selID = (Int)GadgetListBoxGetItemData(listboxLadderSelect, selIndex);
+	selID = (Int)(uintptr_t)GadgetListBoxGetItemData(listboxLadderSelect, selIndex);
 	if (!selID)
 		return;
 	updateLadderDetails(selID, staticTextLadderName, listboxLadderDetails);
@@ -378,7 +378,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 				if (selectPos < 0)
 					break;
 
-				ladderIndex = (Int)GadgetListBoxGetItemData( listboxLadderSelect, selectPos, 0 );
+				ladderIndex = (Int)(uintptr_t)GadgetListBoxGetItemData( listboxLadderSelect, selectPos, 0 );
 				const LadderInfo *li = TheLadderList->findLadderByIndex( ladderIndex );
 				if (li && li->cryptedPassword.isNotEmpty())
 				{
@@ -444,7 +444,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 			if (selIndex < 0)
 				break;
 
-			selID = (Int)GadgetListBoxGetItemData(listboxLadderSelect, selIndex);
+			selID = (Int)(uintptr_t)GadgetListBoxGetItemData(listboxLadderSelect, selIndex);
 			if (!selID)
 				break;
 
@@ -635,7 +635,7 @@ WindowMsgHandledType RCGameDetailsMenuSystem( GameWindow *window, UnsignedInt ms
 			{
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
-				Int selectedID = (Int)window->winGetUserData();
+				Int selectedID = (Int)(uintptr_t)window->winGetUserData();
 				if(!selectedID)
 					break;
 				closeRightClickMenu(window);

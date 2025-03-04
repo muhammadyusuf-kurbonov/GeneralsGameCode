@@ -451,7 +451,7 @@ WindowMsgHandledType MapSelectMenuSystem( GameWindow *window, UnsignedInt msg,
 				Int controlID = control->winGetWindowId();
 				if( controlID == listboxMap ) 
 				{
-					int rowSelected = mData2;
+					int rowSelected = (uintptr_t)mData2;
 				
 					if (rowSelected >= 0)
 					{
