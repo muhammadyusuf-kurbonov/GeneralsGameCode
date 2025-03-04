@@ -35,13 +35,17 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"int.h"
-#include	"mpmath.h"
+#include	"INT.H"
+#include	"MPMATH.H"
 #include	"rng.h"
 
+template<>
 int bignum::Error = 0;
+template<>
 bool bignum::Carry = false;
+template<>
 bool bignum::Borrow = false;
+template<>
 bignum bignum::Remainder;
 
 

@@ -31,7 +31,7 @@
 #ifndef __BEZIERSEGMENT_H__
 #define __BEZIERSEGMENT_H__
 
-#if _WIN32
+#ifdef _WIN32
 #include <d3dx8math.h>
 #else
 #include <d3dx9math.h>

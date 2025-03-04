@@ -42,8 +42,12 @@
 #include "wwmemlog.h"
 #include "wwdebug.h"
 #include "vector.h"
-#include "fastallocator.h"
+#include "FastAllocator.h"
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <thread>
+#endif
 
 #define USE_FAST_ALLOCATOR
 
@@ -95,7 +99,7 @@ static unsigned FreeCount;
 ** Name for each memory category.  I'm padding the array with some "undefined" strings in case
 ** someone forgets to set the name when adding a new category.
 */
-static char * _MemoryCategoryNames[] =
+static const char * _MemoryCategoryNames[] =
 {
 	"UNKNOWN",
 	"Geometry",
@@ -289,6 +293,10 @@ WWINLINE void * Get_Mem_Log_Mutex(void)
 	return _MemLogCriticalSectionHandle;
 
 #endif
+
+#if DISABLE_MEMLOG
+	return NULL;
+#endif
 }
 
 WWINLINE void Lock_Mem_Log_Mutex(void)
@@ -392,7 +400,11 @@ ActiveCategoryStackClass::operator = (const ActiveCategoryStackClass & that)
 ***************************************************************************************************/
 ActiveCategoryStackClass & ActiveCategoryClass::Get_Active_Stack(void)
 {
+#ifdef _WIN32
 	int current_thread = ::GetCurrentThreadId();
+#else
+	int current_thread = -1;
+#endif
 
 	/*
 	** If we already have an allocated category stack for the current thread,

@@ -43,7 +43,11 @@
 
 
 #include "wwdebug.h"
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <errno.h>
+#endif
 //#include "win.h" can use this if allowed to see wwlib
 #include <stdlib.h>
 #include <stdarg.h>
@@ -51,7 +55,7 @@
 #include <assert.h>
 #include <string.h>
 #include <signal.h>
-#include "except.h"
+#include "Except.h"
 
 
 static PrintFunc			_CurMessageHandler = NULL;
@@ -77,9 +81,12 @@ void Convert_System_Error_To_String(int id, char* buffer, int buf_len)
 #endif
 }
 
-int Get_Last_System_Error()
-{
-	return GetLastError();
+int Get_Last_System_Error() {
+#ifdef _UNIX
+	return errno;
+#else
+  return GetLastError();
+#endif
 }
 
 /***********************************************************************************************

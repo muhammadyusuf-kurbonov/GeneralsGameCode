@@ -53,11 +53,11 @@
 #include "bittype.h"
 #include "wwdebug.h"
 #include "mutex.h"
-#include <new.h>
 #include <stdlib.h>
 #include <stddef.h>
-
-
+#ifdef _WIN32
+#include <new.h>
+#endif
 
 /**********************************************************************************************
 ** ObjectPoolClass
@@ -158,6 +158,7 @@ private:
 ** the class.
 */
 #define DEFINE_AUTO_POOL(T,BLOCKSIZE) \
+template<>\
 ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator;
 
 

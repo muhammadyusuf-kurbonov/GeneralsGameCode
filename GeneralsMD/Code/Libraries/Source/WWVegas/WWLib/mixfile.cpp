@@ -37,9 +37,9 @@
 #include "mixfile.h"
 #include "wwdebug.h"
 #include "ffactory.h"
-#include "wwfile.h"
+#include "WWFILE.H"
 #include "realcrc.h"
-#include "rawfile.h"
+#include "RAWFILE.H"
 #include "win.h"
 #include "bittype.h"
 
@@ -318,9 +318,14 @@ MixFileFactoryClass::Flush_Changes (void)
 	//
 	//	Get the path of the mix file
 	//
+	#ifdef _WIN32
 	char drive[_MAX_DRIVE] = { 0 };
 	char dir[_MAX_DIR] = { 0 };
 	::_splitpath (MixFilename, drive, dir, NULL, NULL);
+	#else
+	char drive[255] = { 0 };
+	char dir[255] = { 0 };
+	#endif
 	StringClass path	= drive;
 	path					+= dir;
 
@@ -369,8 +374,12 @@ MixFileFactoryClass::Flush_Changes (void)
 	//
 	//	Delete the old mix file and rename the new one
 	//
+#ifdef _WIN32
 	::DeleteFile (MixFilename);
 	::MoveFile (full_path, MixFilename);
+#else
+
+#endif
 
 	//
 	//	Reset the lists
@@ -397,10 +406,12 @@ MixFileFactoryClass::Get_Temp_Filename (const char *path, StringClass &full_path
 	//
 	for (int index = 0; index < 20; index ++) {
 		full_path.Format ("%s%.2d.dat", (const char *)temp_path, index + 1);
+	#ifdef _WIN32
 		if (GetFileAttributes (full_path) == 0xFFFFFFFF) {
 			retval = true;
 			break;
 		}
+	#endif
 	}
 
 	return retval;
@@ -655,6 +666,7 @@ void	MixFileCreator::Add_File( const char * filename, FileClass *file )
 */
 void	Add_Files( const char * dir, MixFileCreator & mix )
 {
+#ifdef _WIN32
 	BOOL bcontinue = TRUE;
 	HANDLE hfile_find;
 	WIN32_FIND_DATA find_info = {0};
@@ -680,6 +692,9 @@ void	Add_Files( const char * dir, MixFileCreator & mix )
 //			WWDEBUG_SAY(( "Adding file from %s %s\n", source, name ));
 		}
 	}
+#else
+
+#endif
 }
 
 void	Setup_Mix_File( void )

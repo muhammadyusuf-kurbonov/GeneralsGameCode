@@ -26,6 +26,11 @@
 #include "always.h"
 #include "thread.h"
 
+#ifndef _WIN32
+#include <atomic>
+#endif
+
+
 
 // Always use mutex or critical section when accessing the same data from multiple threads!
 

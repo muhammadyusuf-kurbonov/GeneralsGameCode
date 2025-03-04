@@ -37,11 +37,12 @@
 #ifndef DSURFACE_H
 #define DSURFACE_H
 
-#include	"palette.h"
+#include	"PALETTE.H"
 #include	"win.h"
 #include	"xsurface.h"
+#ifdef _WIN32
 #include	<ddraw.h>
-
+#endif
 /*
 **	This is a concrete surface class that is based on the DirectDraw
 **	API.

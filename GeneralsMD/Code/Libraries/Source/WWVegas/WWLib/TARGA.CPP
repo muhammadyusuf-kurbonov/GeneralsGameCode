@@ -60,7 +60,7 @@
 *
 ****************************************************************************/
 
-#include "targa.h"
+#include "TARGA.H"
 #ifndef TGA_USES_WWLIB_FILE_CLASSES
 #include <stdio.h>
 #endif
@@ -68,7 +68,7 @@
 #include <memory.h>
 #include <string.h>
 #ifdef TGA_USES_WWLIB_FILE_CLASSES
-#include "wwfile.h"
+#include "WWFILE.H"
 #include "ffactory.h"
 #else
 #include <io.h>
@@ -827,6 +827,7 @@ void Targa::XFlip(void)
 
 static __forceinline void _swapBytes(char *p1, char *p2, unsigned count)
 {
+	#ifdef _WIN32
   _asm
   {
     mov esi,[p1]
@@ -865,6 +866,17 @@ static __forceinline void _swapBytes(char *p1, char *p2, unsigned count)
     jmp lpLessThan16
   done:
   }
+	#else
+	char *p1end=p1+count;
+	while (p1<p1end)
+	{
+		char tmp=*p1;
+		*p1=*p2;
+		*p2=tmp;
+		++p1;
+		++p2;
+	}
+	#endif
 }
 
 void Targa::YFlip(void)

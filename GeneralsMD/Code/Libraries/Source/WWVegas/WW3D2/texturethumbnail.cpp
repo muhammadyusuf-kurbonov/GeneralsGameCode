@@ -25,7 +25,7 @@
 #include "textureloader.h"
 #include "bitmaphandler.h"
 #include "ffactory.h"
-#include "rawfile.h"
+#include "RAWFILE.H"
 #include "mixfile.h"
 #include "wwprofile.h"
 #include <windows.h>

@@ -39,10 +39,10 @@
 
 #include <string.h>	// stricmp()
 #include "animatedsoundmgr.h"
-#include "ini.h"
+#include "INI.H"
 #include "inisup.h"
 #include "ffactory.h"
-#include "wwfile.h"
+#include "WWFILE.H"
 #include <stdio.h>
 #include "definition.h"
 #include "definitionmgr.h"

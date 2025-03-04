@@ -248,7 +248,7 @@ private:
 	static int ProcessorModel;
 	static int ProcessorRevision;
 	static int ProcessorSpeed;
-	static sint64 ProcessorTicksPerSecond;	// Ticks per second
+	static int64_t ProcessorTicksPerSecond;	// Ticks per second
 	static double InvProcessorTicksPerSecond;	// 1.0 / Ticks per second
 
 	static ProcessorManufacturerType ProcessorManufacturer;

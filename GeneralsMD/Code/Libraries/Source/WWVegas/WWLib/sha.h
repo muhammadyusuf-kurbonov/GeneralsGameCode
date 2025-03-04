@@ -43,13 +43,16 @@
 **	November of '94. Until the compiler supports this, use the following
 **	definition.
 */
-#include <new.h>
 #include "always.h"
 #include	"bool.h"
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<string.h>
-
+#ifdef _WIN32
+#include <new.h>
+#else
+#include <new>
+#endif
 
 /*
 **	This implements the Secure Hash Algorithm. It is a cryptographically

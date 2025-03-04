@@ -101,7 +101,7 @@
 #include "statistics.h"
 #include "pointgr.h"
 #include "ffactory.h"
-#include "ini.h"
+#include "INI.H"
 #include "dazzle.h"
 #include "meshmdl.h"
 #include "dx8renderer.h"

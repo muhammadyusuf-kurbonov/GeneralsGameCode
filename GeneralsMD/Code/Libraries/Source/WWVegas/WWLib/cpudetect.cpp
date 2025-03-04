@@ -20,14 +20,15 @@
 #include "wwstring.h"
 #include "wwdebug.h"
 #include "thread.h"
-#include "mpu.h"
+#include "MPU.H"
 #pragma warning (disable : 4201)	// Nonstandard extension - nameless struct
+#ifdef _WIN32
 #include <windows.h>
-#include "systimer.h"
-
-#ifdef _UNIX
-# include <time.h>  // for time(), localtime() and timezone variable.
+#elif defined(_UNIX)
+#include <time.h>  // for time(), localtime() and timezone variable.
+#include <cpuid.h>
 #endif
+#include "systimer.h"
 
 struct OSInfoStruct {
 	const char* Code;
@@ -57,7 +58,7 @@ int CPUDetectClass::ProcessorFamily;
 int CPUDetectClass::ProcessorModel;
 int CPUDetectClass::ProcessorRevision;
 int CPUDetectClass::ProcessorSpeed;
-__int64 CPUDetectClass::ProcessorTicksPerSecond;	// Ticks per second
+int64_t CPUDetectClass::ProcessorTicksPerSecond;	// Ticks per second
 double CPUDetectClass::InvProcessorTicksPerSecond;	// 1.0 / Ticks per second
 
 unsigned CPUDetectClass::FeatureBits;
@@ -125,7 +126,7 @@ const char* CPUDetectClass::Get_Processor_Manufacturer_Name()
 
 #define ASM_RDTSC _asm _emit 0x0f _asm _emit 0x31
 
-static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
+static unsigned Calculate_Processor_Speed(int64_t& ticks_per_second)
 {
 	struct {
 		unsigned timer0_h;
@@ -162,8 +163,8 @@ static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
 #endif
 	}
 
-	__int64 t=*(__int64*)&Time.timer1_h-*(__int64*)&Time.timer0_h;
-	ticks_per_second=(__int64)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
+	int64_t t=*(int64_t*)&Time.timer1_h-*(int64_t*)&Time.timer0_h;
+	ticks_per_second=(int64_t)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
 	return unsigned((double)t/(double)(elapsed*1000));
 }
 
@@ -848,24 +849,8 @@ void CPUDetectClass::Init_CPUID_Instruction()
       pop ebx
    }
 #elif defined(_UNIX)
-     __asm__(" mov $0, __cpuid_available");  // clear flag
-     __asm__(" push %ebx");
-     __asm__(" pushfd");
-     __asm__(" pop %eax");
-     __asm__(" mov %eax, %ebx");
-     __asm__(" xor 0x00200000, %eax");
-     __asm__(" push %eax");
-     __asm__(" popfd");
-     __asm__(" pushfd");
-     __asm__(" pop %eax");
-     __asm__(" xor %ebx, %eax");
-     __asm__(" je done");
-     __asm__(" mov $1, __cpuid_available");
-     goto done;  // just to shut the compiler up
-   done:
-     __asm__(" push %ebx");
-     __asm__(" popfd");
-     __asm__(" pop %ebx");
+	 unsigned int eax, ebx, ecx, edx;
+	cpuid_available = __get_cpuid(0, &eax, &ebx, &ecx, &edx) != 0;
 #endif
 	HasCPUIDInstruction=!!cpuid_available;
 }
@@ -917,8 +902,8 @@ void CPUDetectClass::Init_Memory()
 
 void CPUDetectClass::Init_OS()
 {
-	OSVERSIONINFO os;
 #ifdef WIN32
+	OSVERSIONINFO os;
    os.dwOSVersionInfoSize = sizeof(os);
 	GetVersionEx(&os);
 
@@ -962,17 +947,7 @@ bool CPUDetectClass::CPUID(
       popad
    }
 #elif defined(_UNIX)
-   __asm__("pusha");
-   __asm__("mov	__cpuid_type, %eax");
-   __asm__("xor	%ebx, %ebx");
-   __asm__("xor	%ecx, %ecx");
-   __asm__("xor	%edx, %edx");
-   __asm__("cpuid");
-   __asm__("mov	%eax, __u_eax");
-   __asm__("mov	%ebx, __u_ebx");
-   __asm__("mov	%ecx, __u_ecx");
-   __asm__("mov	%edx, __u_edx");
-   __asm__("popa");
+	__get_cpuid(cpuid_type, &u_eax, &u_ebx, &u_ecx, &u_edx);
 #endif
 
 	u_eax_=u_eax;
@@ -990,11 +965,15 @@ void CPUDetectClass::Init_Processor_Log()
 	StringClass work(0,true);
 
 	SYSLOG(("Operating System: "));
+#ifdef _WIN32
 	switch (OSVersionPlatformId) {
 	case VER_PLATFORM_WIN32s: SYSLOG(("Windows 3.1")); break;
 	case VER_PLATFORM_WIN32_WINDOWS: SYSLOG(("Windows 9x")); break;
 	case VER_PLATFORM_WIN32_NT: SYSLOG(("Windows NT")); break;
 	}
+#elif defined(_UNIX)
+	 SYSLOG(("UNIX"));
+#endif
 	SYSLOG(("\r\n"));
 
 	SYSLOG(("Operating system version %d.%d\r\n",OSVersionNumberMajor,OSVersionNumberMinor));
@@ -1068,7 +1047,7 @@ void CPUDetectClass::Init_Processor_Log()
 	}
 
 	if (CPUDetectClass::Get_L1_Instruction_Trace_Cache_Size()) {
-		SYSLOG(("L1 Instruction Trace Cache: %d way set associative, %dk µOPs\r\n",
+		SYSLOG(("L1 Instruction Trace Cache: %d way set associative, %dk ï¿½OPs\r\n",
 			CPUDetectClass::Get_L1_Instruction_Cache_Set_Associative(),
 			CPUDetectClass::Get_L1_Instruction_Cache_Size()/1024));
 	}
@@ -1129,7 +1108,7 @@ void CPUDetectClass::Init_Compact_Log()
 static class CPUDetectInitClass
 {
 public:
-	CPUDetectInitClass::CPUDetectInitClass()
+	CPUDetectInitClass()
 	{
 		CPUDetectClass::Init_CPUID_Instruction();
 		// We pretty much need CPUID, but let's not crash if it doesn't exist.
@@ -1272,6 +1251,7 @@ void Get_OS_Info(
 		os_info.SubCode="UNKNOWN";
 		os_info.VersionString="UNKNOWN";
 		break;
+#ifdef _WIN32
 	case VER_PLATFORM_WIN32_WINDOWS:
 		{
 			for(int i=0;i<sizeof(Windows9xVersionTable)/sizeof(os_info);++i) {
@@ -1328,5 +1308,6 @@ void Get_OS_Info(
 			os_info.Code="WINXX";
 			return;
 		}
+		#endif
 	}
 }

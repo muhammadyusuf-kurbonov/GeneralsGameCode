@@ -50,7 +50,7 @@ class STLSpecialAlloc;
 #include <sys/timeb.h>
 #include <sys/types.h>
 #include <time.h>
-#if _WIN32
+#ifdef _WIN32
 #include <io.h>
 #else
 #include <unistd.h>

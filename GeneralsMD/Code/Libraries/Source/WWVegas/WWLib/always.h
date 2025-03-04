@@ -55,6 +55,9 @@
 #define __forceinline
 #endif
 
+#ifndef _lrotl
+#define _lrotl(__X, __C) ((__X << __C) | (__X >> (32 - __C)))
+#endif
 /*
 ** Define for debug memory allocation to include __FILE__ and __LINE__ for every memory allocation.
 ** This helps find leaks.

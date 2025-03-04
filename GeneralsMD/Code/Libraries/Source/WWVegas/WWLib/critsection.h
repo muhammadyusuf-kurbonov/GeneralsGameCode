@@ -45,7 +45,9 @@
 
 #include "always.h"
 #include "wwdebug.h"
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 class CriticalSectionClass
 {
@@ -67,7 +69,9 @@ public:
 	friend LockClass;
 
 private:
+#ifndef _UNIX	
 	CRITICAL_SECTION Bar;
+#endif
 	bool inside;
 	void Enter();
 	void Exit();

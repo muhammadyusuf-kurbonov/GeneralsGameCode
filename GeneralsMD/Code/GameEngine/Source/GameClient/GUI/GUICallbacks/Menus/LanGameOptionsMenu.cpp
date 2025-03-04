@@ -979,7 +979,7 @@ void updateGameOptions( void )
     GadgetCheckBoxSetChecked( checkboxLimitSuperweapons, theGame->getSuperweaponRestriction() != 0 );
 		Int itemCount = GadgetComboBoxGetLength(comboBoxStartingCash);
 		Int index;
-    for ( Int index = 0; index < itemCount; index++ )
+    for ( index = 0; index < itemCount; index++ )
     {
       Int value  = (ptrdiff_t)GadgetComboBoxGetItemData(comboBoxStartingCash, index);
       if ( value == theGame->getStartingCash().countMoney() )

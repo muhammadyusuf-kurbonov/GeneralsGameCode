@@ -28,7 +28,8 @@
 #ifdef _UNIX
 #include "osdep.h"
 #include <linux/kernel.h>
-#include <linux/sys.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 extern "C" {
 	int sysinfo(struct sysinfo *info);
@@ -211,8 +212,10 @@ void SecureRandomClass::Generate_Seed(void)
 			int_seeds[i]^=time(NULL);
 		else if ((i % 4) == 1)
 			int_seeds[i]^=getpid();
+		#ifdef _WI32
 		else if ((i % 4) == 2)
 			int_seeds[i]^=GetTickCount();
+		#endif
 		else if ((i % 4) == 3)
 			int_seeds[i]^=i;
 	}
