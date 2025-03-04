@@ -31,13 +31,8 @@
 #ifndef __PEERDEFS_H__
 #define __PEERDEFS_H__
 
-#ifdef _WIN32
 #include "GameSpy/Peer/Peer.h"
 #include "GameSpy/GP/GP.h"
-#else
-typedef int GPEnum;
-typedef int GPProfile;
-#endif
 
 #include "GameClient/Color.h"
 #include "Common/STLTypedefs.h"
