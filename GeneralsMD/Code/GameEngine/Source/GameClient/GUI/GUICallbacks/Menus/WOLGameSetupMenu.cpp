@@ -119,7 +119,7 @@ void SendStatsToOtherPlayers(const GameInfo *game)
 	subStats.locale = fullStats.locale;
 	subStats.gamesAsRandom = fullStats.gamesAsRandom;
 	GetAdditionalDisconnectsFromUserFile(&subStats);
-	fullStr.format("%d %s", TheGameSpyInfo->getLocalProfileID(), TheGameSpyPSMessageQueue->formatPlayerKVPairs( subStats ));
+	fullStr.format("%d %s", TheGameSpyInfo->getLocalProfileID(), TheGameSpyPSMessageQueue->formatPlayerKVPairs( subStats ).c_str());
 	req.options = fullStr.str();
 
 	Int localIndex = game->getLocalSlotNum();
@@ -140,7 +140,7 @@ void SendStatsToOtherPlayers(const GameInfo *game)
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static Bool isShuttingDown = false;
 static Bool buttonPushed = false;
-static char *nextScreen = NULL;
+static const char *nextScreen = NULL;
 static Bool raiseMessageBoxes = false;
 static Bool launchGameNext = FALSE;
 
@@ -2582,7 +2582,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
-	static buttonCommunicatorID = NAMEKEY_INVALID;
+	static int buttonCommunicatorID = NAMEKEY_INVALID;
 	switch( msg )
 	{
 		//-------------------------------------------------------------------------------------------------	
@@ -2690,7 +2690,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
-				static buttonCommunicatorID = NAMEKEY("GameSpyGameOptionsMenu.wnd:ButtonCommunicator");
+				static int buttonCommunicatorID = NAMEKEY("GameSpyGameOptionsMenu.wnd:ButtonCommunicator");
 				if ( controlID == buttonBackID )
 				{
 					savePlayerInfo();

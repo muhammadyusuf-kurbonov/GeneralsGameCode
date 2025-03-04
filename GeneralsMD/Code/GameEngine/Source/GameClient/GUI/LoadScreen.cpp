@@ -184,7 +184,7 @@ SinglePlayerLoadScreen::SinglePlayerLoadScreen( void )
 	//Initialization(s) inserted
 	m_currentObjectiveLine = 0;
 	m_currentObjectiveLineCharacter = 0;
-	m_finishedObjectiveText = NULL;
+	m_finishedObjectiveText = FALSE;
 	m_currentObjectiveWidthOffset = 0;
 	//
 	m_progressBar = NULL;
@@ -1174,7 +1174,7 @@ ShellGameLoadScreen::~ShellGameLoadScreen( void )
 
 void ShellGameLoadScreen::init( GameInfo *game )
 {
-	static BOOL firstLoad = TRUE;
+	static Bool firstLoad = TRUE;
 
 	
 	// create the layout of the load screen

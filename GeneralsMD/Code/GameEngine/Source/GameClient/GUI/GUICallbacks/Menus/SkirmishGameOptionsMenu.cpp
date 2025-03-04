@@ -494,7 +494,7 @@ void CheckForCDAtGameStart( gameStartCallback callback )
 	{
 		// popup a dialog asking for a CD
 		ExMessageBoxOkCancel(TheGameText->fetch("GUI:InsertCDPrompt"), TheGameText->fetch("GUI:InsertCDMessage"),
-			callback, checkCDCallback, cancelStartBecauseOfNoCD);
+			(void*)callback, checkCDCallback, cancelStartBecauseOfNoCD);
 	}
 	else
 	{
@@ -506,7 +506,7 @@ Bool sandboxOk = FALSE;
 static void startPressed(void)
 {
 
-	BOOL isReady = FALSE;
+	Bool isReady = FALSE;
 	Int playerCount = TheSkirmishGameInfo->getNumPlayers();
 	AsciiString lowerMap = TheSkirmishGameInfo->getMap();
 	lowerMap.toLower();

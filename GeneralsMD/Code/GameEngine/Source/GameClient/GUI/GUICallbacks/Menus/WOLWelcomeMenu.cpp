@@ -77,7 +77,7 @@
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static Bool isShuttingDown = FALSE;
 static Bool buttonPushed = FALSE;
-static char *nextScreen = NULL;
+static const char *nextScreen = NULL;
 
 // window ids ------------------------------------------------------------------------------
 static NameKeyType parentWOLWelcomeID = NAMEKEY_INVALID;
@@ -317,7 +317,7 @@ static float s_totalWinPercent = 0;
 
 static const char* FindNextNumber( const char* pStart )
 {
-	char* pNum = strchr( pStart, '\n' );  //go to next line
+	const char* pNum = strchr( pStart, '\n' );  //go to next line
 	if( !pNum )
 		return pStart;  //error
 
@@ -364,7 +364,7 @@ void HandleOverallStats( const char* szHTTPStats, unsigned len )
 		//      we want win% = team's wins / total # games played by all teams
 		const char* pTotal = FindNextNumber(pSide);
 		const char* pWins = FindNextNumber(pTotal);
-		float percent = atof(pWins) / max(1,atof(pTotal));  //max prevents divide by zero
+		float percent = atof(pWins) / max(1.0,atof(pTotal));  //max prevents divide by zero
 		s_totalWinPercent += percent;
 
 		s_winStats.insert(std::make_pair( side, percent ));

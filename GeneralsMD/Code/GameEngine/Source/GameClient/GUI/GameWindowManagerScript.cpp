@@ -2759,7 +2759,7 @@ GameWindow *GameWindowManager::winCreateFromScript( AsciiString filenameString,
 		{
 
 			DEBUG_LOG(( "WinCreateFromScript: Error parsing layout block\n" ));
-			return FALSE;
+			return NULL;
 
 		}  // end if
 
