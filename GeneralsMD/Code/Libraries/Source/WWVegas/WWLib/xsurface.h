@@ -40,7 +40,7 @@
 #ifndef XSURFACE_H
 #define XSURFACE_H
 
-#include	"Surface.h"
+#include	"surface.h"
 
 /*
 **	This is a concrete (mostly) derived class that handles a surface. This layer presumes that

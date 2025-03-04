@@ -40,7 +40,7 @@
 #ifndef TRECT_H
 #define TRECT_H
 
-#include	"Point.h"
+#include	"point.h"
 
 
 /*

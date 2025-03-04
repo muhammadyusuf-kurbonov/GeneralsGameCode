@@ -40,7 +40,7 @@
 #ifndef SURFACE_H
 #define SURFACE_H
 
-#include	"Point.h"
+#include	"point.h"
 #include	"trect.h"
 
 /*
