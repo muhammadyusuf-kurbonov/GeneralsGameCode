@@ -1619,14 +1619,15 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	if (!selectedResolution.isEmpty())
 	{	//try to parse 2 integers out of string
 		if (sscanf(selectedResolution.str(),"%d%d", &selectedXRes, &selectedYRes) != 2)
-		{	selectedXRes=800; selectedYRes=600;
+		{
+			selectedXRes=800; selectedYRes=600;
 		}
 	}
 
 	// populate resolution modes
 	GadgetComboBoxReset(comboBoxResolution);
 	Int numResolutions = TheDisplay->getDisplayModeCount();
-	for( i = 0; i < numResolutions; ++i )
+	for( int i = 0; i < numResolutions; ++i )
 	{	Int xres,yres,bitDepth;
 		TheDisplay->getDisplayModeDescription(i,&xres,&yres,&bitDepth);
 		str.format(L"%d x %d",xres,yres);
