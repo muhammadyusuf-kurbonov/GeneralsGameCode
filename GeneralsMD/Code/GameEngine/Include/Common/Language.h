@@ -99,6 +99,13 @@ typedef enum
 #define GameIsAlpha iswalpha
 #define GameArrayEnd(array) (array)[(sizeof(array)/sizeof((array)[0]))-1] = 0
 
+#ifndef _WIN32
+static Bool iswascii(wchar_t c)
+{
+	return (c >= 0 && c <= 127);
+}
+#endif
+
 // INLINING ///////////////////////////////////////////////////////////////////
 
 // EXTERNALS //////////////////////////////////////////////////////////////////

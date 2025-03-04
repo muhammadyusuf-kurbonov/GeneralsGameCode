@@ -186,6 +186,11 @@ static DWORD timeGetTime(void)
   return diff;
 }
 
+static DWORD GetTickCount(void)
+{
+  return timeGetTime();
+}
+
 static void Sleep(DWORD ms)
 {
   struct timespec ts;
@@ -217,6 +222,11 @@ static bool GetModuleFileName(HINSTANCE hInstance, char* buffer, int size)
   return true;
 }
 
+static unsigned int GetDoubleClickTime()
+{
+  return 500;
+}
+
 #include <pthread.h>
 typedef pthread_t THREAD_ID;
 
@@ -243,6 +253,12 @@ static void GlobalFree(void *ptr)
   free(ptr);
 }
 
+typedef unsigned int HKL;
+static HKL GetKeyboardLayout(int)
+{
+  return 0;
+}
+
 #include <sstream>
 
 static char* itoa(int value, char* str, int base)
@@ -257,13 +273,32 @@ static char* itoa(int value, char* str, int base)
   return str;
 }
 
+static int _wtoi(const wchar_t* str)
+{
+  std::wstringstream ss(str);
+  int i;
+  ss >> i;
+  return i;
+}
+
+// These need to match windows_base.h from DXVK, as long as it's being used
 typedef char TCHAR;
+typedef const TCHAR* LPCTSTR;
+typedef TCHAR* LPTSTR;
+
+typedef const char* LPCSTR;
+typedef char* LPSTR;
+
+typedef int32_t HRESULT;
+
+#define S_OK 0
+
 #define _tcslen strlen
 #define _tcscmp strcmp
 #define _tcsicmp strcasecmp
 #define _tcsclen strlen
 
-
+#define VK_RETURN 0x0D
 
 #endif
 

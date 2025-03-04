@@ -1052,6 +1052,108 @@ void GameClient::allocateShadows(void)
 		draw->allocateShadows();
 }
 
+#ifndef _WIN32
+struct MEMORYSTATUS
+{
+	// Total number of bytes required by the structure
+	DWORD dwLength;
+	// Number of bytes of physical memory
+	DWORD dwTotalPhys;
+};
+
+struct MEMORYSTATUSEX
+{
+	// Total number of bytes required by the structure
+	DWORD dwLength;
+	// Number of bytes of physical memory
+	uint64_t ullTotalPhys;
+	// Number of bytes of physical memory available
+	uint64_t ullAvailPhys;
+	// Number of bytes of paging file
+	uint64_t ullTotalPageFile;
+	// Number of bytes of paging file available
+	uint64_t ullAvailPageFile;
+	// Number of bytes of user address space
+	uint64_t ullTotalVirtual;
+	// Number of bytes of user address space available
+	uint64_t ullAvailVirtual;
+
+	// Memory load
+	DWORD dwMemoryLoad;
+};
+
+void GlobalMemoryStatusEx(MEMORYSTATUSEX *pStatus)
+{
+	// Get memory status
+	MEMORYSTATUSEX status;
+	status.dwLength = sizeof(MEMORYSTATUSEX);
+
+#ifdef LINUX
+	struct sysinfo info;
+	if (sysinfo(&info) == 0)
+	{
+		// Fill in memory status
+		unsigned long load_times_100 = info.loads[0] * 100;
+		unsigned long load_shifted = load_times_100 >> SI_LOAD_SHIFT;
+		status.dwMemoryLoad = load_shifted;
+
+		// MemTotal
+		status.ullTotalPhys = info.totalram * info.mem_unit;
+		// MemFree
+		status.ullAvailPhys = info.freeram * info.mem_unit;
+		// SwapFree
+		status.ullAvailPageFile = info.freeswap * info.mem_unit;
+		// SwapTotal
+		status.ullTotalPageFile = info.totalswap * info.mem_unit;
+		// Assume that virtual memory is the sum of physical memory and page file
+		status.ullAvailVirtual = status.ullAvailPhys + status.ullAvailPageFile;
+		status.ullTotalVirtual = status.ullTotalPhys + status.ullTotalPageFile;
+	}
+	else // Fallback to UNIX-style memory status, with some assumptions
+	{
+#endif
+		// Obtain memory load in percent
+		long pagesize = sysconf(_SC_PAGESIZE);
+		long pagecount = sysconf(_SC_PHYS_PAGES);
+		long freepages = sysconf(_SC_AVPHYS_PAGES);
+
+		// Fill in memory status
+		status.dwMemoryLoad = (pagecount - freepages) * 100 / pagecount;
+		// MemTotal
+		status.ullTotalPhys = pagesize * pagecount;
+		// MemFree (MemAvailable would be better, but not available on all systems)
+		status.ullAvailPhys = pagesize * freepages;
+		// Assume that page file is the same size as physical memory
+		// This is factually untrue, but usually, the page file is not used, but present.
+		// And if it is, it's suggested to be the twice the size of physical memory,
+		// by various articles on the internet.
+
+		// Would be SwapFree if parsed from /proc/meminfo
+		status.ullAvailPageFile = status.ullAvailPhys;
+		// Would be SwapTotal
+		status.ullTotalPageFile = status.ullTotalPhys;
+		// Assume that virtual memory is the sum of physical memory and page file
+		status.ullAvailVirtual = status.ullAvailPhys + status.ullAvailPageFile;
+		status.ullTotalVirtual = status.ullTotalPhys + status.ullTotalPageFile;
+#ifdef LINUX
+	}
+#endif
+
+	// Copy to output
+	*pStatus = status;
+}
+#endif
+
+void GlobalMemoryStatus(MEMORYSTATUS *pStatus)
+{
+	MEMORYSTATUSEX status;
+	status.dwLength = sizeof(MEMORYSTATUSEX);
+	GlobalMemoryStatusEx(&status);
+
+	// Fill in memory status
+	pStatus->dwTotalPhys = (DWORD)status.ullTotalPhys;
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Preload assets for the currently loaded map.  Those assets include all the damage states
 	* for every building loaded, as well as any faction units/structures we can build and

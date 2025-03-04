@@ -1045,11 +1045,7 @@ GlobalData::GlobalData()
 	m_shouldUpdateTGAToDDS = FALSE;
 	
 	// Default DoubleClickTime to System double click time.
-#ifdef _WIN32
 	m_doubleClickTimeMS = GetDoubleClickTime(); // Note: This is actual MS, not frames.
-#else
-	m_doubleClickTimeMS = 500;
-#endif
 	
 #ifdef DUMP_PERF_STATS
 	m_dumpPerformanceStatistics = FALSE;

@@ -72,6 +72,19 @@
 //used to access a messagebox that does "ok" and "cancel"
 #include "GameClient/MessageBox.h"
 
+#ifndef _WIN32
+static void ghttpSetProxy(const char *pszProxy)
+{
+	UnicodeString title;
+	title.set(L"Warning");
+
+	UnicodeString message;
+	message.set(L"Proxy settings are not supported on this platform.");
+
+	MessageBoxOk(title, message, NULL);
+}
+#endif
+
 // This is for non-RC builds only!!!
 #define VERBOSE_VERSION L"Release"
 

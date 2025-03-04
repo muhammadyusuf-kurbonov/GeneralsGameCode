@@ -143,6 +143,7 @@ void HeaderTemplateManager::init( void )
 {
 	INI ini;
 	AsciiString fname;
+#ifdef _WIN32
 	fname.format("Data\\%s\\HeaderTemplate.ini", GetRegistryLanguage().str());
 	OSVERSIONINFO	osvi;
 	osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
@@ -156,6 +157,9 @@ void HeaderTemplateManager::init( void )
 				fname = tempName;
 		}
 	}
+#else
+	fname.format("Data/%s/HeaderTemplate.ini", GetRegistryLanguage().str());
+#endif
 	ini.load( fname, INI_LOAD_OVERWRITE, NULL );
 	populateGameFonts();
 }
