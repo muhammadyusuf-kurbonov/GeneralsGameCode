@@ -1,20 +1,42 @@
-project(cnc-zero-hour C CXX)
+# z stands for Zero Hour, i stands for Interface
+add_library(zi_gameengine INTERFACE)
+add_library(zi_gameengine_include INTERFACE)
+add_library(zi_gameenginedevice_include INTERFACE)
+add_library(zi_libraries_include INTERFACE)
+add_library(zi_libraries_source INTERFACE)
+add_library(zi_libraries_source_wwvegas INTERFACE)
+add_library(zi_libraries_source_wwvegas_ww3d2 INTERFACE)
+add_library(zi_libraries_source_wwvegas_wwdebug INTERFACE)
+add_library(zi_libraries_source_wwvegas_wwlib INTERFACE)
+add_library(zi_libraries_source_wwvegas_wwmath INTERFACE)
+add_library(zi_libraries_source_wwvegas_wwsaveload INTERFACE)
+add_library(zi_main INTERFACE)
 
-cmake_minimum_required(VERSION 3.23)
+target_include_directories(zi_gameengine INTERFACE "GameEngine")
+target_include_directories(zi_gameengine_include INTERFACE "GameEngine/Include")
+target_include_directories(zi_gameenginedevice_include INTERFACE "GameEngineDevice/Source")
+target_include_directories(zi_libraries_include INTERFACE "Libraries/Include")
+target_include_directories(zi_libraries_source INTERFACE "Libraries/Source")
+target_include_directories(zi_libraries_source_wwvegas INTERFACE "Libraries/Source/WWVegas")
+target_include_directories(zi_libraries_source_wwvegas_ww3d2 INTERFACE "Libraries/Source/WWVegas/WW3D2")
+target_include_directories(zi_libraries_source_wwvegas_wwdebug INTERFACE "Libraries/Source/WWVegas/WWDebug")
+target_include_directories(zi_libraries_source_wwvegas_wwlib INTERFACE "Libraries/Source/WWVegas/WWLib")
+target_include_directories(zi_libraries_source_wwvegas_wwmath INTERFACE "Libraries/Source/WWVegas/WWMath")
+target_include_directories(zi_libraries_source_wwvegas_wwsaveload INTERFACE "Libraries/Source/WWVegas/WWSaveLoad")
+target_include_directories(zi_main INTERFACE "Main")
 
-file(GLOB_RECURSE SOURCES_COMMON
-    ${CMAKE_CURRENT_SOURCE_DIR}/GameEngine/Source/Common/*.cpp
-)
+# Contains internal libraries
+add_subdirectory(Libraries)
 
-add_library(cnc-zero-hour-common STATIC ${SOURCES_COMMON})
+# Base GameEngine library
+add_subdirectory(GameEngine)
 
-target_include_directories(cnc-zero-hour-common PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/Libraries/Include
-    ${CMAKE_CURRENT_SOURCE_DIR}/GameEngine/Include
-    ${CMAKE_CURRENT_SOURCE_DIR}/GameEngine/Include/Precompiled
-    # Used in Thing.h via WWMath
-    ${CMAKE_CURRENT_SOURCE_DIR}/Libraries/Source/WWVegas
-    # Also pulls WWLib
-    ${CMAKE_CURRENT_SOURCE_DIR}/Libraries/Source/WWVegas/WWLib
-    ${CMAKE_CURRENT_SOURCE_DIR}/extern/dxvk-native
-)
+# Platform specific GameEngine code
+add_subdirectory(GameEngineDevice)
+
+# Contains the main game exe target.
+add_subdirectory(Main)
+
+if (GENZH_BUILD_ZEROHOUR_TOOLS)
+    add_subdirectory(Tools)
+endif()
