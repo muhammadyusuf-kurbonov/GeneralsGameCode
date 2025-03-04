@@ -58,7 +58,14 @@
 
 #ifndef _WINDOWS
 #ifndef _lrotl
-#define _lrotl(__X, __C) ((__X << __C) | (__X >> (32 - __C)))
+static inline uint32_t _lrotl(uint32_t value, int shift)
+{
+#ifdef __clang__
+	return __builtin_rotateleft32(value, shift);
+#else
+	return ((value << shift) | (value >> (32 - shift)));
+#endif
+}
 #endif
 #endif
 
