@@ -151,7 +151,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 			level_size/=level_mip_dec;
 		}
 	}
-	for (level=0;level<MipLevels;++level) 
+	for (int level=0;level<MipLevels;++level) 
 	{
 		LevelSizes[level]=level_size;
 		LevelOffsets[level]=level_offset;
@@ -164,7 +164,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 
 	if (Type==DDS_CUBEMAP)
 	{
-		for (level=0; level<MipLevels;++level)
+		for (int level=0; level<MipLevels;++level)
 		{
 			CubeFaceSize+=LevelSizes[level];
 		}

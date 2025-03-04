@@ -810,7 +810,7 @@ bool DX8Wrapper::Set_Any_Render_Device(void)
 	}
 
 	// Try windowed first
-	for (dev_number = 0; dev_number < _RenderDeviceNameTable.Count(); dev_number++) {
+	for (int dev_number = 0; dev_number < _RenderDeviceNameTable.Count(); dev_number++) {
 		if (Set_Render_Device(dev_number,-1,-1,-1,1,false)) {
 			return true;
 		}
@@ -2316,7 +2316,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 	}
 	if (render_state_changed&VERTEX_BUFFER_CHANGED) {
 		SNAPSHOT_SAY(("DX8 - apply vb change\n"));
-		for (i=0;i<MAX_VERTEX_STREAMS;++i) {
+		for (int i=0;i<MAX_VERTEX_STREAMS;++i) {
 			if (render_state.vertex_buffers[i]) {
 				switch (render_state.vertex_buffer_types[i]) {//->Type()) {
 				case BUFFER_TYPE_DX8:
@@ -3085,7 +3085,8 @@ void DX8Wrapper::Set_Light_Environment(LightEnvironmentClass* light_env)
 		}
 
 		D3DLIGHT8 light;		
-		for (int l=0;l<light_count;++l) {
+		int l;
+		for (l=0;l<light_count;++l) {
 			
 			::ZeroMemory(&light, sizeof(D3DLIGHT8));
 			

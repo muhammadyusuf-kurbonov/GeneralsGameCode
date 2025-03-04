@@ -34,7 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
+#undef _DEBUG
 #include "soundscene.h"
 #include "soundcullobj.h"
 #include "logicalsound.h"
@@ -45,9 +45,7 @@
 #include "threads.h"
 #include "wwmemlog.h"
 
-
 DEFINE_AUTO_POOL(SoundSceneClass::AudibleInfoClass, 64);
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //	Generic constants

@@ -676,7 +676,7 @@ void MeshModelClass::Init_For_NPatch_Rendering()
 		}
 	}
 
-	for (i=0;i<polygon_count;++i) {
+	for (int i=0;i<polygon_count;++i) {
 		bool duplicates[3];
 		duplicates[0]=DuplicateLocationHash.Exists(locations[polygon_indices[i][0]]);
 		duplicates[1]=DuplicateLocationHash.Exists(locations[polygon_indices[i][1]]);
