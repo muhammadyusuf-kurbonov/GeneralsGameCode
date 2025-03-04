@@ -25,8 +25,8 @@
 #ifndef __DOWNLOADMANAGER_H__
 #define __DOWNLOADMANAGER_H__
 
-#include "WWDownload/downloadDefs.h"
-#include "WWDownload/download.h"
+#include "WWDownload/DownloadDefs.h"
+#include "WWDownload/Download.h"
 #include <string>
 #include <list>
 

@@ -64,7 +64,7 @@
 #include "GameClient/GadgetComboBox.h"
 #include "GameClient/GadgetListBox.h"
 #include "GameNetwork/GameSpy/GSConfig.h"
-#include "GameNetwork/GameSpy/Peerdefs.h"
+#include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpy/PeerThread.h"
 #include "GameNetwork/GameSpyOverlay.h"
 
