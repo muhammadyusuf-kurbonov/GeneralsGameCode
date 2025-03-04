@@ -3,6 +3,7 @@ file(GLOB_RECURSE SOURCES_WWLIB
 )
 
 # Remove Debug.cpp from the common sources for UNIX
+list(REMOVE_ITEM SOURCES_WWLIB ${CMAKE_CURRENT_SOURCE_DIR}/regexpr.cpp)
 if(UNIX)
     list(REMOVE_ITEM SOURCES_WWLIB ${CMAKE_CURRENT_SOURCE_DIR}/ddraw.cpp)
     list(REMOVE_ITEM SOURCES_WWLIB ${CMAKE_CURRENT_SOURCE_DIR}/dib.cpp)

@@ -18,6 +18,7 @@ if(UNIX)
     )
 else()
     target_compile_definitions(WWDebug PUBLIC
+        -D_WINDOWS
         -DWINVER=0x400
         -D_WIN32_WINNT=0x0400
     )

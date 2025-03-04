@@ -50,14 +50,18 @@
 #define __cdecl //__attribute((cdecl))
 #include <stddef.h>
 #endif
+#include <stdint.h>
 
 #ifndef __forceinline
 #define __forceinline
 #endif
 
+#ifndef _WINDOWS
 #ifndef _lrotl
 #define _lrotl(__X, __C) ((__X << __C) | (__X >> (32 - __C)))
 #endif
+#endif
+
 /*
 ** Define for debug memory allocation to include __FILE__ and __LINE__ for every memory allocation.
 ** This helps find leaks.

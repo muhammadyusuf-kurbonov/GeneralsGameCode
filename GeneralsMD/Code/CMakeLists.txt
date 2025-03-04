@@ -28,7 +28,6 @@ target_include_directories(zi_main INTERFACE "Main")
 if(WIN32)
     add_subdirectory(extern/d3d8)
     add_subdirectory(extern/GamespySDK)
-    add_subdirectory(extern/gnu_regex)
 endif()
 
 add_subdirectory(Libraries)

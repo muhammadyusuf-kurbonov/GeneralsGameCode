@@ -4054,7 +4054,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_BW_VIEW:
 		{   //We're not testing BW mode anymore, so use this message for toggling wireframe mode.
-			static mode=0;
+			static int mode=0;
 			if (mode == 0)
 			{	//First turn on wireframe
 				TheTacticalView->set3DWireFrameMode(TRUE);
@@ -5045,7 +5045,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
 			QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
 			numberLookups = 100000;
-			for( testindex = 1; testindex < numberLookups; testindex++ )
+			for( Int testindex = 1; testindex < numberLookups; testindex++ )
 			{
 				Object *objPtr = TheGameLogic->findObjectByID((ObjectID)testindex);
 				objPtr++;
@@ -5059,7 +5059,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
 			QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
 			numberLookups = 1000000;
-			for( testindex = 1; testindex < numberLookups; testindex++ )
+			for( Int testindex = 1; testindex < numberLookups; testindex++ )
 			{
 				Object *objPtr = TheGameLogic->findObjectByID((ObjectID)testindex);
 				objPtr++;

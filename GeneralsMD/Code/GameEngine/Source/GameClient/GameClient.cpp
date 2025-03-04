@@ -1142,7 +1142,6 @@ void GlobalMemoryStatusEx(MEMORYSTATUSEX *pStatus)
 	// Copy to output
 	*pStatus = status;
 }
-#endif
 
 void GlobalMemoryStatus(MEMORYSTATUS *pStatus)
 {
@@ -1153,6 +1152,7 @@ void GlobalMemoryStatus(MEMORYSTATUS *pStatus)
 	// Fill in memory status
 	pStatus->dwTotalPhys = (DWORD)status.ullTotalPhys;
 }
+#endif
 
 //-------------------------------------------------------------------------------------------------
 /** Preload assets for the currently loaded map.  Those assets include all the damage states
