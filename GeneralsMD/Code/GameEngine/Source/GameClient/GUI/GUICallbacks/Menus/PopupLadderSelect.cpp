@@ -577,7 +577,7 @@ static void updateLadderDetails( Int selID, GameWindow *staticTextLadderName, Ga
 
 	// maps
 	AsciiStringList validMaps = info->validMaps;
-	for (it = validMaps.begin(); it != validMaps.end(); ++it)
+	for ( AsciiStringListIterator it = validMaps.begin(); it != validMaps.end(); ++it)
 	{
 		const MapMetaData *md = TheMapCache->findMap(*it);
 		if (md)

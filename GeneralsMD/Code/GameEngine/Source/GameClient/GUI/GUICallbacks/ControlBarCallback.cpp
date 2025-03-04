@@ -65,7 +65,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 																	 WindowMsgData mData1Orig, WindowMsgData mData2Orig )
 {
 	UnsignedInt mData1 = (uintptr_t)mData1Orig;
-	UnsignedInt mData2 = (uintptr_t)mData2Orig;
+	// UnsignedInt mData2 = (uintptr_t)mData2Orig;
 
 	// get player
 	Player *player = ThePlayerList->getLocalPlayer();

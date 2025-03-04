@@ -3152,7 +3152,7 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 		DEBUG_LOG(("------------------------------------------\n"));
 		DEBUG_LOG(("Begin Pool Underflow Report\n"));
 		DEBUG_LOG(("------------------------------------------\n"));
-		for (pool = m_firstPoolInFactory; pool; pool = pool->getNextPoolInList())
+		for (MemoryPool *pool = m_firstPoolInFactory; pool; pool = pool->getNextPoolInList())
 		{
 			Int peak = pool->getPeakBlockCount()*pool->getAllocationSize();
 			Int initial = pool->getInitialBlockCount()*pool->getAllocationSize();
@@ -3451,7 +3451,7 @@ void initMemoryManager()
 	linktest = new char[8];
 	delete [] linktest;
 
-#ifdef _WIN32
+#if 0//def _WIN32
 	linktest = new char("",1);
 	delete linktest;
 #endif

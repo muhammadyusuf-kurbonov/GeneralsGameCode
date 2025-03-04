@@ -754,7 +754,7 @@ void WOLBuddyOverlayInit( WindowLayout *layout, void *userData )
 	parentBuddies->winHide(FALSE);
 	parentIgnore->winHide(TRUE);
 
-	//GadgetTextEntrySetText(textEntry, UnicodeString.TheEmptyString);
+	//GadgetTextEntrySetText(textEntry, UnicodeString::TheEmptyString);
 
 	PopulateOldBuddyMessages();
 

@@ -856,7 +856,7 @@ void updateMapStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[
 		  }
     }
 	}
-	for( i = 0; i < MAX_SLOTS; ++i)
+	for( Int i = 0; i < MAX_SLOTS; ++i)
 	{
     if ( buttonMapStartPositions[i] == NULL )
       continue;
@@ -1176,7 +1176,7 @@ void InitSkirmishGameGadgets( void )
 		DEBUG_ASSERTCRASH(buttonMapStartPosition[i], ("Could not find the ButtonMapStartPosition[%d]",i ));
 	}
    
-	for (i = 0; i < MAX_SLOTS; ++i)
+	for (Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		PopulateColorComboBox(i, comboBoxColor, TheSkirmishGameInfo );
 		GadgetComboBoxSetSelectedPos(comboBoxColor[i], 0);
@@ -1280,7 +1280,8 @@ void updateSkirmishGameOptions( void )
 
   GadgetCheckBoxSetChecked( checkBoxLimitSuperweapons, TheSkirmishGameInfo->getSuperweaponRestriction() != 0 );
   Int itemCount = GadgetComboBoxGetLength(comboBoxStartingCash);
-  for ( Int index = 0; index < itemCount; index++ )
+  Int index;
+  for ( index = 0; index < itemCount; index++ )
   {
     Int value  = (Int)(uintptr_t)GadgetComboBoxGetItemData(comboBoxStartingCash, index);
     if ( value == TheSkirmishGameInfo->getStartingCash().countMoney() )

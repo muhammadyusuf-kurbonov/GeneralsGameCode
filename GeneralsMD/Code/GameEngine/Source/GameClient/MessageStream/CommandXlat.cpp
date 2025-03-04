@@ -5095,7 +5095,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
 			QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
 			numberLookups = 100000;
-			for( testindex = 1; testindex < numberLookups; testindex++ )
+			for( Int testindex = 1; testindex < numberLookups; testindex++ )
 			{
 				Drawable *drawPtr = TheGameClient->findDrawableByID((DrawableID)testindex);
 				drawPtr++;
@@ -5109,7 +5109,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
 			QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
 			numberLookups = 1000000;
-			for( testindex = 1; testindex < numberLookups; testindex++ )
+			for( Int testindex = 1; testindex < numberLookups; testindex++ )
 			{
 				Drawable *drawPtr = TheGameClient->findDrawableByID((DrawableID)testindex);
 				drawPtr++;
