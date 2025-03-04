@@ -22,7 +22,3 @@ add_library(WWLib STATIC ${SOURCES_WWLIB})
 target_link_libraries(WWLib PUBLIC
     WWDebug
 )
-
-target_link_libraries(WWLib PRIVATE
-    gnu_regex
-)

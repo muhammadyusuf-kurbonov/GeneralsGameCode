@@ -1,47 +1,17 @@
-# Set source files
-set(WWSAVELOAD_SRC
-    definition.cpp
-    definitionfactory.cpp
-    definitionfactorymgr.cpp
-    definitionmgr.cpp
-    parameter.cpp
-    persistfactory.cpp
-    pointerremap.cpp
-    saveload.cpp
-    saveloadstatus.cpp
-    saveloadsubsystem.cpp
-    twiddler.cpp
-    wwsaveload.cpp
-    definition.h
-    definitionclassids.h
-    definitionfactory.h
-    definitionfactorymgr.h
-    definitionmgr.h
-    editable.h
-    parameter.h
-    parameterlist.h
-    parametertypes.h
-    persist.h
-    persistfactory.h
-    pointerremap.h
-    postloadable.h
-    saveload.h
-    saveloadids.h
-    saveloadstatus.h
-    saveloadstatus.h
-    saveloadsubsystem.h
-    simpledefinitionfactory.h
-    simpleparameter.h
-    twiddler.h
-    wwsaveload.h
+file(GLOB_RECURSE SOURCES_WWSAVELOAD
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.CPP
 )
 
-# Targets to build.
-add_library(z_wwsaveload STATIC)
-set_target_properties(z_wwsaveload PROPERTIES OUTPUT_NAME wwsaveload)
+add_library(WWSaveLoad STATIC ${SOURCES_WWSAVELOAD})
 
-target_sources(z_wwsaveload PRIVATE ${WWSAVELOAD_SRC})
+target_link_libraries(WWSaveLoad PUBLIC
+    WWLib
+)
 
-target_link_libraries(z_wwsaveload PRIVATE
-    z_wwcommon
+target_include_directories(WWSaveLoad PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/../WWMath
+)
+
+target_include_directories(WWSaveLoad PUBLIC 
+    ${CMAKE_CURRENT_SOURCE_DIR} 
 )

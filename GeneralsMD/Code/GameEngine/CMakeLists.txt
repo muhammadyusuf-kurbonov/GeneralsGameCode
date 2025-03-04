@@ -17,21 +17,20 @@ file(GLOB_RECURSE SOURCES_GAMECLIENT
 
 add_library(GameEngine STATIC ${SOURCES_COMMON} ${SOURCES_GAMECLIENT})
 
-target_include_directories(GameEngine PRIVATE
+target_include_directories(GameEngine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/Include/Precompiled
+)
+
+target_include_directories(GameEngine PRIVATE
     ${CMAKE_SOURCE_DIR}/Libraries/Include
     # Used in Thing.h via WWMath
     ${CMAKE_SOURCE_DIR}/Libraries/Source/WWVegas
-    # Also pulls WWLib
-    ${CMAKE_SOURCE_DIR}/Libraries/Source/WWVegas/WWLib
-    # Pulled by wwstring.h
-    ${CMAKE_SOURCE_DIR}/Libraries/Source/WWVegas/WWDebug
     # Required by DataChunk.cpp
     ${CMAKE_SOURCE_DIR}/Libraries/Source/Compression
 )
 
-target_link_libraries(GameEngine PRIVATE WWLib)
+target_link_libraries(GameEngine PUBLIC WWLib)
 
 if(WIN32)
     target_link_libraries(GameEngine PRIVATE d3d8 gamespy BrowserDispatch)
