@@ -3628,7 +3628,7 @@ Int W3DModelDraw::getCurrentBonePositions(
 	
 	if (positions && transforms)
 	{
-		for (i = 0; i < posCount; ++i)
+		for (Int i = 0; i < posCount; ++i)
 		{
 			Vector3 pos = transforms[i].Get_Translation();
 			positions[i].x = pos.X;

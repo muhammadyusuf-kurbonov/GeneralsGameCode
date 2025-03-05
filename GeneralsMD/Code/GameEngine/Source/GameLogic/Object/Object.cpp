@@ -1872,7 +1872,7 @@ void Object::attemptDamage( DamageInfo *damageInfo )
 			damageInfo->in.m_damageType != DAMAGE_PENALTY &&
 			damageInfo->in.m_damageType != DAMAGE_HEALING &&
 			getControllingPlayer() &&
-			!BitTest(damageInfo->in.m_sourcePlayerMask, getControllingPlayer()->getPlayerMask()) && 
+			!BitTestEA(damageInfo->in.m_sourcePlayerMask, getControllingPlayer()->getPlayerMask()) && 
 			m_radarData != NULL &&
 			getControllingPlayer() == ThePlayerList->getLocalPlayer() )
 		TheRadar->tryUnderAttackEvent( this );
@@ -3685,7 +3685,7 @@ void Object::updateObjValuesFromMapProperties(Dict* properties)
           }
 
           valInt = properties->getInt( TheKey_objectSoundAmbientLoopCount, &exists );
-          if ( exists && BitTest( audioToModify->m_control, AC_LOOP ) )
+          if ( exists && BitTestEA( audioToModify->m_control, AC_LOOP ) )
           {
             audioToModify->overrideLoopCount( valInt );
             infoModified = true;
@@ -5453,7 +5453,7 @@ void Object::doCommandButton( const CommandButton *commandButton, CommandSourceT
 			case GUI_COMMAND_FIRE_WEAPON:
 				if( ai )
 				{
-					if( !BitTest( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) && !BitTest( commandButton->getOptions(), NEED_TARGET_POS ) )
+					if( !BitTestEA( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) && !BitTestEA( commandButton->getOptions(), NEED_TARGET_POS ) )
 					{
 						setWeaponLock( commandButton->getWeaponSlot(), LOCKED_TEMPORARILY );
 						//LOCATION BASED FIRE WEAPON
@@ -5581,7 +5581,7 @@ void Object::doCommandButtonAtObject( const CommandButton *commandButton, Object
 			case GUI_COMMAND_FIRE_WEAPON:
 				if( ai )
 				{
-					if( BitTest( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
+					if( BitTestEA( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 					{
 						//OBJECT BASED FIRE WEAPON
 						if( !obj )
@@ -5596,7 +5596,7 @@ void Object::doCommandButtonAtObject( const CommandButton *commandButton, Object
 
 						setWeaponLock( commandButton->getWeaponSlot(), LOCKED_TEMPORARILY );
 
-						if( BitTest( commandButton->getOptions(), ATTACK_OBJECTS_POSITION ) )
+						if( BitTestEA( commandButton->getOptions(), ATTACK_OBJECTS_POSITION ) )
 						{
 							//Actually, you know what.... we want to attack the object's location instead.
 							ai->aiAttackPosition( obj->getPosition(), commandButton->getMaxShotsToFire(), cmdSource );
@@ -5702,7 +5702,7 @@ void Object::doCommandButtonAtPosition( const CommandButton *commandButton, cons
 			case GUI_COMMAND_FIRE_WEAPON:
 				if( ai )
 				{
-					if( BitTest( commandButton->getOptions(), NEED_TARGET_POS ) )
+					if( BitTestEA( commandButton->getOptions(), NEED_TARGET_POS ) )
 					{
 						//LOCATION BASED FIRE WEAPON
 						if( !pos )
@@ -5765,7 +5765,7 @@ void Object::doCommandButtonUsingWaypoints( const CommandButton *commandButton, 
 	
 	if( commandButton )
 	{
-		if( !BitTest( commandButton->getOptions(), CAN_USE_WAYPOINTS ) )
+		if( !BitTestEA( commandButton->getOptions(), CAN_USE_WAYPOINTS ) )
 		{
 			//Our button doesn't support waypoints.
 			DEBUG_CRASH( ("WARNING: Script doCommandButtonUsingWaypoints for button %s lacks CAN_USE_WAYPOINTS option. Doing nothing.", commandButton->getName().str()) );

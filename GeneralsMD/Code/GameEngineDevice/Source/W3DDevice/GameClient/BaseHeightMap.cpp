@@ -2699,7 +2699,8 @@ void BaseHeightMapRenderObjClass::renderShoreLinesSorted(CameraClass *pCamera)
 			//Loop over visible terrain and extract all the tiles that need shoreline blend
 			if (m_shoreLineSortInfosXMajor)	//map is wider than taller.
 			{	
-				for (Int x=drawStartX; x<drawEdgeX; x++)
+				Int x;
+				for (x=drawStartX; x<drawEdgeX; x++)
 				{	//figure out how many tiles are available in this column
 					shoreLineTileSortInfo *sortInfo=&m_shoreLineSortInfos[x];
 
@@ -2819,7 +2820,8 @@ flushVertexBuffer0:
 			}
 			else
 			{
-				for (Int y=drawStartY; y<drawEdgeY; y++)
+				Int y;
+				for (y=drawStartY; y<drawEdgeY; y++)
 				{	//figure out how many tiles are available in this row
 					shoreLineTileSortInfo *sortInfo=&m_shoreLineSortInfos[y];
 

@@ -107,7 +107,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 			const CommandButton *command = TheInGameUI->getGUICommand();
 			if( command 
 					&& (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER || command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT)
-					&& BitTest( command->getOptions(), NEED_TARGET_POS ) )
+					&& BitTestEA( command->getOptions(), NEED_TARGET_POS ) )
 				targeting = TRUE;
 
 			if( targeting == FALSE )
@@ -180,7 +180,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 				const CommandButton *command = TheInGameUI->getGUICommand();
 				if( command 
 						&& (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER || command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT)
-						&& BitTest( command->getOptions(), NEED_TARGET_POS ) )
+						&& BitTestEA( command->getOptions(), NEED_TARGET_POS ) )
 				{
 					Int index = TheMouse->getCursorIndex( command->getCursorName() );
 
@@ -278,7 +278,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 				const CommandButton *command = TheInGameUI->getGUICommand();
 				if( command 
 					&& (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER || command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT)
-					&& BitTest( command->getOptions(), NEED_TARGET_POS ) 
+					&& BitTestEA( command->getOptions(), NEED_TARGET_POS ) 
 					)
 				{
 

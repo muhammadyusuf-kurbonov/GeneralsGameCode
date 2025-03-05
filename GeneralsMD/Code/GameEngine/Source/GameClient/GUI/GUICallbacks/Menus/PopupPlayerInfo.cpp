@@ -321,88 +321,88 @@ void BattleHonorTooltip(GameWindow *window,
 		return;
 	}
 	Real tooltipWidth = 1.5f;
-	if (BitTest(battleHonor, BATTLE_HONOR_NOT_GAINED))
+	if (BitTestEA(battleHonor, BATTLE_HONOR_NOT_GAINED))
 	{
-		if(BitTest(battleHonor, BATTLE_HONOR_LOYALTY_USA))
+		if(BitTestEA(battleHonor, BATTLE_HONOR_LOYALTY_USA))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyUSADisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_LOYALTY_CHINA))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_LOYALTY_CHINA))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyChinaDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_LOYALTY_GLA))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_LOYALTY_GLA))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyGLADisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_BATTLE_TANK))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_BATTLE_TANK))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorBattleTankDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_AIR_WING))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_AIR_WING))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorAirWingDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_ENDURANCE))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_ENDURANCE))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorEnduranceDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_CAMPAIGN_USA))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_CAMPAIGN_USA))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorCampaignUSADisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_CAMPAIGN_CHINA))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_CAMPAIGN_CHINA))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorCampaignChinaDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_CAMPAIGN_GLA))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_CAMPAIGN_GLA))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorCampaignGLADisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_BLITZ10))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_BLITZ10))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorBlitzDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_FAIR_PLAY))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_FAIR_PLAY))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorFairPlayDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_APOCALYPSE))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_APOCALYPSE))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorApocalypseDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_CHALLENGE_MODE))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_CHALLENGE_MODE))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorCampaignChallengeDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_ULTIMATE))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_ULTIMATE))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorUltimateDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_GLOBAL_GENERAL))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_GLOBAL_GENERAL))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorGlobalGeneralDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_CHALLENGE))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_CHALLENGE))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorChallengeDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_STREAK))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_STREAK))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreakDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_STREAK_ONLINE))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_STREAK_ONLINE))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreakOnlineDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_DOMINATION))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_DOMINATION))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorDominationDisabled"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_DOMINATION_ONLINE))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_DOMINATION_ONLINE))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorDominationOnlineDisabled"), -1, NULL, tooltipWidth );
 	}
 	else
 	{
-		if(BitTest(battleHonor, BATTLE_HONOR_LOYALTY_USA))
+		if(BitTestEA(battleHonor, BATTLE_HONOR_LOYALTY_USA))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyUSA"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_LOYALTY_CHINA))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_LOYALTY_CHINA))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyChina"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_LOYALTY_GLA))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_LOYALTY_GLA))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorLoyaltyGLA"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_BATTLE_TANK))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_BATTLE_TANK))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorBattleTank"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_AIR_WING))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_AIR_WING))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorAirWing"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_ENDURANCE))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_ENDURANCE))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorEndurance"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_CAMPAIGN_USA))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_CAMPAIGN_USA))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorCampaignUSA"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_CAMPAIGN_CHINA))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_CAMPAIGN_CHINA))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorCampaignChina"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_CAMPAIGN_GLA))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_CAMPAIGN_GLA))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorCampaignGLA"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_BLITZ5))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_BLITZ5))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorBlitz5"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_BLITZ10))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_BLITZ10))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorBlitz10"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_FAIR_PLAY))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_FAIR_PLAY))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorFairPlay"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_APOCALYPSE))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_APOCALYPSE))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorApocalypse"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_OFFICERSCLUB))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_OFFICERSCLUB))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorOfficersClub"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_CHALLENGE_MODE))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_CHALLENGE_MODE))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorCampaignChallenge"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_ULTIMATE))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_ULTIMATE))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorUltimate"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_GLOBAL_GENERAL))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_GLOBAL_GENERAL))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorGlobalGeneral"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_CHALLENGE))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_CHALLENGE))
 			TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorChallenge"), -1, NULL, tooltipWidth );
-		else if(BitTest(battleHonor, BATTLE_HONOR_STREAK))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_STREAK))
 		{
 			if (extraValue >= 1000)
 				TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreak1000"), -1, NULL, tooltipWidth );
@@ -419,7 +419,7 @@ void BattleHonorTooltip(GameWindow *window,
 			else
 				TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreakDisabled"), -1, NULL, tooltipWidth );
 		}
-		else if(BitTest(battleHonor, BATTLE_HONOR_STREAK_ONLINE))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_STREAK_ONLINE))
 		{
 			if (extraValue >= 1000)
 				TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreak1000Online"), -1, NULL, tooltipWidth );
@@ -436,7 +436,7 @@ void BattleHonorTooltip(GameWindow *window,
 			else
 				TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorStreakOnlineDisabled"), -1, NULL, tooltipWidth );
 		}
-		else if(BitTest(battleHonor, BATTLE_HONOR_DOMINATION))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_DOMINATION))
 		{
 			if (extraValue >= 10000)
 				TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorDomination10000"), -1, NULL, tooltipWidth );
@@ -449,7 +449,7 @@ void BattleHonorTooltip(GameWindow *window,
 			else
 				TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorDominationDisabled"), -1, NULL, tooltipWidth );
 		}
-		else if(BitTest(battleHonor, BATTLE_HONOR_DOMINATION_ONLINE))
+		else if(BitTestEA(battleHonor, BATTLE_HONOR_DOMINATION_ONLINE))
 		{
 			if (extraValue >= 10000)
 				TheMouse->setCursorTooltip( TheGameText->fetch("TOOLTIP:BattleHonorDomination10000Online"), -1, NULL, tooltipWidth );
@@ -547,23 +547,23 @@ static void populateBattleHonors(const PSPlayerStats& stats, Int battleHonors, I
 	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("FairPlay"), isFairPlayer,
 		BATTLE_HONOR_FAIR_PLAY, row, column);
 
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorAirWing"), BitTest(battleHonors, BATTLE_HONOR_AIR_WING),
+	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorAirWing"), BitTestEA(battleHonors, BATTLE_HONOR_AIR_WING),
 		BATTLE_HONOR_AIR_WING, row, column);
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorBattleTank"), BitTest(battleHonors, BATTLE_HONOR_BATTLE_TANK),
+	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorBattleTank"), BitTestEA(battleHonors, BATTLE_HONOR_BATTLE_TANK),
 		BATTLE_HONOR_BATTLE_TANK, row, column);
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Apocalypse"), BitTest(battleHonors, BATTLE_HONOR_APOCALYPSE),
+	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Apocalypse"), BitTestEA(battleHonors, BATTLE_HONOR_APOCALYPSE),
 		BATTLE_HONOR_APOCALYPSE, row, column);
 
 	// create a spacer for row 2 and start the images on row 3
 	GadgetListBoxAddEntryImage(list, NULL, 2, 0, 10, 10, TRUE, GameMakeColor(255,255,255,255));
 	row = 3;
 
-	if (BitTest(battleHonors, BATTLE_HONOR_BLITZ5))
+	if (BitTestEA(battleHonors, BATTLE_HONOR_BLITZ5))
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorBlitz5"), TRUE,
 			BATTLE_HONOR_BLITZ5, row, column);
 	}
-	else if (BitTest(battleHonors, BATTLE_HONOR_BLITZ10))
+	else if (BitTestEA(battleHonors, BATTLE_HONOR_BLITZ10))
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorBlitz10"), TRUE,
 			BATTLE_HONOR_BLITZ10, row, column);
@@ -649,7 +649,7 @@ static void populateBattleHonors(const PSPlayerStats& stats, Int battleHonors, I
 	}
 
 	// TEST FOR GLOBAL GENERAL HONOR
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("GlobalGen"), BitTest(battleHonors, BATTLE_HONOR_GLOBAL_GENERAL),
+	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("GlobalGen"), BitTestEA(battleHonors, BATTLE_HONOR_GLOBAL_GENERAL),
 		BATTLE_HONOR_GLOBAL_GENERAL, row, column);
 
 	/*
@@ -666,50 +666,50 @@ static void populateBattleHonors(const PSPlayerStats& stats, Int battleHonors, I
 		*/
 
 
-	//insertBattleHonor(list, TheMappedImageCollection->findImageByName("Endurance"), BitTest(battleHonors, BATTLE_HONOR_ENDURANCE),
+	//insertBattleHonor(list, TheMappedImageCollection->findImageByName("Endurance"), BitTestEA(battleHonors, BATTLE_HONOR_ENDURANCE),
 		//BATTLE_HONOR_ENDURANCE, row, column);
 
 	/*
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Campaign_USA"), BitTest(battleHonors, BATTLE_HONOR_CAMPAIGN_USA),
+	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Campaign_USA"), BitTestEA(battleHonors, BATTLE_HONOR_CAMPAIGN_USA),
 		BATTLE_HONOR_CAMPAIGN_USA, row, column);
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Campaign_China"), BitTest(battleHonors, BATTLE_HONOR_CAMPAIGN_CHINA),
+	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Campaign_China"), BitTestEA(battleHonors, BATTLE_HONOR_CAMPAIGN_CHINA),
 		BATTLE_HONOR_CAMPAIGN_CHINA, row, column);
-	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Campaign_GLA"), BitTest(battleHonors, BATTLE_HONOR_CAMPAIGN_GLA),
+	InsertBattleHonor(list, TheMappedImageCollection->findImageByName("Campaign_GLA"), BitTestEA(battleHonors, BATTLE_HONOR_CAMPAIGN_GLA),
 		BATTLE_HONOR_CAMPAIGN_GLA, row, column);
 	*/
 
 	/*
-	if(BitTest(challenge, BH_CHALLENGE_MASK_7))
+	if(BitTestEA(challenge, BH_CHALLENGE_MASK_7))
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorChallenge7"), TRUE,
 			BATTLE_HONOR_CHALLENGE, row, column);
 	}
-	else if (BitTest(challenge, BH_CHALLENGE_MASK_6))
+	else if (BitTestEA(challenge, BH_CHALLENGE_MASK_6))
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorChallenge6"), TRUE,
 			BATTLE_HONOR_CHALLENGE, row, column);
 	}
-	else if (BitTest(challenge, BH_CHALLENGE_MASK_5))
+	else if (BitTestEA(challenge, BH_CHALLENGE_MASK_5))
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorChallenge5"), TRUE,
 			BATTLE_HONOR_CHALLENGE, row, column);
 	}
-	else if (BitTest(challenge, BH_CHALLENGE_MASK_4))
+	else if (BitTestEA(challenge, BH_CHALLENGE_MASK_4))
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorChallenge4"), TRUE,
 			BATTLE_HONOR_CHALLENGE, row, column);
 	}
-	else if (BitTest(challenge, BH_CHALLENGE_MASK_3))
+	else if (BitTestEA(challenge, BH_CHALLENGE_MASK_3))
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorChallenge3"), TRUE,
 			BATTLE_HONOR_CHALLENGE, row, column);
 	}
-	else if (BitTest(challenge, BH_CHALLENGE_MASK_2))
+	else if (BitTestEA(challenge, BH_CHALLENGE_MASK_2))
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorChallenge2"), TRUE,
 			BATTLE_HONOR_CHALLENGE, row, column);
 	}
-	else if (BitTest(challenge, BH_CHALLENGE_MASK_1))
+	else if (BitTestEA(challenge, BH_CHALLENGE_MASK_1))
 	{
 		InsertBattleHonor(list, TheMappedImageCollection->findImageByName("HonorChallenge1"), TRUE,
 			BATTLE_HONOR_CHALLENGE, row, column);
@@ -788,7 +788,7 @@ Int CalculateRank( const PSPlayerStats& stats )
 	}
 	rankPoints += numGames * TheRankPointValues->m_disconnectMultiplier;
 
-	if(BitTest(stats.battleHonors, BATTLE_HONOR_CAMPAIGN_USA | BATTLE_HONOR_CAMPAIGN_CHINA |BATTLE_HONOR_CAMPAIGN_GLA))
+	if(BitTestEA(stats.battleHonors, BATTLE_HONOR_CAMPAIGN_USA | BATTLE_HONOR_CAMPAIGN_CHINA |BATTLE_HONOR_CAMPAIGN_GLA))
 	{
 		rankPoints += 1 * TheRankPointValues->m_completedSoloCampaigns;
 	}
@@ -1394,7 +1394,7 @@ WindowMsgHandledType GameSpyPlayerInfoOverlayInput( GameWindow *window, Unsigned
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestEA( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
 																							(WindowMsgData)buttonClose, (WindowMsgData)buttonCloseID );
