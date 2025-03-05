@@ -27,9 +27,9 @@ target_include_directories(GameEngine PUBLIC
 )
 
 target_include_directories(GameEngine PRIVATE
-    ${CMAKE_SOURCE_DIR}/Libraries/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../Libraries/Include
     # Used in Thing.h via WWMath
-    ${CMAKE_SOURCE_DIR}/Libraries/Source/WWVegas
+    ${CMAKE_CURRENT_SOURCE_DIR}/../Libraries/Source/WWVegas
 )
 
 target_link_libraries(GameEngine PUBLIC WWLib)
