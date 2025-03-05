@@ -61,9 +61,7 @@
 #include	<assert.h>
 #include	<stdlib.h>
 #include <string.h>
-#ifdef _WIN32
-#include <new.h>
-#endif
+#include <new>
 #ifdef _MSC_VER
 #pragma warning (disable : 4702) // unreachable code, happens with some uses of these templates
 #endif

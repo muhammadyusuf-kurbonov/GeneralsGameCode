@@ -87,6 +87,7 @@ void __cdecl Print_Win32Error(unsigned long win32Error);
 #else // _WINDOWS
 #define HANDLE void*
 #define HWND void*
+#define HINSTANCE void*
 #define INVALID_HANDLE_VALUE NULL
 typedef const char* LPCSTR;
 //#include <unistd.h>	// file does not exist
