@@ -1697,12 +1697,12 @@ void BaseHeightMapRenderObjClass::updateShorelineTiles(Int minX, Int minY, Int m
 
 	if (shoreLineSortInfosXMajor)
 		for (Int i=minX; i<maxX; i++)
-			for (j=minY; j<maxY; j++)
+			for (Int j=minY; j<maxY; j++)
 			{
 				updateShorelineTile(i,j,border,pMap);
 			}
 	else
-		for (j=minY; j<maxY; j++)
+		for (Int j=minY; j<maxY; j++)
 			for (Int i=minX; i<maxX; i++)
 			{
 				updateShorelineTile(i,j,border,pMap);

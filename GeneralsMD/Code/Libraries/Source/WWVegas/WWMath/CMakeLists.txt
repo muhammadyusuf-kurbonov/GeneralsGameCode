@@ -6,7 +6,7 @@ add_library(WWMath STATIC ${SOURCES_WWMATH})
 
 # For d3dx8math.h
 target_link_libraries(WWMath PRIVATE
-    d3d8
+    d3d8lib
 )
 
 target_link_libraries(WWMath PUBLIC

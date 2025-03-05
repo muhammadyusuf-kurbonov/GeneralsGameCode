@@ -12,7 +12,7 @@ target_link_libraries(WW3D2 PRIVATE
 )
 
 target_link_libraries(WW3D2 PUBLIC
-    WWMath d3d8
+    WWMath d3d8lib
 )
 
 target_include_directories(WW3D2 PUBLIC

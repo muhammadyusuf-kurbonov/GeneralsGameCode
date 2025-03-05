@@ -1,10 +1,16 @@
-set(SOURCES_MILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MilesAudioDevice/MilesAudioManager.cpp
-)
+set(SOURCES_MILES )
+if (SAGE_USE_MILES)
+    set(SOURCES_MILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/Source/MilesAudioDevice/MilesAudioManager.cpp
+    )
+endif()
 
-set(SOURCES_BINK
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/VideoDevice/Bink/BinkVideoPlayer.cpp
-)
+set(SOURCES_BINK )
+if(SAGE_USE_BINK)
+    set(SOURCES_BINK
+        ${CMAKE_CURRENT_SOURCE_DIR}/Source/VideoDevice/Bink/BinkVideoPlayer.cpp
+    )
+endif()
 
 file(GLOB_RECURSE SOURCES_W3DDevice
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/W3DDevice/*.cpp
@@ -23,7 +29,15 @@ add_library(GameEngineDevice STATIC
 
 target_include_directories(GameEngineDevice PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Include
-    ${CMAKE_SOURCE_DIR}/Libraries/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../Libraries/Include
 )
 
 target_link_libraries(GameEngineDevice PRIVATE WW3D2 GameEngine)
+
+if (SAGE_USE_MILES)
+    target_link_libraries(GameEngineDevice PRIVATE milesstub)
+endif()
+
+if (SAGE_USE_BINK)
+    target_link_libraries(GameEngineDevice PRIVATE binkstub)
+endif()

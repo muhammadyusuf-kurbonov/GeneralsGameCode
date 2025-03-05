@@ -36,7 +36,7 @@ target_link_libraries(GameEngine PUBLIC WWLib)
 target_link_libraries(GameEngine PRIVATE Compression)
 
 if(WIN32)
-    target_link_libraries(GameEngine PRIVATE d3d8 gamespy BrowserDispatch)
+    target_link_libraries(GameEngine PRIVATE d3d8lib gamespy BrowserDispatch)
 else()
     target_include_directories(GameEngine PRIVATE
         ${CMAKE_SOURCE_DIR}/extern/dxvk-native/usr/include/dxvk
