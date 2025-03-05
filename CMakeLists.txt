@@ -8,6 +8,8 @@ option(SAGE_BUILD_GENERALS "Build the C&C Generals game" OFF)
 option(SAGE_BUILD_ZEROHOUR "Build the C&C Generals Zero Hour game" ON)
 option(SAGE_USE_GAMESPY "Use GameSpy" ON)
 option(SAGE_USE_MILES "Use Miles Sound System" ON)
+option(SAGE_USE_ZLIB "Use ZLib" ON)
+option(SAGE_USE_LZHL "Use LZH-Light" ON)
 include(CMakeDependentOption)
 cmake_dependent_option(SAGE_USE_BINK "Use Bink Video Library" ON "WIN32" OFF)
 cmake_dependent_option(SAGE_USE_DX8 "Use DirectX 8" ON "WIN32" OFF)
@@ -18,6 +20,8 @@ message(STATUS "Using Bink: ${SAGE_USE_BINK}")
 message(STATUS "Using GameSpy: ${SAGE_USE_GAMESPY}")
 message(STATUS "Using Miles: ${SAGE_USE_MILES}")
 message(STATUS "Using DirectX 8: ${SAGE_USE_DX8}")
+message(STATUS "Using ZLib: ${SAGE_USE_ZLIB}")
+message(STATUS "Using LZH-Light: ${SAGE_USE_LZHL}")
 
 include(FetchContent)
 if(SAGE_USE_BINK)
@@ -54,6 +58,13 @@ if(SAGE_USE_DX8)
   FetchContent_MakeAvailable(dx8)
 endif()
 
+if(SAGE_USE_LZHL)
+  FetchContent_Declare(
+    liblzhl
+    GIT_REPOSITORY https://github.com/feliwir/liblzhl
+    GIT_TAG fd7c70c4bb96e7a4a682f574e788c499f00a0b8d)
+  FetchContent_MakeAvailable(liblzhl)
+endif()
 
 if(WIN32)
   add_definitions(-D_WINDOWS)

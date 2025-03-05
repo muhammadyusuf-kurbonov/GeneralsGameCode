@@ -92,7 +92,22 @@
 #define NULL 0						// C++ doesn't like casting void *'s into other pointers
 #endif
 
-#include "always.h"
+#ifndef __forceinline
+#define __forceinline
+#endif
+
+// MSVC math.h defines overloaded functions with this name...
+//#ifndef abs
+//#define abs(x) (((x) < 0) ? -(x) : (x))
+//#endif
+
+#ifndef min
+#define min(x,y) (((x)<(y)) ? (x) : (y))
+#endif
+
+#ifndef max
+#define max(x,y) (((x)>(y)) ? (x) : (y))
+#endif
 
 #ifndef TRUE
 #define TRUE true

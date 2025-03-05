@@ -1,38 +1,12 @@
-set(COMPRESSION_SRC
-    EAC/btreeabout.cpp
-    EAC/btreedecode.cpp
-    EAC/btreeencode.cpp
-    EAC/huffabout.cpp
-    EAC/huffdecode.cpp
-    EAC/huffencode.cpp
-    EAC/refabout.cpp
-    EAC/refdecode.cpp
-    EAC/refencode.cpp
-    EAC/btreecodex.h
-    EAC/codex.h
-    EAC/gimex.h
-    EAC/huffcodex.h
-    EAC/refcodex.h
-    LZHCompress/NoxCompress.cpp
-    LZHCompress/NoxCompress.h
-    CompressionManager.cpp
-    Compression.h
-)
+file(GLOB_RECURSE SOURCES_EAC ${CMAKE_CURRENT_SOURCE_DIR}/EAC/*.cpp)
+file(GLOB_RECURSE SOURCES_LZH ${CMAKE_CURRENT_SOURCE_DIR}/LZHCompress/*.cpp)
 
-add_library(z_compression STATIC)
-set_target_properties(z_compression PROPERTIES OUTPUT_NAME compression)
+find_package(ZLIB REQUIRED)
 
-target_sources(z_compression PRIVATE ${COMPRESSION_SRC})
+add_library(Compression STATIC CompressionManager.cpp ${SOURCES_EAC} ${SOURCES_LZH})
 
-target_include_directories(z_compression INTERFACE
-    .
-)
+target_include_directories(
+  Compression PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+                     ${CMAKE_CURRENT_SOURCE_DIR}/../../Include)
 
-target_link_libraries(z_compression PRIVATE
-    zi_libraries_include
-)
-
-target_link_libraries(z_compression PUBLIC
-    liblzhl
-    libzlib
-)
+target_link_libraries(Compression PRIVATE LZHL::LZHL ZLIB::ZLIB)
