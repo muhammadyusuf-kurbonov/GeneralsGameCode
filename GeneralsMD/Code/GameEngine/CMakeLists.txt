@@ -15,6 +15,10 @@ file(GLOB_RECURSE SOURCES_GAMECLIENT
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/GameClient/*.cpp
 )
 
+if(UNIX)
+    list(REMOVE_ITEM SOURCES_GAMECLIENT ${CMAKE_CURRENT_SOURCE_DIR}/Source/GameClient/GUI/IMEManager.cpp)
+endif()
+
 add_library(GameEngine STATIC ${SOURCES_COMMON} ${SOURCES_GAMECLIENT})
 
 target_include_directories(GameEngine PUBLIC
@@ -35,8 +39,7 @@ if(WIN32)
     target_link_libraries(GameEngine PRIVATE d3d8 gamespy BrowserDispatch)
 else()
     target_include_directories(GameEngine PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/extern/dxvk-native/usr/include/dxvk
-        ${CMAKE_CURRENT_SOURCE_DIR}/extern/compat
+        ${CMAKE_SOURCE_DIR}/extern/dxvk-native/usr/include/dxvk
     )
 endif()
 

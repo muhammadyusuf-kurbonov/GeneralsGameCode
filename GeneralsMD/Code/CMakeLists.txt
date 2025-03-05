@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.23)
 project(ZeroHour LANGUAGES C CXX)
 
+add_subdirectory(CompatLib)
+
 add_subdirectory(Libraries)
 add_subdirectory(GameEngine)
 add_subdirectory(GameEngineDevice)

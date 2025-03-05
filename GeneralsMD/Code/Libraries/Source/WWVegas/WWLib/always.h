@@ -279,5 +279,8 @@ template <class T> T max(T a,T b)
 #define size_of(typ,id) sizeof(((typ*)0)->id)
 #endif
 
+#ifndef _WIN32
+#include "windows_compat.h"
+#endif
 
 #endif
