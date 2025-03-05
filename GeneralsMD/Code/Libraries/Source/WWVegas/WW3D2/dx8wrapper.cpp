@@ -1457,8 +1457,9 @@ bool DX8Wrapper::Find_Color_And_Z_Mode(int resx,int resy,int bitdepth,D3DFORMAT 
 	*/
 	bool found = false;
 	unsigned int mode = 0;
-
-	for (int format_index=0; format_index < format_count; format_index++) {
+	
+	int format_index;
+	for (format_index=0; format_index < format_count; format_index++) {
 		found |= Find_Color_Mode(format_table[format_index],resx,resy,&mode);
 		if (found) break;
 	}

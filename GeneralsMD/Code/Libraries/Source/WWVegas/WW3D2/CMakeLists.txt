@@ -14,3 +14,7 @@ target_link_libraries(WW3D2 PRIVATE
 target_link_libraries(WW3D2 PUBLIC
     WWMath d3d8
 )
+
+target_include_directories(WW3D2 PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)

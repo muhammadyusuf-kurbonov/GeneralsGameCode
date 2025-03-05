@@ -32,3 +32,9 @@ endif()
 
 add_subdirectory(Libraries)
 add_subdirectory(GameEngine)
+add_subdirectory(GameEngineDevice)
+
+if(WIN32)
+    add_executable(RTS WIN32 Main/WinMain.cpp)
+    target_link_libraries(RTS GameEngine GameEngineDevice)
+endif()
