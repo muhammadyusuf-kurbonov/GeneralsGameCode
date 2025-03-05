@@ -92,6 +92,9 @@ enum DrawableID : int
 	FORCE_DRAWABLEID_TO_LONG_SIZE = 0x7ffffff
 };
 
+#undef min
+#undef max
+
 #include <algorithm>
 #include <bitset>
 #include <unordered_map>
