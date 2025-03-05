@@ -114,6 +114,10 @@ class STLSpecialAlloc;
 //#include <string>
 //#include <vector>
 
+#ifndef _WIN32
+#include "windows_compat.h"
+#endif
+
 //------------------------------------------------------------------------------------ RTS Includes
 // Icky. These have to be in this order.
 #include "Lib/BaseType.h"
@@ -140,9 +144,5 @@ class STLSpecialAlloc;
 
 #include "Common/Thing.h"
 #include "Common/UnicodeString.h"
-
-#ifndef _WIN32
-#include "windows_compat.h"
-#endif
 
 #endif /* __PRERTS_H__ */
