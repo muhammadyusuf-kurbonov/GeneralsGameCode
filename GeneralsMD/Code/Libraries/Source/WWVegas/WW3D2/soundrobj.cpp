@@ -37,8 +37,8 @@
 #if noWWAUDIO //(gth) removing dependency on wwaudio
 
 #include "soundrobj.h"
-#include "audiblesound.h"
-#include "sound3d.h"
+#include "AudibleSound.h"
+#include "Sound3D.h"
 #include "wwaudio.h"
 #include "ffactory.h"
 #include "WWFILE.H"

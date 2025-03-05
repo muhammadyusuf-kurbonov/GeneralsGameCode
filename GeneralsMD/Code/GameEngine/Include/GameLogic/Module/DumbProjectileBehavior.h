@@ -39,7 +39,7 @@
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/WeaponBonusConditionFlags.h"
 #include "Common/INI.h"
-#include "WWMath/Matrix3D.h"
+#include "WWMath/matrix3d.h"
 
 class ParticleSystem;
 class FXList;

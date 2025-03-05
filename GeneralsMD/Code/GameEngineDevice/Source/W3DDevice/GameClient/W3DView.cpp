@@ -89,7 +89,7 @@
 #include "WW3D2/Camera.h"
 #include "WW3D2/Coltype.h"
 #include "WW3D2/PredLod.h"
-#include "WW3D2/WW3D.h"
+#include "WW3D2/ww3d.h"
 
 #include "W3DDevice/GameClient/camerashakesystem.h"
 

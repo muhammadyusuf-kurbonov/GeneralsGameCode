@@ -43,12 +43,12 @@
 
 #include "always.h"
 #pragma warning (push, 3)
-#include "Mss.H"
+#include "mss.h"
 #pragma warning (pop)
 
-#include "Vector.H"
-#include "SoundBuffer.H"
-#include "AudioEvents.H"
+#include "vector.h"
+#include "SoundBuffer.h"
+#include "AudioEvents.h"
 #include "wwstring.h"
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -386,7 +386,7 @@ public:
 	// Note:  The cache sizes are in kilo-bytes.  The default
 	// is currently set to 1MB.
 	//
-	bool					Set_Cache_Size (int kbytes = DEF_CACHE_SIZE)	{ m_MaxCacheSize = (kbytes * 1024); }
+	bool					Set_Cache_Size (int kbytes = DEF_CACHE_SIZE)	{ m_MaxCacheSize = (kbytes * 1024); return true; }
 	int					Get_Cache_Size (void) const						{ return m_MaxCacheSize / 1024; }
 	int					Get_Current_Cache_Size (void) const				{ return m_CurrentCacheSize; }
 

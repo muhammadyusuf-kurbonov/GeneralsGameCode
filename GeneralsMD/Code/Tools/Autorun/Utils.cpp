@@ -73,7 +73,7 @@
 #include "assert.h"
 #include "locale_api.h"
 #include "resource.h"
-#include "utils.h"
+#include "Utils.h"
 #include "winfix.h"
 #include "wnd_file.h"
 #include <winver.h>

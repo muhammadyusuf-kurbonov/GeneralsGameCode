@@ -35,14 +35,14 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #undef _DEBUG
-#include "soundscene.h"
-#include "soundcullobj.h"
-#include "logicalsound.h"
-#include "logicallistener.h"
+#include "SoundScene.h"
+#include "SoundCullObj.h"
+#include "LogicalSound.h"
+#include "LogicalListener.h"
 #include "chunkio.h"
 #include "persistfactory.h"
 #include "wwprofile.h"
-#include "threads.h"
+#include "Threads.h"
 #include "wwmemlog.h"
 
 DEFINE_AUTO_POOL(SoundSceneClass::AudibleInfoClass, 64);
@@ -200,7 +200,7 @@ SoundSceneClass::Collect_Logical_Sounds (int listener_count)
 				//	Is the sound ready to notify?
 				//
 				if (sound_obj->Allow_Notify (timestamp)) {
-					listener->On_Event (AudioCallbackClass::EVENT_LOGICAL_HEARD, (uint32)listener, (uint32)sound_obj);
+					listener->On_Event (AudioCallbackClass::EVENT_LOGICAL_HEARD, (uintptr_t)listener, (uintptr_t)sound_obj);
 				}
 			}
 		}

@@ -36,7 +36,7 @@
 
 #include "locale.h"
 #include "locale_api.h"
-#include "utils.h"
+#include "Utils.h"
 #include "wnd_file.h"
 //#include "resources.h"
 

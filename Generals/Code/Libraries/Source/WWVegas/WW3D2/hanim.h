@@ -50,7 +50,7 @@
 #include "hash.h"
 #include "mempool.h"
 #include <refcount.h>
-#include <slist.h>
+#include "slist.h"
 #include <vector.h>
 
 struct NodeMotionStruct;

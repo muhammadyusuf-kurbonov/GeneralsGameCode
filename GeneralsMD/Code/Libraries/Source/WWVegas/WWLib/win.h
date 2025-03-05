@@ -85,12 +85,7 @@ void __cdecl Print_Win32Error(unsigned long win32Error);
 #endif // _DEBUG
 
 #else // _WINDOWS
-#define HANDLE void*
-#define HWND void*
-#define HINSTANCE void*
-#define INVALID_HANDLE_VALUE NULL
-typedef const char* LPCSTR;
-//#include <unistd.h>	// file does not exist
+#include "windows_compat.h"
 #endif // _WINDOWS
 
 #endif // WIN_H

@@ -58,7 +58,7 @@
 #include "matrix3d.h"
 #include "layer.h"
 #include "sphere.h"
-#include "coltype.h"
+#include "ColType.h"
 
 
 class RenderObjClass;
