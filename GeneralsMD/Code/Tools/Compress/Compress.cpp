@@ -20,7 +20,46 @@
 #include <cstdio>
 #include "Lib/BaseType.h"
 #include "Compression/Compression.h"
-#include "../CRCDiff/Debug.h"
+#include "../CRCDiff/debug.h"
+
+#ifdef _UNIX
+#include <alloca.h>
+#define _alloca alloca
+#include <ctype.h>
+#include <cstring>
+#include <wchar.h>
+typedef char TCHAR;
+typedef wchar_t WCHAR; 
+#define _tcslen strlen
+#define _tcsclen strlen
+#define _tcscmp strcmp
+#define _tcsicmp strcasecmp
+#define _wcsicmp wcscasecmp 
+#define stricmp strcasecmp
+#define strnicmp strncasecmp
+#define strcmpi strcasecmp
+
+#define _snprintf snprintf
+#define strupr(s) for(int i=0; i<strlen(s); i++) s[i]=toupper(s[i])
+char *strrev(char *str)
+{
+    if (!str || ! *str)
+        return str;
+
+    int i = strlen(str) - 1, j = 0;
+
+    char ch;
+    while (i > j)
+    {
+        ch = str[i];
+        str[i] = str[j];
+        str[j] = ch;
+        i--;
+        j++;
+    }
+    return str;
+}
+#endif
 
 #ifndef DEBUG
 
@@ -54,7 +93,7 @@ void dumpHelp(const char *exe)
 	}
 }
 
-void main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	std::string inFile = "";
 	std::string outFile = "";
@@ -65,7 +104,7 @@ void main(int argc, char **argv)
 		if ( !stricmp(argv[i], "-help") )
 		{
 			dumpHelp(argv[0]);
-			exit(0);
+			return EXIT_SUCCESS;
 		}
 
 		if ( !strcmp(argv[i], "-in") )
@@ -106,7 +145,7 @@ void main(int argc, char **argv)
 	if (inFile.empty())
 	{
 		dumpHelp(argv[0]);
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	DEBUG_LOG(("IN:'%s' OUT:'%s' Compression:'%s'\n",
@@ -119,7 +158,7 @@ void main(int argc, char **argv)
 		if (!fp)
 		{
 			DEBUG_LOG(("Cannot open '%s'\n", inFile.c_str()));
-			return;
+			return EXIT_FAILURE;
 		}
 		fseek(fp, 0, SEEK_END);
 		int size = ftell(fp);
@@ -131,14 +170,14 @@ void main(int argc, char **argv)
 		if (numRead != 8)
 		{
 			DEBUG_LOG(("Cannot read header from '%s'\n", inFile.c_str()));
-			return;
+			return EXIT_FAILURE;
 		}
 
 		CompressionType usedType = CompressionManager::getCompressionType(data, 8);
 		if (usedType == COMPRESSION_NONE)
 		{
 			DEBUG_LOG(("No compression on '%s'\n", inFile.c_str()));
-			return;
+			return EXIT_FAILURE;
 		}
 
 		int uncompressedSize = CompressionManager::getUncompressedSize(data, 8);
@@ -147,8 +186,9 @@ void main(int argc, char **argv)
 			inFile.c_str(), CompressionManager::getCompressionNameByType(usedType),
 			uncompressedSize, size, size/(double)(uncompressedSize+0.1)*100.0));
 
-		return;
+		return EXIT_FAILURE;
 	}
 
 	// compress file
+	return EXIT_SUCCESS;
 }

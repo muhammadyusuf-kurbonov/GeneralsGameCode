@@ -93,7 +93,7 @@
 #endif
 
 #ifndef __forceinline
-#define __forceinline
+#define __forceinline inline
 #endif
 
 // MSVC math.h defines overloaded functions with this name...

@@ -53,7 +53,7 @@
 #include <stdint.h>
 
 #ifndef __forceinline
-#define __forceinline
+#define __forceinline inline
 #endif
 
 #ifndef _WINDOWS

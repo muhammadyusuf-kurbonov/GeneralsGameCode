@@ -7,6 +7,7 @@ add_library(Compression STATIC CompressionManager.cpp ${SOURCES_EAC} ${SOURCES_L
 
 target_include_directories(
   Compression PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+                     ${CMAKE_CURRENT_SOURCE_DIR}/../
                      ${CMAKE_CURRENT_SOURCE_DIR}/../../Include)
 
 target_link_libraries(Compression PRIVATE LZHL::LZHL ZLIB::ZLIB)

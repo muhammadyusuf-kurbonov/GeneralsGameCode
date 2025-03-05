@@ -6,6 +6,7 @@ project(
 
 option(SAGE_BUILD_GENERALS "Build the C&C Generals game" OFF)
 option(SAGE_BUILD_ZEROHOUR "Build the C&C Generals Zero Hour game" ON)
+option(SAGE_BUILD_TOOLS "Build the tools" ON)
 option(SAGE_USE_GAMESPY "Use GameSpy" ON)
 option(SAGE_USE_MILES "Use Miles Sound System" ON)
 option(SAGE_USE_ZLIB "Use ZLib" ON)

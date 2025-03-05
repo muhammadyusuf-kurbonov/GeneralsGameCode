@@ -9,3 +9,7 @@ if(WIN32)
     add_executable(RTS WIN32 Main/WinMain.cpp)
     target_link_libraries(RTS GameEngine GameEngineDevice)
 endif()
+
+if(SAGE_BUILD_TOOLS)
+    add_subdirectory(Tools/Compress)
+endif()
