@@ -36,21 +36,25 @@
 
 
 #include "always.h"
+#ifdef _WIN32
 #include <Windows.H>
-#include "WWAudio.H"
-#include "WWDebug.H"
-#include "Utils.H"
-#include "RealCRC.H"
-#include "SoundBuffer.H"
-#include "AudibleSound.H"
-#include "Sound3D.H"
-#include "RawFile.H"
-#include "WW3D.H"
-#include "SoundScene.H"
-#include "SoundPseudo3D.H"
-#include "FFactory.H"
-#include "Registry.H"
-#include "Threads.H"
+#else
+#include "windows_compat.h"
+#endif
+#include "WWAudio.h"
+#include "wwdebug.h"
+#include "Utils.h"
+#include "realcrc.h"
+#include "SoundBuffer.h"
+#include "AudibleSound.h"
+#include "Sound3D.h"
+#include "RAWFILE.H"
+#include "ww3d.h"
+#include "SoundScene.h"
+#include "SoundPseudo3D.h"
+#include "ffactory.h"
+#include "registry.h"
+#include "Threads.h"
 #include "LogicalSound.h"
 #include "LogicalListener.h"
 #include "definitionclassids.h"
@@ -128,14 +132,23 @@ WWAudioClass::WWAudioClass (void)
 	  m_EffectsLevel (0),
 	  m_ReverbRoomType (ENVIRONMENT_GENERIC)
 {
+#ifdef _WIN32
 	::InitializeCriticalSection (&MMSLockClass::_MSSLockCriticalSection);
+#else
+	pthread_mutex_init (&MMSLockClass::_MSSLockCriticalSection, NULL);
+#endif
 
 	//
 	// Start Miles Sound System
 	//
 	AIL_startup ();
 	_theInstance = this;
+#ifdef _WIN32
 	_TimerSyncEvent = ::CreateEvent (NULL, TRUE, FALSE, "WWAUDIO_TIMER_SYNC");
+#else
+	_TimerSyncEvent = new sem_t;
+	sem_init ((sem_t*)_TimerSyncEvent, 0, 0);
+#endif
 
 	//
 	// Set some default values
@@ -164,10 +177,18 @@ WWAudioClass::~WWAudioClass (void)
 
 	Shutdown ();
 	_theInstance = NULL;
+#ifdef _WIN32
 	::CloseHandle(_TimerSyncEvent);
 	_TimerSyncEvent = NULL;
 
 	::DeleteCriticalSection (&MMSLockClass::_MSSLockCriticalSection);
+#else
+	sem_destroy ((sem_t*)_TimerSyncEvent);
+	delete (sem_t*)_TimerSyncEvent;
+	_TimerSyncEvent = NULL;
+
+	pthread_mutex_destroy (&MMSLockClass::_MSSLockCriticalSection);
+#endif	
 
 	//
 	//	Free the list of logical "types".
@@ -2178,9 +2199,20 @@ WWAudioClass::Shutdown (void)
 		m_UpdateTimer = -1;
 
 		// Wait for the timer callback function to end
+#ifdef _WIN32
 		::WaitForSingleObject (_TimerSyncEvent, 20000);
 		::CloseHandle (_TimerSyncEvent);
 		_TimerSyncEvent = NULL;
+#else
+		timespec ts;
+		ts.tv_sec = 20;
+		ts.tv_nsec = 0;
+		sem_timedwait((sem_t*)_TimerSyncEvent, &ts);
+
+		sem_destroy((sem_t*)_TimerSyncEvent);
+		delete _TimerSyncEvent;
+		_TimerSyncEvent = NULL;
+#endif
 	}
 
 	//

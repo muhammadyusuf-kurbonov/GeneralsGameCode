@@ -10,6 +10,10 @@ typedef int32_t HRESULT;
 
 typedef int BOOL;
 
+#define INVALID_HANDLE_VALUE NULL
+
+typedef void *LPVOID;
+
 #define FALSE 0
 #define TRUE 1
 

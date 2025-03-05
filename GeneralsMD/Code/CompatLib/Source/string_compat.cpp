@@ -20,3 +20,12 @@ int _vsnwprintf(wchar_t* buffer, size_t count, const wchar_t* format, va_list ar
 {
   return vswprintf(buffer, count, format, args);
 }
+
+char* _strlwr(char* str)
+{
+  for (int i = 0; str[i] != '\0'; i++)
+  {
+    str[i] = tolower(str[i]);
+  }
+  return str;
+}

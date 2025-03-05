@@ -39,8 +39,14 @@
 #define __UTILS_H
 
 #pragma warning (push, 3)
-#include "Mss.H"
+#include "mss.h"
 #pragma warning (pop)
+
+#ifndef _WIN32
+#include <pthread.h>
+#include "windows_compat.h"
+#include <string.h>
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -76,8 +82,11 @@ class MMSLockClass
 		MMSLockClass (void) { ::AIL_lock (); }
 		~MMSLockClass (void) { ::AIL_unlock (); }
 
-
+#ifdef _WIN32
 	static CRITICAL_SECTION _MSSLockCriticalSection;
+#else
+	static pthread_mutex_t _MSSLockCriticalSection;
+#endif
 };
 
 
