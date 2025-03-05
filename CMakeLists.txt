@@ -4,20 +4,12 @@ project(
   VERSION 0.1
   LANGUAGES C CXX)
 
-if(WIN32)
-  add_definitions(-D_WINDOWS)
-  add_definitions(-DWINVER=0x400)
-  add_definitions(-D_WIN32_WINNT=0x0400)
-elseif(UNIX)
-  add_definitions(-D_UNIX)
-endif()
-
 option(SAGE_BUILD_GENERALS "Build the C&C Generals game" OFF)
 option(SAGE_BUILD_ZEROHOUR "Build the C&C Generals Zero Hour game" ON)
-option(SAGE_USE_BINK "Use Bink Video Library" ON)
 option(SAGE_USE_GAMESPY "Use GameSpy" ON)
 option(SAGE_USE_MILES "Use Miles Sound System" ON)
 include(CMakeDependentOption)
+cmake_dependent_option(SAGE_USE_BINK "Use Bink Video Library" ON "WIN32" OFF)
 cmake_dependent_option(SAGE_USE_DX8 "Use DirectX 8" ON "WIN32" OFF)
 
 message(STATUS "Building Generals: ${SAGE_BUILD_GENERALS}")
@@ -60,6 +52,15 @@ if(SAGE_USE_DX8)
     GIT_REPOSITORY https://github.com/TheSuperHackers/min-dx8-sdk.git
     GIT_TAG        efd4b6d9f4915bd38aaa2184d49f404a18be59a3)
   FetchContent_MakeAvailable(dx8)
+endif()
+
+
+if(WIN32)
+  add_definitions(-D_WINDOWS)
+  add_definitions(-DWINVER=0x400)
+  add_definitions(-D_WIN32_WINNT=0x0400)
+elseif(UNIX)
+  add_definitions(-D_UNIX)
 endif()
 
 if(SAGE_BUILD_GENERALS)
