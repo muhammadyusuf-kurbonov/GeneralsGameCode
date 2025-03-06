@@ -55,6 +55,7 @@ else()
     target_include_directories(GameEngine PRIVATE
         ${CMAKE_SOURCE_DIR}/extern/dxvk-native/usr/include/dxvk
     )
+    target_link_libraries(GameEngine PRIVATE gamespy)
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")    
