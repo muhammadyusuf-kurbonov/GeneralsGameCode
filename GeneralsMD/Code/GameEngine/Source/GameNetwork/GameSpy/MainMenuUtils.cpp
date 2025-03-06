@@ -43,7 +43,7 @@
 
 #include "GameClient/ShellHooks.h"
 
-#include "GameSpy/ghttp/ghttp.h"
+#include "gamespy/ghttp/ghttp.h"
 
 #include "GameNetwork/DownloadManager.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"

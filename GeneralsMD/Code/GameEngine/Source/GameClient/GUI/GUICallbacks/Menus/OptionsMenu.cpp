@@ -30,7 +30,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "GameSpy/ghttp/ghttp.h"
+#include "gamespy/ghttp/ghttp.h"
 
 #include "Common/AudioAffect.h"
 #include "Common/AudioSettings.h"

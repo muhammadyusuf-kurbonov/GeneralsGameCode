@@ -31,7 +31,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "GameSpy/Peer/Peer.h"
+#include "gamespy/peer/peer.h"
 
 #include "Common/GameEngine.h"
 #include "Common/GameSpyMiscPreferences.h"
