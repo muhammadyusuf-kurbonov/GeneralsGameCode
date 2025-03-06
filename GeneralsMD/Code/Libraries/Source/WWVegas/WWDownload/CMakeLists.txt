@@ -1,24 +1,7 @@
-# Set source files
-set(WWDOWNLOAD_SRC
-    Download.cpp
-    Download.h
-    DownloadDebug.h
-    downloaddefs.h
-    FTP.CPP
-    ftp.h
-    ftpdefs.h
-    registry.cpp
-    Registry.h
-    urlBuilder.cpp
-    urlBuilder.h
-)
+set(SOURCES_WWDOWNLOAD Download.cpp FTP.CPP registry.cpp urlBuilder.cpp)
 
-# Targets to build.
-add_library(z_wwdownload STATIC)
-set_target_properties(z_wwdownload PROPERTIES OUTPUT_NAME wwdownload)
+add_library(WWDownload STATIC ${SOURCES_WWDOWNLOAD})
 
-target_sources(z_wwdownload PRIVATE ${WWDOWNLOAD_SRC})
-
-target_link_libraries(z_wwdownload PRIVATE
-    z_wwcommon
+target_include_directories(WWDownload PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
 )

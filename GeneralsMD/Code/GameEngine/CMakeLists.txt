@@ -52,7 +52,7 @@ target_include_directories(GameEngine PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../Libraries/Source/WWVegas
 )
 
-target_link_libraries(GameEngine PUBLIC WWLib WWMath)
+target_link_libraries(GameEngine PUBLIC WWLib WWMath WWDownload)
 target_link_libraries(GameEngine PRIVATE Compression)
 
 if(WIN32)
