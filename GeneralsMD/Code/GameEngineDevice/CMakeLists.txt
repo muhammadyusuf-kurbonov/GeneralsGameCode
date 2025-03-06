@@ -27,17 +27,23 @@ add_library(GameEngineDevice STATIC
     ${SOURCES_BINK}
 )
 
-target_include_directories(GameEngineDevice PRIVATE
+target_include_directories(GameEngineDevice PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/../Libraries/Include
 )
 
-target_link_libraries(GameEngineDevice PRIVATE WW3D2 GameEngine)
+target_include_directories(GameEngineDevice PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../Main
+)
+
+target_link_libraries(GameEngineDevice PUBLIC WW3D2 GameEngine BrowserDispatch)
 
 if (SAGE_USE_MILES)
-    target_link_libraries(GameEngineDevice PRIVATE milesstub)
+    # TODO: this shouldnt have to be public. Fix Win32GameEngine.h
+    target_link_libraries(GameEngineDevice PUBLIC milesstub)
 endif()
 
 if (SAGE_USE_BINK)
-    target_link_libraries(GameEngineDevice PRIVATE binkstub)
+    # TODO: this shouldnt have to be public. Fix Win32GameEngine.h
+    target_link_libraries(GameEngineDevice PUBLIC binkstub)
 endif()

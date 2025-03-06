@@ -39,6 +39,19 @@
 #include "Common/AsciiString.h"
 
 //------------------------------------------------------------------------------------------------- 
+/**
+	Note that NameKeyType isn't a "real" enum, but an enum type used to enforce the
+	fact that NameKeys are really magic cookies, and aren't really interchangeable
+	with ints. NAMEKEY_INVALID is always a legal value, but all other values are dynamically
+	determined at runtime. (The generated code is basically identical, of course.)
+*/
+//------------------------------------------------------------------------------------------------- 
+enum NameKeyType
+{
+	NAMEKEY_INVALID = 0,
+	NAMEKEY_MAX = 1 << 23,					// max ordinal value of a NameKey (some code relies on these fitting into 24 bits safely)
+	FORCE_NAMEKEYTYPE_LONG = 0x7fffffff	// a trick to ensure the NameKeyType is a 32-bit int
+};
 
 //-------------------------------------------------------------------------------------------------
 /** A bucket entry for the name key generator */

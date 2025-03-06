@@ -2022,7 +2022,7 @@ void GarrisonContain::loadStationGarrisonPoints( void )
 
     m_stationPointList.clear();// we are starting over... forget everything
 
-    for( t = 0; t < count; ++t )
+    for( int t = 0; t < count; ++t )
     {
       StationPointData tempStationPointData;
       tempStationPointData.position = tempBuffer[ t ];

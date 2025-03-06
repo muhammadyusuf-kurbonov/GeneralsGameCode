@@ -43,10 +43,6 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Snapshot;
 typedef Int Color;
-enum ObjectID : int;
-enum DrawableID : int;
-#include "KindOfTypes.h"
-enum ScienceType : int;
 class Matrix3D;
 
 // ------------------------------------------------------------------------------------------------

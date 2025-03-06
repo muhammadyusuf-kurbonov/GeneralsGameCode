@@ -50,10 +50,6 @@
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
-
-// FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
-enum ObjectID : int;
-
 // ------------------------------------------------------------------------------------------------
 /** This class is used to track objects as they exit our area of influence */
 // ------------------------------------------------------------------------------------------------

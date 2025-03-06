@@ -315,7 +315,7 @@ void PolygonTrigger::removePolygonTrigger(PolygonTrigger *pTrigger)
 		pPrev = pTrig;
 	}
 	DEBUG_ASSERTCRASH(pTrig, ("Attempting to remove a polygon not in the list."));
-	if (pTrig) {
+	if (PolygonTrigger * pTrig) {
 		if (pPrev) {
 			DEBUG_ASSERTCRASH(pTrigger==pPrev->m_nextPolygonTrigger, ("Logic errror.  jba."));
 			pPrev->m_nextPolygonTrigger = pTrig->m_nextPolygonTrigger;

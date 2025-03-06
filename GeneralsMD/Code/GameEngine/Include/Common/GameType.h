@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals Zero Hour(tm)
+**	Command & Conquer Generals(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -36,6 +36,20 @@
 // the default size of the world map
 #define DEFAULT_WORLD_WIDTH		64
 #define DEFAULT_WORLD_HEIGHT	64
+
+/// A unique, generic "identifier" used to access Objects.
+enum ObjectID
+{
+	INVALID_ID = 0,
+	FORCE_OBJECTID_TO_LONG_SIZE = 0x7ffffff
+};
+
+/// A unique, generic "identifier" used to access Drawables.
+enum DrawableID
+{
+	INVALID_DRAWABLE_ID = 0,
+	FORCE_DRAWABLEID_TO_LONG_SIZE = 0x7ffffff
+};
 
 /// A unique, generic "identifier" used to identify player specified formations.
 enum FormationID
@@ -179,4 +193,3 @@ enum PathfindLayerEnum {LAYER_INVALID = 0, LAYER_GROUND = 1, LAYER_WALL = 15, LA
 //-------------------------------------------------------------------------------------------------
 
 #endif // _GAME_TYPE_H_
-

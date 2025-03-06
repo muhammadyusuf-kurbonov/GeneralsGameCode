@@ -64,33 +64,9 @@ class STLSpecialAlloc;
 
 // FORWARD DECLARATIONS
 class Object;
-/**
-	Note that NameKeyType isn't a "real" enum, but an enum type used to enforce the
-	fact that NameKeys are really magic cookies, and aren't really interchangeable
-	with ints. NAMEKEY_INVALID is always a legal value, but all other values are dynamically
-	determined at runtime. (The generated code is basically identical, of course.)
-*/
-//------------------------------------------------------------------------------------------------- 
-enum NameKeyType : int
-{
-	NAMEKEY_INVALID					= 0,
-	NAMEKEY_MAX							= 1<<23,					// max ordinal value of a NameKey (some code relies on these fitting into 24 bits safely)
-	FORCE_NAMEKEYTYPE_LONG	= 0x7fffffff	// a trick to ensure the NameKeyType is a 32-bit int
-};
-
-/// A unique, generic "identifier" used to access Objects.
-enum ObjectID : int
-{
-	INVALID_ID = 0,
-	FORCE_OBJECTID_TO_LONG_SIZE = 0x7ffffff
-};
-
-/// A unique, generic "identifier" used to access Drawables.
-enum DrawableID : int
-{
-	INVALID_DRAWABLE_ID = 0,
-	FORCE_DRAWABLEID_TO_LONG_SIZE = 0x7ffffff
-};
+enum NameKeyType;
+enum ObjectID;
+enum DrawableID;
 
 #undef min
 #undef max

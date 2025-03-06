@@ -38,13 +38,13 @@
 
 // Define which libraries to use. 
 #if defined(_INTERNAL)
-#  pragma comment (lib,"profileinternal.lib")
-#elif defined(_DEBUG)
-#  pragma comment (lib,"profiledebug.lib")
-#elif defined(_PROFILE)
-#  pragma comment (lib,"profileprofile.lib")
-#else
-#  pragma comment (lib,"profile.lib")
+// #  pragma comment (lib,"profileinternal.lib")
+// #elif defined(_DEBUG)
+// #  pragma comment (lib,"profiledebug.lib")
+// #elif defined(_PROFILE)
+// #  pragma comment (lib,"profileprofile.lib")
+// #else
+// #  pragma comment (lib,"profile.lib")
 #endif
 
 // include all our public header files (use double quotes here)

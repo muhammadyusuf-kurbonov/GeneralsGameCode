@@ -19,7 +19,15 @@ if(UNIX)
     list(REMOVE_ITEM SOURCES_GAMECLIENT ${CMAKE_CURRENT_SOURCE_DIR}/Source/GameClient/GUI/IMEManager.cpp)
 endif()
 
-add_library(GameEngine STATIC ${SOURCES_COMMON} ${SOURCES_GAMECLIENT})
+file(GLOB_RECURSE SOURCES_GAMELOGIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/GameLogic/*.cpp
+)
+
+file(GLOB_RECURSE SOURCES_GAMENETWORK
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/GameNetwork/*.cpp
+)
+
+add_library(GameEngine STATIC ${SOURCES_COMMON} ${SOURCES_GAMECLIENT} ${SOURCES_GAMELOGIC} ${SOURCES_GAMENETWORK})
 
 target_include_directories(GameEngine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Include
@@ -32,7 +40,7 @@ target_include_directories(GameEngine PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../Libraries/Source/WWVegas
 )
 
-target_link_libraries(GameEngine PUBLIC WWLib)
+target_link_libraries(GameEngine PUBLIC WWLib WWMath)
 target_link_libraries(GameEngine PRIVATE Compression)
 
 if(WIN32)
