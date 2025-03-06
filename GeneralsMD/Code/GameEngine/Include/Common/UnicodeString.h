@@ -81,23 +81,6 @@ class AsciiString;
 	UnicodeStrings are suitable for use as automatic, member, or static variables.
 */
 
-// TODO: Careful, Linux wchar_t is 4 bytes, Windows wchar_t is 2 bytes
-// Make sure, whatever EA did does not rely on wchar_t being 2 bytes
-#include <wchar.h>
-#include <wctype.h>
-
-#ifndef _WIN32
-static int _wcsicmp(const wchar_t* s1, const wchar_t* s2)
-{
-	while (*s1 && *s2 && towlower(*s1) == towlower(*s2))
-	{
-		s1++;
-		s2++;
-	}
-	return towlower(*s1) - towlower(*s2);
-}
-#endif
-
 class UnicodeString
 {
 private:

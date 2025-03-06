@@ -54,13 +54,17 @@ typedef signed int      sint;
 typedef float				float32;
 typedef double				float64;
 
+#ifdef _WIN32
 typedef unsigned long        DWORD;
+#endif
 typedef unsigned short	WORD;
 typedef unsigned char   BYTE;
 typedef int             BOOL;
 typedef unsigned short	USHORT;
 typedef const char *		LPCSTR;
 typedef unsigned int    UINT;
+#ifdef _WIN32
 typedef unsigned long        ULONG;
+#endif
 
 #endif //BITTYPE_H

@@ -58,13 +58,6 @@
 
 class UnicodeString;
 
-#ifndef _WIN32
-#define _stricmp strcasecmp
-#define stricmp strcasecmp
-#define _strnicmp strncasecmp
-#define strnicmp strncasecmp
-#endif
-
 // -----------------------------------------------------
 /**
 	AsciiString is the fundamental single-byte string type used in the Generals

@@ -65,7 +65,7 @@
 #include "matrix3.h"
 #include "matrix4.h"
 #include "quat.h"
-#ifdef _WIN32
+#ifndef SAGE_USE_GLM
 #include <d3dx8math.h>
 #else
 #include <glm/glm.hpp>
@@ -521,7 +521,7 @@ void Matrix3D::Get_Inverse(Matrix3D & inv) const
 	// TODO: Implement the general purpose inverse function here (once we need it :-)
 	//Get_Orthogonal_Inverse(inv);
 
-#ifdef _WIN32
+#ifndef SAGE_USE_GLM
 	Matrix4x4	mat4(*this);
 	Matrix4x4	mat4Inv;
 
