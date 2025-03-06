@@ -48,8 +48,9 @@ void StackDumpFromAddresses(void**addresses, unsigned int count, void (*callback
 
 void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* linenumber, unsigned int* address);
 
+struct _EXCEPTION_POINTERS;
 // Dumps out the exception info and stack trace.
-void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info );
+void DumpExceptionInfo( unsigned int u, _EXCEPTION_POINTERS* e_info );
 
 #else
 

@@ -28,7 +28,15 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#ifdef _WIN32
 #include <winsock.h>	// This one has to be here. Prevents collisions with windsock2.h
+#else
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#endif
 
 #include "GameNetwork/GameSpy/PingThread.h"
 #include "mutex.h"
@@ -248,14 +256,17 @@ AsciiString Pinger::getPingString( Int timeout )
 void PingThreadClass::Thread_Function()
 {
 	try {
+#ifdef _WIN32
 	_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
-	PingRequest req;
 
 	WSADATA wsaData;
 
 	// Fire up winsock (prob already done, but doesn't matter)
 	WORD wVersionRequested = MAKEWORD(1, 1);
 	WSAStartup( wVersionRequested, &wsaData );
+
+#endif
+	PingRequest req;
 
 	while ( running )
 	{
@@ -274,7 +285,7 @@ void PingThreadClass::Thread_Function()
 			}
 			else
 			{
-				HOSTENT *hostStruct;
+				hostent *hostStruct;
 				in_addr *hostNode;
 				hostStruct = gethostbyname(hostnameBuffer);
 				if (hostStruct == NULL)
@@ -322,7 +333,9 @@ void PingThreadClass::Thread_Function()
 		Switch_Thread();
 	}
 
+#ifdef _WIN32
 	WSACleanup();
+#endif
 	} catch ( ... ) {
 		DEBUG_CRASH(("Exception in ping thread!"));
 	}
@@ -335,6 +348,7 @@ void PingThreadClass::Thread_Function()
 //-------------------------------------------------------------------------
 //-------------------------------------------------------------------------
 
+#ifdef _WIN32
 HANDLE WINAPI IcmpCreateFile(VOID); /* INVALID_HANDLE_VALUE on error */
 BOOL WINAPI IcmpCloseHandle(HANDLE IcmpHandle); /* FALSE on error */
 
@@ -380,6 +394,7 @@ DWORD WINAPI IcmpSendEcho(
    DWORD ReplySize,     /* length of reply (must allow at least 1 reply) */
    DWORD Timeout       /* time in milliseconds to wait for reply */
 );
+#endif
 
 
 #define IP_STATUS_BASE 11000
@@ -418,6 +433,10 @@ DWORD WINAPI IcmpSendEcho(
 
 Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
 {
+#ifndef _WIN32
+#pragma message ("doPing() not implemented for non-Windows platforms")
+	 return -1;
+#else
    /*
     * Initialize default settings 
     */
@@ -569,6 +588,7 @@ cleanup:
       FreeLibrary((HINSTANCE)hICMP_DLL);
 
    return pingTime;
+#endif
 }
 
 

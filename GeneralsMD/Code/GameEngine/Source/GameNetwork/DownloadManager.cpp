@@ -49,6 +49,7 @@ DownloadManager::DownloadManager()
 
 	// ----- Initialize Winsock -----
 	m_winsockInit = true;
+#ifdef _WIN32
 	WORD verReq = MAKEWORD(2, 2);
 	WSADATA wsadata;
 
@@ -65,6 +66,7 @@ DownloadManager::DownloadManager()
 			m_winsockInit = false;
 		}
 	}
+#endif
 
 }
 
@@ -73,7 +75,9 @@ DownloadManager::~DownloadManager()
 	delete m_download;
 	if (m_winsockInit)
 	{
+#ifdef _WIN32
 		WSACleanup();
+#endif
 		m_winsockInit = false;
 	}
 }

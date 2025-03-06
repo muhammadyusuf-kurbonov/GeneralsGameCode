@@ -259,4 +259,9 @@ template <class T> T max(T a,T b)
 #define size_of(typ,id) sizeof(((typ*)0)->id)
 #endif
 
+// Register keyword is invalid in C++17
+#if __cplusplus >= 201703L
+#define register
+#endif
+
 #endif

@@ -28,7 +28,15 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#ifdef _WIN32
 #include <winsock.h>	// This one has to be here. Prevents collisions with winsock2.h
+#else
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#endif
 
 #include "GameNetwork/GameSpy/GameResultsThread.h"
 #include "mutex.h"
@@ -210,14 +218,17 @@ Bool GameResultsQueue::areGameResultsBeingSent( void )
 void GameResultsThreadClass::Thread_Function()
 {
 	try {
+#ifdef _WIN32
 	_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
-	GameResultsRequest req;
 
 	WSADATA wsaData;
 
 	// Fire up winsock (prob already done, but doesn't matter)
 	WORD wVersionRequested = MAKEWORD(1, 1);
 	WSAStartup( wVersionRequested, &wsaData );
+#endif
+
+	GameResultsRequest req;
 
 	while ( running )
 	{
@@ -236,7 +247,7 @@ void GameResultsThreadClass::Thread_Function()
 			}
 			else
 			{
-				HOSTENT *hostStruct;
+				hostent *hostStruct;
 				in_addr *hostNode;
 				hostStruct = gethostbyname(hostnameBuffer);
 				if (hostStruct == NULL)
@@ -264,7 +275,9 @@ void GameResultsThreadClass::Thread_Function()
 		Switch_Thread();
 	}
 
+#ifdef _WIN32
 	WSACleanup();
+#endif
 	} catch ( ... ) {
 		DEBUG_CRASH(("Exception in results thread!"));
 	}
@@ -360,6 +373,7 @@ Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port,
 	sockAddr.sin_addr.s_addr = IP;
 	sockAddr.sin_port = htons(port);
 
+#ifdef _WIN32
 	// Start the connection process....
 	if( connect( sock, (struct sockaddr *)&sockAddr, sizeof( sockAddr ) ) == -1 )
 	{
@@ -386,6 +400,34 @@ Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port,
 	}
 
 	closesocket(sock);
+#else
+	// Start the connection process....
+	if( connect( sock, (struct sockaddr *)&sockAddr, sizeof( sockAddr ) ) == -1 )
+	{
+		error = errno;
+		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - connect() returned %d(%s)\n", error, strerror(error)));
+		if( ( error == EWOULDBLOCK ) || ( error == EINVAL ) || ( error == EALREADY ) )
+		{
+			return( -1 );
+		}
+
+		if( error != EISCONN )
+		{
+			close( sock );
+			return( -1 );
+		}
+	}
+
+	if (send( sock, results.c_str(), results.length(), 0 ) == -1)
+	{
+		error = errno;
+		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - send() returned %d(%s)\n", error, strerror(error)));
+		close(sock);
+		return error;
+	}
+
+	close(sock);
+#endif
 
 	return results.length();
 }

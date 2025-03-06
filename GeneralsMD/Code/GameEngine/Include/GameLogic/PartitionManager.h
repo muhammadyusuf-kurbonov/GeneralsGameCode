@@ -1223,6 +1223,17 @@ protected:
 #endif
 };
 
+// Required to be able to use in friend declaration
+static void hLineAddLooker(Int x1, Int x2, Int y, void *playerIndex);
+static void hLineRemoveLooker(Int x1, Int x2, Int y, void *playerIndex);
+static void hLineAddShrouder(Int x1, Int x2, Int y, void *playerIndex);
+static void hLineRemoveShrouder(Int x1, Int x2, Int y, void *playerIndex);
+
+static void hLineAddThreat(Int x1, Int x2, Int y, void *threatValueParms);
+static void hLineRemoveThreat(Int x1, Int x2, Int y, void *threatValueParms);
+static void hLineAddValue(Int x1, Int x2, Int y, void *threatValueParms);
+static void hLineRemoveValue(Int x1, Int x2, Int y, void *threatValueParms);
+
 //=====================================
 /** 
 	PartitionManager is the singleton class that manages the entire partition/collision

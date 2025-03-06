@@ -121,7 +121,7 @@ private:
 	std::string m_nick, m_email, m_pass;
 };
 
-static enum CallbackType
+enum CallbackType
 {
 	CALLBACK_CONNECT,
 	CALLBACK_ERROR,
@@ -133,7 +133,7 @@ static enum CallbackType
 
 void callbackWrapper( GPConnection *con, void *arg, void *param )
 {
-	CallbackType info = (CallbackType)(Int)param;
+	CallbackType info = (CallbackType)(uintptr_t)param;
 	BuddyThreadClass *thread = MESSAGE_QUEUE->getThread() ? MESSAGE_QUEUE->getThread() : NULL /*(TheGameSpyBuddyMessageQueue)?TheGameSpyBuddyMessageQueue->getThread():NULL*/;
 	if (!thread)
 		return;
@@ -267,7 +267,9 @@ GPProfile GameSpyBuddyMessageQueue::getLocalProfileID( void )
 void BuddyThreadClass::Thread_Function()
 {
 	try {
+#ifdef _WIN32
 	_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
+#endif
 	GPConnection gpCon;
 	GPConnection *con = &gpCon;
 	gpInitialize( con, 0, 0 ,0 );
@@ -308,8 +310,7 @@ void BuddyThreadClass::Thread_Function()
 				break;
 			case BuddyRequest::BUDDYREQUEST_DELETEACCT:
 				m_isdeleting =  true;
-				// TheSuperHackers @tweak OmniBlade API was updated since Generals released to require a callback. Passing -1 will make our wrapper ignore this.
-				gpDeleteProfile( con, callbackWrapper, (void *)(-1) );
+				gpDeleteProfile( con, NULL, NULL );
 				break;
 			case BuddyRequest::BUDDYREQUEST_LOGOUT:
 				m_isConnecting = m_isConnected = false;
@@ -326,12 +327,13 @@ void BuddyThreadClass::Thread_Function()
 				{
 					m_isConnecting = true;
 					m_nick = incomingRequest.arg.login.nick;
+					// uniquenick and email
 					m_email = incomingRequest.arg.login.email;
 					m_pass = incomingRequest.arg.login.password;
 					m_isNewAccount = TRUE;
-					// TheSuperHackers @tweak OmniBlade API was updated since Generals release to require uniquenick which is the same as nick and cdkey is an empty string here.
-					m_isConnected = (gpConnectNewUser( con, incomingRequest.arg.login.nick, incomingRequest.arg.login.nick, incomingRequest.arg.login.email,
-						incomingRequest.arg.login.password, "", (incomingRequest.arg.login.hasFirewall)?GP_FIREWALL:GP_NO_FIREWALL,
+					m_isConnected = (gpConnectNewUser( con, incomingRequest.arg.login.nick, incomingRequest.arg.login.email,
+						NULL, NULL,
+						incomingRequest.arg.login.password, (incomingRequest.arg.login.hasFirewall)?GP_FIREWALL:GP_NO_FIREWALL,
 						GP_BLOCKING, callbackWrapper, (void *)CALLBACK_CONNECT ) == GP_NO_ERROR);
 					if (m_isNewAccount) // if we didn't re-login
 					{

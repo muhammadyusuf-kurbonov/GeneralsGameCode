@@ -33,6 +33,12 @@ list(REMOVE_ITEM SOURCES_GAMENETWORK
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/GameNetwork/GameSpyGP.cpp
 )
 
+if(UNIX)
+# Currently using a header-only stub for UNIX, excluded from build otherwise,
+# as it relies on OLE
+    list(REMOVE_ITEM SOURCES_GAMENETWORK ${CMAKE_CURRENT_SOURCE_DIR}/Source/GameNetwork/WOLBrowser/WebBrowser.cpp)
+endif()
+
 add_library(GameEngine STATIC ${SOURCES_COMMON} ${SOURCES_GAMECLIENT} ${SOURCES_GAMELOGIC} ${SOURCES_GAMENETWORK})
 
 target_include_directories(GameEngine PUBLIC
