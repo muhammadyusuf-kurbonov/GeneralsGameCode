@@ -27,6 +27,12 @@ file(GLOB_RECURSE SOURCES_GAMENETWORK
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/GameNetwork/*.cpp
 )
 
+list(REMOVE_ITEM SOURCES_GAMENETWORK 
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/GameNetwork/GameSpyChat.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/GameNetwork/GameSpyGameInfo.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/GameNetwork/GameSpyGP.cpp
+)
+
 add_library(GameEngine STATIC ${SOURCES_COMMON} ${SOURCES_GAMECLIENT} ${SOURCES_GAMELOGIC} ${SOURCES_GAMENETWORK})
 
 target_include_directories(GameEngine PUBLIC
