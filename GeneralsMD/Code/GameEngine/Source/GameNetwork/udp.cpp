@@ -47,6 +47,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#else
+#define socklen_t int
 #endif
 
 //-------------------------------------------------------------------------
