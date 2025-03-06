@@ -41,6 +41,7 @@
 #define CRC_H
 
 #include	<stdlib.h>
+#include	<stdint.h>
 #ifdef _UNIX
 	#include "osdep.h"
 #endif

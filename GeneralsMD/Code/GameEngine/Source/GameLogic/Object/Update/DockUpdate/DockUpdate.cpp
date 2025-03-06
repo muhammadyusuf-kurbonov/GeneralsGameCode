@@ -174,7 +174,7 @@ Bool DockUpdate::reserveApproachPosition( Object* docker, Coord3D *position, Int
 
 		loadDockPositions();// refresh this new one
 
-		positionIndex = m_approachPositionOwners.size() - 1;// The new last spot
+		Int positionIndex = m_approachPositionOwners.size() - 1;// The new last spot
 		m_approachPositionOwners[positionIndex] = dockerID;
 		*position = computeApproachPosition( positionIndex, docker );
 		*index = positionIndex;

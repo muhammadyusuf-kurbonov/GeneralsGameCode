@@ -41,6 +41,8 @@
 #ifndef BITTYPE_H
 #define BITTYPE_H
 
+#include <stdint.h>
+
 typedef unsigned char	uint8;
 typedef unsigned short	uint16;
 typedef uint32_t	      uint32;
