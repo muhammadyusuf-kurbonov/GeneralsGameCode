@@ -608,7 +608,7 @@ private: \
 	
 // ----------------------------------------------------------------------------
 #define MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS) \
-protected: \
+public: \
 	virtual ~ARGCLASS(); \
 public: \
 	enum ARGCLASS##MagicEnum { ARGCLASS##_GLUE_NOT_IMPLEMENTED = 0 }; \
