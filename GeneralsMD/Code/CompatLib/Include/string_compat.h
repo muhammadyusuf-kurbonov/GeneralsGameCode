@@ -6,12 +6,15 @@
 typedef const char* LPCSTR;
 typedef char* LPSTR;
 
+extern "C"
+{
 char* itoa(int value, char* str, int base);
 
 int _vsnwprintf(wchar_t* buffer, size_t count, const wchar_t* format, va_list args);
+char* _strlwr(char* str);
+}
 #define _vsnprintf vsnprintf
-char* strlwr(char* str);
-#define _strlwr strlwr
+#define strlwr _strlwr
 
 #define lstrcmpi strcasecmp
 #define _stricmp strcasecmp
