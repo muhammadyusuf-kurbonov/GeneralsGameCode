@@ -59,6 +59,10 @@ class HackInternetAIInterface;
 class AssaultTransportAIInterface;
 class JetAIUpdate;
 
+enum AIStateType : int;
+enum ObjectID : int;
+
+
 //-------------------------------------------------------------------------------------------------
 const Real FAST_AS_POSSIBLE = 999999.0f;
 

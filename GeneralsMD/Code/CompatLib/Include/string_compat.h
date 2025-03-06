@@ -14,3 +14,7 @@ char* strlwr(char* str);
 #define _strlwr strlwr
 
 #define lstrcmpi strcasecmp
+#define _stricmp strcasecmp
+#define stricmp strcasecmp
+#define _strnicmp strncasecmp
+#define strnicmp strncasecmp

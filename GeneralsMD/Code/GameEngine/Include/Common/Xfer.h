@@ -43,6 +43,9 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Snapshot;
 typedef Int Color;
+enum ObjectID : int;
+enum DrawableID : int;
+enum KindOfType: int;
 class Matrix3D;
 
 // ------------------------------------------------------------------------------------------------
