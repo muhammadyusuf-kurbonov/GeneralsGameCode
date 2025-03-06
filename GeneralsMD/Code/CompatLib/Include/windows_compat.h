@@ -1,10 +1,15 @@
 #pragma once
 
-// If on x86, define the following types
-#if defined(_M_IX86) || defined(_M_X64)
-#define CALLBACK __stdcall
-#else
+#ifndef CALLBACK
 #define CALLBACK
+#endif
+
+#if !defined(__stdcall)
+#define __stdcall
+#endif
+
+#ifndef WINAPI
+#define WINAPI
 #endif
 
 #if !defined _MSC_VER

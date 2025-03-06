@@ -4,6 +4,9 @@ project(
   VERSION 0.1
   LANGUAGES C CXX)
 
+# Required for filesystem
+set(CMAKE_CXX_STANDARD 17)
+
 option(SAGE_BUILD_GENERALS "Build the C&C Generals game" OFF)
 option(SAGE_BUILD_ZEROHOUR "Build the C&C Generals Zero Hour game" ON)
 option(SAGE_BUILD_TOOLS "Build the tools" ON)

@@ -14,3 +14,10 @@ class CComModule
 };
 
 bool GetModuleFileName(HINSTANCE hInstance, char* buffer, int size);
+
+typedef uintptr_t (*FARPROC)();
+typedef HANDLE HMODULE;
+
+HMODULE LoadLibrary(const char* lpFileName);
+FARPROC GetProcAddress(HMODULE hModule, const char* lpProcName);
+void FreeLibrary(HMODULE hModule);
