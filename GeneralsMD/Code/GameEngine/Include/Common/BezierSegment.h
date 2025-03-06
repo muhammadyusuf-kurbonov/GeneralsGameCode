@@ -33,8 +33,10 @@
 
 #ifdef _WIN32
 #include <d3dx8math.h>
+#elif defined(SAGE_USE_GLM)
+#include <glm/glm.hpp>
 #else
-#include <d3dx9math.h>
+#error "Missing a math library"
 #endif
 #include "Common/STLTypedefs.h"
 
@@ -43,7 +45,11 @@
 class BezierSegment
 {
 	protected:
+#ifndef SAGE_USE_GLM
 		static const D3DXMATRIX s_bezBasisMatrix;
+#else // SAGE_USE_GLM
+		static const glm::mat4 s_bezBasisMatrix;
+#endif
 		Coord3D m_controlPoints[4];
 
 	public:	// Constructors
