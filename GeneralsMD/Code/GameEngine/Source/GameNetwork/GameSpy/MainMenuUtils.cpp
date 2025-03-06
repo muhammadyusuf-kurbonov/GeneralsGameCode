@@ -316,7 +316,7 @@ static void queuePatch(Bool mandatory, AsciiString downloadURL)
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
-															char * buffer, GHTTPByteCount bufferLen, void * param )
+															char * buffer, GHTTPByteCount  bufferLen, void * param )
 {
 	Int run = (uintptr_t)param;
 	if (run != timeThroughOnline)
@@ -356,7 +356,7 @@ static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
-																char * buffer, GHTTPByteCount bufferLen, void * param )
+								char * buffer, GHTTPByteCount  bufferLen, void * param )
 {
 	Int run = (uintptr_t)param;
 	if (run != timeThroughOnline)
@@ -421,7 +421,7 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
-																		char * buffer, GHTTPByteCount bufferLen, void * param )
+									 char * buffer, GHTTPByteCount bufferLen, void * param )
 {
 	Int run = (uintptr_t)param;
 	if (run != timeThroughOnline)
@@ -508,7 +508,7 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
+static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount  bufferLen, void * param )
 {
 	Int run = (uintptr_t)param;
 	if (run != timeThroughOnline)
