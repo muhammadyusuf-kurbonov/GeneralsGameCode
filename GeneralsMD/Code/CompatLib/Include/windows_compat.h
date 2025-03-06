@@ -7,12 +7,41 @@
 #define CALLBACK
 #endif
 
+#if !defined _MSC_VER
+#if !defined(__cdecl)
+#if defined __has_attribute && __has_attribute(cdecl) && defined(__i386__)
+#define __cdecl __attribute__((cdecl))
+#else
+#define __cdecl
+#endif
+#endif /* !defined __cdecl */
+#endif
+
+#ifndef __forceinline
+#if defined __has_attribute && __has_attribute(always_inline)
+#define __forceinline __attribute__((always_inline))
+#else
+#define __forceinline inline
+#endif
+#endif
+
 static unsigned int GetDoubleClickTime()
 {
   return 500;
 }
 
 #include "types_compat.h"
+
+#ifndef _lrotl
+static inline uint32_t _lrotl(uint32_t value, int shift)
+{
+#ifdef __clang__
+	return __builtin_rotateleft32(value, shift);
+#else
+	return ((value << shift) | (value >> (32 - shift)));
+#endif
+}
+#endif
 
 #include "thread_compat.h"
 #include "tchar_compat.h"

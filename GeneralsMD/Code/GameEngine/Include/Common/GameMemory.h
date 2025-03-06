@@ -642,7 +642,7 @@ protected: \
 		instead -- it'd be nice if we could catch this at compile time, but catching it at \
 		runtime seems to be the best we can do... \
 	*/ \
-	inline void *operator new(size_t s) throw(ErrorCode) \
+	inline void *operator new(size_t s) \
 	{ \
 		DEBUG_CRASH(("This operator new should normally never be called... please use new(char*) instead.")); \
 		DEBUG_ASSERTCRASH(s == sizeof(ARGCLASS), ("The wrong operator new is being called; ensure all objects in the hierarchy have MemoryPoolGlue set up correctly")); \
@@ -684,7 +684,7 @@ protected: \
 public: \
 	enum ARGCLASS##MagicEnum { ARGCLASS##_GLUE_NOT_IMPLEMENTED = 0 }; \
 protected: \
-	inline void *operator new(size_t s, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2) throw(ErrorCode) \
+	inline void *operator new(size_t s, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2) \
 	{ \
 		DEBUG_CRASH(("this should be impossible to call (abstract base class)")); \
 		DEBUG_ASSERTCRASH(s == sizeof(ARGCLASS), ("The wrong operator new is being called; ensure all objects in the hierarchy have MemoryPoolGlue set up correctly")); \
@@ -697,7 +697,7 @@ protected: \
 		DEBUG_CRASH(("this should be impossible to call (abstract base class)")); \
 	} \
 protected: \
-	inline void *operator new(size_t s) throw(ErrorCode) \
+	inline void *operator new(size_t s) \
 	{ \
 		DEBUG_CRASH(("this should be impossible to call (abstract base class)")); \
 		DEBUG_ASSERTCRASH(s == sizeof(ARGCLASS), ("The wrong operator new is being called; ensure all objects in the hierarchy have MemoryPoolGlue set up correctly")); \

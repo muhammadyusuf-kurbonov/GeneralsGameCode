@@ -42,32 +42,12 @@
 
 #include <assert.h>
 
+#ifndef _WIN32
+#include "windows_compat.h"
+#endif
+
 // Disable warning about exception handling not being enabled. It's used as part of STL - in a part of STL we don't use.
 #pragma warning(disable : 4530)
-
-#ifndef _WIN32
-// Attribute gets ignored anyways by compiler
-#define __cdecl //__attribute((cdecl))
-#include <stddef.h>
-#endif
-#include <stdint.h>
-
-#ifndef __forceinline
-#define __forceinline inline
-#endif
-
-#ifndef _WINDOWS
-#ifndef _lrotl
-static inline uint32_t _lrotl(uint32_t value, int shift)
-{
-#ifdef __clang__
-	return __builtin_rotateleft32(value, shift);
-#else
-	return ((value << shift) | (value >> (32 - shift)));
-#endif
-}
-#endif
-#endif
 
 /*
 ** Define for debug memory allocation to include __FILE__ and __LINE__ for every memory allocation.
@@ -277,10 +257,6 @@ template <class T> T max(T a,T b)
 
 #ifndef size_of
 #define size_of(typ,id) sizeof(((typ*)0)->id)
-#endif
-
-#ifndef _WIN32
-#include "windows_compat.h"
 #endif
 
 #endif
