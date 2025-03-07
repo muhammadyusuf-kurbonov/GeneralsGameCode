@@ -17,7 +17,7 @@ file(GLOB_RECURSE SOURCES_W3DDevice
 )
 
 file(GLOB_RECURSE SOURCES_WIN32Device
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/W3DDevice/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Win32Device/*.cpp
 )
 
 add_library(GameEngineDevice STATIC 
@@ -36,7 +36,7 @@ target_include_directories(GameEngineDevice PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../Main
 )
 
-target_link_libraries(GameEngineDevice PUBLIC WW3D2 GameEngine BrowserDispatch)
+target_link_libraries(GameEngineDevice PUBLIC WW3D2 WWShade GameEngine BrowserDispatch)
 
 if (SAGE_USE_MILES)
     # TODO: this shouldnt have to be public. Fix Win32GameEngine.h
