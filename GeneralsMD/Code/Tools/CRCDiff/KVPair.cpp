@@ -27,6 +27,7 @@
 #include "KVPair.h"
 #include "debug.h"
 #include <stdio.h>
+#include <cstring>
 
 std::string intToString(int val)
 {

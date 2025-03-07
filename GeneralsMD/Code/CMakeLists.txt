@@ -14,4 +14,5 @@ endif()
 
 if(SAGE_BUILD_TOOLS)
     add_subdirectory(Tools/Compress)
+    add_subdirectory(Tools/CRCDiff)
 endif()
