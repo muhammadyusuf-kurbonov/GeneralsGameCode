@@ -34,7 +34,7 @@
 
 // Comment out the following line to disable copy protection checks
 #ifdef _WIN32
-#define DO_COPY_PROTECTION
+//#define DO_COPY_PROTECTION
 #endif
 
 #ifdef DO_COPY_PROTECTION
