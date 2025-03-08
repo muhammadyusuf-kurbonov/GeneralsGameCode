@@ -49,12 +49,16 @@ void WriteStackLine(void*address, void (*callback)(const char*));
 static CONTEXT gsContext;
 static Bool gsInit=FALSE;
 
+#ifdef _WIN64
+BOOL (__stdcall *gsSymGetLineFromAddr)(IN  HANDLE,IN  DWORD64,OUT PDWORD64,OUT PIMAGEHLP_LINE);
+#else
 BOOL (__stdcall *gsSymGetLineFromAddr)(
 		IN  HANDLE                  hProcess,
 		IN  DWORD                   dwAddr,
 		OUT PDWORD                  pdwDisplacement,
 		OUT PIMAGEHLP_LINE          Line
 			);
+#endif
 
 
 //*****************************************************************************
@@ -124,8 +128,13 @@ BOOL InitSymbolInfo()
 	// We use GetProcAddress to stop link failures at dll loadup
 	HINSTANCE hInstDebugHlp = GetModuleHandle("dbghelp.dll");
 
+#ifdef _WIN64
+	gsSymGetLineFromAddr = (BOOL (__stdcall *)(	IN  HANDLE,IN  DWORD64,OUT PDWORD64,OUT PIMAGEHLP_LINE))
+							GetProcAddress(hInstDebugHlp , "SymGetLineFromAddr64");
+#else
 	gsSymGetLineFromAddr = (BOOL (__stdcall *)(	IN  HANDLE,IN  DWORD,OUT PDWORD,OUT PIMAGEHLP_LINE))
 							GetProcAddress(hInstDebugHlp , "SymGetLineFromAddr");
+#endif
 
 	char pathname[_MAX_PATH+1];
 	char drive[10];
@@ -276,7 +285,11 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
 		*address = 0xFFFFFFFF;
 	}
 
+#ifdef _WIN64
+	DWORD64 displacement = 0;
+#else
 	ULONG displacement = 0;
+#endif
 
     HANDLE process = ::GetCurrentProcess();
 
@@ -585,6 +598,7 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	}
 
 	DOUBLE_DEBUG (("\nStack Dump:\n"));
+#ifndef _WIN64
 	StackDumpFromContext(context->Eip, context->Esp, context->Ebp, NULL);
 
 	DOUBLE_DEBUG (("\nDetails:\n"));
@@ -626,6 +640,7 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 
 	strcat (scrap, "\n");
 	DOUBLE_DEBUG ( ( (scrap)));
+#endif
   DEBUG_LOG(( "********** END EXCEPTION DUMP ****************\n\n" ));
 }																									 
 

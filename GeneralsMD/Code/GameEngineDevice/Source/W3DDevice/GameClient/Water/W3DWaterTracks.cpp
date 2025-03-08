@@ -80,7 +80,7 @@ WaterTracksRenderSystem *TheWaterTracksRenderSystem=NULL;	///< singleton for tra
 
 static Bool pauseWaves=FALSE;
 
-enum waveType
+enum waveType : int
 {
 	WaveTypeFirst,
 	WaveTypePond=WaveTypeFirst,
@@ -178,7 +178,7 @@ Int WaterTracksObj::freeWaterTracksResources(void)
 *	the specified texture.
  */
 //=============================================================================
-void WaterTracksObj::init( Real width, Real length, Vector2 &start, Vector2 &end, Char *texturename, Int waveTimeOffset)
+void WaterTracksObj::init( Real width, Real length, const Vector2 &start, const Vector2 &end, Char *texturename, Int waveTimeOffset)
 {	
 	freeWaterTracksResources();	//free old resources used by this track
 
@@ -250,7 +250,7 @@ void WaterTracksObj::init( Real width, Real length, Vector2 &start, Vector2 &end
 *	defines the maximum distance the wave will reach.
  */
 //=============================================================================
-void WaterTracksObj::init( Real width, Vector2 &start, Vector2 &end, Char *texturename)
+void WaterTracksObj::init( Real width, const Vector2 &start, const Vector2 &end, Char *texturename)
 {	
 	freeWaterTracksResources();	//free old resources used by this track
 	m_boundingSphere.Init(Vector3(0,0,0),400);

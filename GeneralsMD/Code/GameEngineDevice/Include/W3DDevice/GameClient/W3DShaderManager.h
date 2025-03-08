@@ -43,6 +43,7 @@ enum StaticGameLODLevel : int;
 enum ChipsetType : int;
 enum CpuType : int;
 enum GraphicsVenderID : int;
+enum FilterModes : int;
 
 class TextureClass;	///forward reference
 /** System for managing complex rendering settings which are either not handled by
