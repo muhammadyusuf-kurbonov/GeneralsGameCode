@@ -58,7 +58,7 @@ int CPUDetectClass::ProcessorFamily;
 int CPUDetectClass::ProcessorModel;
 int CPUDetectClass::ProcessorRevision;
 int CPUDetectClass::ProcessorSpeed;
-int64_t CPUDetectClass::ProcessorTicksPerSecond;	// Ticks per second
+sint64 CPUDetectClass::ProcessorTicksPerSecond;	// Ticks per second
 double CPUDetectClass::InvProcessorTicksPerSecond;	// 1.0 / Ticks per second
 
 unsigned CPUDetectClass::FeatureBits;
@@ -126,7 +126,7 @@ const char* CPUDetectClass::Get_Processor_Manufacturer_Name()
 
 #define ASM_RDTSC _asm _emit 0x0f _asm _emit 0x31
 
-static unsigned Calculate_Processor_Speed(int64_t& ticks_per_second)
+static unsigned Calculate_Processor_Speed(sint64& ticks_per_second)
 {
 	struct {
 		unsigned timer0_h;
@@ -163,8 +163,8 @@ static unsigned Calculate_Processor_Speed(int64_t& ticks_per_second)
 #endif
 	}
 
-	int64_t t=*(int64_t*)&Time.timer1_h-*(int64_t*)&Time.timer0_h;
-	ticks_per_second=(int64_t)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
+	sint64 t=*(sint64*)&Time.timer1_h-*(sint64*)&Time.timer0_h;
+	ticks_per_second=(sint64)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
 	return unsigned((double)t/(double)(elapsed*1000));
 }
 
