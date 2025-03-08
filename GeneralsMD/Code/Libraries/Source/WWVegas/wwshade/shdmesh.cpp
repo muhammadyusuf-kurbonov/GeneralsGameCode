@@ -630,7 +630,7 @@ WW3DErrorType ShdMeshClass::Load_W3D(ChunkLoadClass& cload)
 			
 			// assign each sub-mesh with a name in the format: <parentmesh>.<index>
 			StringClass tmp;
-			tmp.Format("%s.%d",Name,i);
+			tmp.Format("%s.%d",Name.Peek_Buffer(),i);
 			ssmesh->Set_Name(tmp);
 			
 			i++;

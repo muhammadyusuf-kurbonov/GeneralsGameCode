@@ -53,7 +53,7 @@
 #include <windows.h>
 #include	"assert.h"
 #include "cpudetect.h"
-#include	"except.h"
+#include	"Except.h"
 //#include "debug.h"
 #include "MPU.H"
 //#include "commando\nat.h"
@@ -124,8 +124,14 @@ typedef BOOL  (WINAPI *SymLoadModuleType) (HANDLE hProcess, HANDLE hFile, LPSTR 
 typedef DWORD (WINAPI *SymSetOptionsType) (DWORD SymOptions);
 typedef BOOL  (WINAPI *SymUnloadModuleType) (HANDLE hProcess, DWORD BaseOfDll);
 typedef BOOL  (WINAPI *StackWalkType) (DWORD MachineType, HANDLE hProcess, HANDLE hThread, LPSTACKFRAME StackFrame, LPVOID ContextRecord, PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine, PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine, PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine, PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
+#ifdef _WIN64
+typedef PVOID (WINAPI *SymFunctionTableAccessType) (HANDLE hProcess, DWORD64 AddrBase);
+typedef DWORD64 (WINAPI *SymGetModuleBaseType) (HANDLE hProcess, DWORD64 dwAddr);
+#pragma message ("Dumping exception info is not complete for 64-bit builds.")
+#else
 typedef LPVOID (WINAPI *SymFunctionTableAccessType) (HANDLE hProcess, DWORD AddrBase);
 typedef DWORD (WINAPI *SymGetModuleBaseType) (HANDLE hProcess, DWORD dwAddr);
+#endif
 
 
 static SymCleanupType							_SymCleanup = NULL;
@@ -466,6 +472,9 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	symptr->SizeOfStruct = sizeof (IMAGEHLP_SYMBOL);
 	symptr->MaxNameLength = 256-sizeof (IMAGEHLP_SYMBOL);
 	symptr->Size = 0;
+#ifdef _M_X64
+#define Eip Rip
+#endif
 	symptr->Address = context->Eip;
 
 	if (!IsBadCodePtr((FARPROC)context->Eip)) {
@@ -579,6 +588,7 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 
 	DebugString("Register dump...\n");
 
+#if defined(_M_IX86)
 	/*
 	** Dump the registers.
 	*/
@@ -639,6 +649,7 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 		sprintf(scrap, "   %+#.17e\r\n", fp_value);
 		Add_Txt(scrap);
 	}
+#endif
 
 	/*
 	** Dump the bytes at EIP. This will make it easier to match the crash address with later versions of the game.
@@ -667,6 +678,10 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	*/
 	DebugString("Stack dump...\n");
 	Add_Txt("Stack dump (* indicates possible code address) :\r\n");
+#ifdef _M_X64
+#define Esp Rsp
+#endif
+
 	unsigned long *stackptr = (unsigned long*) context->Esp;
 
 	for (int j=0 ; j<2048 ; j++) {
@@ -1245,6 +1260,10 @@ here:
 	stack_frame.AddrStack.Offset = reg_esp;
 	stack_frame.AddrFrame.Mode = AddrModeFlat;
 	stack_frame.AddrFrame.Offset = reg_ebp;
+
+#ifdef _M_X64
+#define Ebp Rbp
+#endif
 
 	/*
 	** Use the context struct if it was provided.

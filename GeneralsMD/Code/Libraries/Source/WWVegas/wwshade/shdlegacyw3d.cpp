@@ -497,7 +497,7 @@ void Shd6LegacyW3DClass::Apply_Instance(int cur_pass, RenderInfoClass& rinfo)
 
 	// set vertex shader
 	StringClass str;
-	SNAPSHOT_SAY(("legacyshader:DX8Wrapper::Set_Shader(%s)\n",Shaders[cur_pass].Get_Description(str)));
+	SNAPSHOT_SAY(("legacyshader:DX8Wrapper::Set_Shader(%s)\n",Shaders[cur_pass].Get_Description(str).Peek_Buffer()));
 	DX8Wrapper::Set_Shader(Shaders[cur_pass]);
 
 	DX8Wrapper::Set_Vertex_Shader(FVF);
@@ -506,7 +506,7 @@ void Shd6LegacyW3DClass::Apply_Instance(int cur_pass, RenderInfoClass& rinfo)
 	DX8Wrapper::Set_Material(Materials[cur_pass]);
 
 	for (int stage=0;stage<MeshMatDescClass::MAX_TEX_STAGES;++stage) {
-		SNAPSHOT_SAY(("legacyshader:DX8Wrapper::Set_Texture(%d,%s)\n",stage,Textures[cur_pass][stage] ? Textures[cur_pass][stage]->Get_Full_Path() : "NULL"));
+		SNAPSHOT_SAY(("legacyshader:DX8Wrapper::Set_Texture(%d,%s)\n",stage,Textures[cur_pass][stage] ? Textures[cur_pass][stage]->Get_Full_Path().Peek_Buffer() : "NULL"));
 		DX8Wrapper::Set_Texture(stage, Textures[cur_pass][stage]);
 	}
 }

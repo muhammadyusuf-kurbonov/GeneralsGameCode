@@ -827,7 +827,7 @@ void CPUDetectClass::Init_CPUID_Instruction()
    // because CodeWarrior seems to have problems with
    // the command (huh?)
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(_WIN64)
    __asm
    {
       mov cpuid_available, 0	// clear flag
@@ -931,7 +931,7 @@ bool CPUDetectClass::CPUID(
 	unsigned u_ecx;
 	unsigned u_edx;
 
-#ifdef WIN32
+#if defined(_WIN32) && !defined(_WIN64)
    __asm
    {
       pushad
@@ -948,6 +948,8 @@ bool CPUDetectClass::CPUID(
    }
 #elif defined(_UNIX)
 	__get_cpuid(cpuid_type, &u_eax, &u_ebx, &u_ecx, &u_edx);
+#else
+#pragma message("CPUID() not implemented for this platform")
 #endif
 
 	u_eax_=u_eax;
@@ -981,11 +983,7 @@ void CPUDetectClass::Init_Processor_Log()
 		(OSVersionBuildNumber&0xff000000)>>24,
 		(OSVersionBuildNumber&0xff0000)>>16,
 		(OSVersionBuildNumber&0xffff)));
-#ifdef WIN32
-   SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo));
-#elif defined(_UNIX)
-   SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo.Peek_Buffer()));
-#endif
+	SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo.Peek_Buffer()));
 
 	SYSLOG(("Processor: %s\r\n",CPUDetectClass::Get_Processor_String()));
 	SYSLOG(("Clock speed: ~%dMHz\r\n",CPUDetectClass::Get_Processor_Speed()));
@@ -996,11 +994,7 @@ void CPUDetectClass::Init_Processor_Log()
 	case 2: cpu_type="Dual"; break;
 	case 3: cpu_type="*Intel Reserved*"; break;
 	}
-#ifdef WIN32
-   SYSLOG(("Processor type: %s\r\n", cpu_type));
-#elif defined(_UNIX)
-   SYSLOG(("Processor type: %s\r\n", cpu_type.Peek_Buffer()));
-#endif
+	SYSLOG(("Processor type: %s\r\n", cpu_type.Peek_Buffer()));
 
 	SYSLOG(("\r\n"));
 
@@ -1292,6 +1286,7 @@ void Get_OS_Info(
 	case VER_PLATFORM_WIN32_NT:
 //		os_info.SubCode.Format("%d",build_sub);
 		os_info.SubCode="UNKNOWN";
+		os_info.Code="UNKNOWN";
 		if (OSVersionNumberMajor==4) {
 			os_info.Code="WINNT";
 			return;
@@ -1308,6 +1303,11 @@ void Get_OS_Info(
 			os_info.Code="WINXX";
 			return;
 		}
-		#endif
+		if (OSVersionNumberMajor == 6)
+		{
+			os_info.Code = "WIN8+";
+			return;
+		}
+#endif
 	}
 }

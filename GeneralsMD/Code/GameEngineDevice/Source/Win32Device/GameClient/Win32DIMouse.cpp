@@ -30,6 +30,13 @@
 #include "Win32Device/GameClient/Win32DIMouse.h"
 #include "WinMain.h"
 
+#ifdef __clang__
+// DIMOFS_BUTTON0 etc are macros to a field in an imaginary 0 pointer struct
+// Use offsetof to ensure the expression is evaluated as a constant
+#undef FIELD_OFFSET
+#define FIELD_OFFSET offsetof
+#endif
+
 // DEFINES ////////////////////////////////////////////////////////////////////////////////////////
 enum { MOUSE_BUFFER_SIZE = 256, };
 

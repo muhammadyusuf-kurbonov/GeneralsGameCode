@@ -26,7 +26,7 @@
 #include "always.h"
 #include "thread.h"
 
-#ifndef _WIN32
+#if !(defined (_WIN32) && !defined (_WIN64))
 #include <atomic>
 #endif
 
@@ -122,7 +122,7 @@ public:
 
 class FastCriticalSectionClass
 {
-	#ifdef _WIN32
+	#if defined (_WIN32) && !defined (_WIN64)
 	unsigned Flag;
 	#else
 	std::atomic<unsigned> Flag;
@@ -138,7 +138,7 @@ public:
 	public:
 		__forceinline LockClass(FastCriticalSectionClass& critical_section) : cs(critical_section)
 		{
-			#ifdef _WIN32
+			#if defined (_WIN32) && !defined (_WIN64)
 		  unsigned& nFlag=cs.Flag;
 
 		  #define ts_lock _emit 0xF0

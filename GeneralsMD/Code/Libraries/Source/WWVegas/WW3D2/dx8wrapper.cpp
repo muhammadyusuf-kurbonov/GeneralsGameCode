@@ -916,7 +916,7 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	DX8Wrapper_IsWindowed = IsWindowed;
 
 	WWDEBUG_SAY(("Attempting Set_Render_Device: name: %s (%s:%s), width: %d, height: %d, windowed: %d\n",
-		_RenderDeviceNameTable[CurRenderDevice],_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Name(),
+		_RenderDeviceNameTable[CurRenderDevice].Peek_Buffer(),_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Name(),
 		_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Version(),ResolutionWidth,ResolutionHeight,(IsWindowed ? 1 : 0)));
 
 #ifdef _WINDOWS
@@ -1061,7 +1061,7 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	Get_Format_Name(DisplayFormat,&displayFormat);
 	Get_Format_Name(_PresentParameters.BackBufferFormat,&backbufferFormat);
 
-	WWDEBUG_SAY(("Using Display/BackBuffer Formats: %s/%s\n",displayFormat,backbufferFormat));
+	WWDEBUG_SAY(("Using Display/BackBuffer Formats: %s/%s\n",displayFormat.Peek_Buffer(),backbufferFormat.Peek_Buffer()));
 	
 	bool ret;
 
@@ -2249,7 +2249,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 	{
 		if (render_state_changed&mask) 
 		{
-			SNAPSHOT_SAY(("DX8 - apply texture %d (%s)\n",i,render_state.Textures[i] ? render_state.Textures[i]->Get_Full_Path() : "NULL"));
+			SNAPSHOT_SAY(("DX8 - apply texture %d (%s)\n",i,render_state.Textures[i] ? render_state.Textures[i]->Get_Full_Path().Peek_Buffer() : "NULL"));
 
 			if (render_state.Textures[i]) 
 			{
@@ -2490,7 +2490,7 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture
 		else {
 			StringClass format_name(0,true);
 			Get_WW3D_Format_Name(format, format_name);
-			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name,mip_level_count));
+			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name.Peek_Buffer(),mip_level_count));
 		}
 
 	}
@@ -2789,7 +2789,7 @@ IDirect3DCubeTexture8* DX8Wrapper::_Create_DX8_Cube_Texture
 		{
 			StringClass format_name(0,true);
 			Get_WW3D_Format_Name(format, format_name);
-			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name,mip_level_count));
+			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name.Peek_Buffer(),mip_level_count));
 		}
 
 	}
@@ -2868,7 +2868,7 @@ IDirect3DVolumeTexture8* DX8Wrapper::_Create_DX8_Volume_Texture
 		{
 			StringClass format_name(0,true);
 			Get_WW3D_Format_Name(format, format_name);
-			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name,mip_level_count));
+			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name.Peek_Buffer(),mip_level_count));
 		}
 
 	}

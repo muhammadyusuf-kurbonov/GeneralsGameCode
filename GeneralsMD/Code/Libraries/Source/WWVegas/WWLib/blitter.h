@@ -69,6 +69,7 @@ class Blitter {
 		**	routine perform the check and call.
 		*/
 		void Blit(void * dest, void const * source, int length) const {if (dest < source) BlitBackward(dest, source, length); else BlitForward(dest, source, length);}
+		virtual ~Blitter() {}
 };
 
 
@@ -87,6 +88,7 @@ class RLEBlitter {
 		**	must begin at the start of the compressed data sequence.
 		*/
 		virtual void Blit(void * dest, void const * source, int length, int leadskip=0) const = 0;
+		virtual ~RLEBlitter() {}
 };
 
 
