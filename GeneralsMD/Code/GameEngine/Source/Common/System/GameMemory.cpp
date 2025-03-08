@@ -3465,9 +3465,9 @@ void initMemoryManager()
 #endif
 
 #ifdef MEMORYPOOL_OVERRIDE_MALLOC
-	if (theLinkTester != 10)
+	if (theLinkTester != 8)
 #else
-	if (theLinkTester != 6)
+	if (theLinkTester != 4)
 #endif
 	{
 		DEBUG_CRASH(("Wrong operator new/delete linked in! Fix this...\n"));
