@@ -127,9 +127,15 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 	{
 		// no buffer manhandling is needed (it's already large enough, and unique to us)
 		if (strToCopy)
-			strcpy(m_data->peek(), strToCopy);
+		{
+			std::string strToCopyStr = strToCopy;
+			strcpy(m_data->peek(), strToCopyStr.c_str());
+		}
 		if (strToCat)
-			strcat(m_data->peek(), strToCat);
+		{
+			std::string strToCatStr = strToCat;
+			strcat(m_data->peek(), strToCatStr.c_str());
+		}
 		return;
 	}
 
