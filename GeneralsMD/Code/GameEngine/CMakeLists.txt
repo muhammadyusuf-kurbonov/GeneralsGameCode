@@ -68,3 +68,5 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 else()
     target_compile_options(GameEngine PRIVATE -Wno-invalid-offsetof)
 endif()
+
+target_precompile_headers(GameEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Include/Precompiled/PreRTS.h)
