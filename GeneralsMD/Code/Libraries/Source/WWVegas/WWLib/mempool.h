@@ -159,7 +159,7 @@ private:
 */
 #define DEFINE_AUTO_POOL(T,BLOCKSIZE) \
 template<>\
-ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator;
+ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator = {};
 
 
 /***********************************************************************************************
