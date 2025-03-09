@@ -61,6 +61,12 @@ void MissingTexture::_Init()
 {
 	WWASSERT(!_MissingTexture);
 
+#ifdef _WIN64
+	static_assert(offsetof(D3DLOCKED_RECT, pBits) == 8, "D3DLOCKED_RECT_TEST and D3DLOCKED_RECT are not compatible");
+#else
+	static_assert(offsetof(D3DLOCKED_RECT, pBits) == 4, "D3DLOCKED_RECT_TEST and D3DLOCKED_RECT are not compatible");
+#endif
+
 	IDirect3DTexture8* tex=DX8Wrapper::_Create_DX8_Texture
 	(
 		missing_image_width,

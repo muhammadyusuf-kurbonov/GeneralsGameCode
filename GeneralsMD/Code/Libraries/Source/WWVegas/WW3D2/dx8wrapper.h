@@ -1007,6 +1007,7 @@ WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color,float alpha
 	const float scale = 255.0;
 	unsigned int col;
 
+#if defined (_WIN32) && !defined (_WIN64)
 	// Multiply r, g, b and a components (0.0,...,1.0) by 255 and convert to integer. Or the integer values togerher
 	// such that 32 bit ingeger has AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB.
 	__asm
@@ -1069,6 +1070,21 @@ not_changed:
 
 		mov	col,eax
 	}
+#else
+	// Multiply r, g, b and a components (0.0,...,1.0) by 255 and convert to integer. Or the integer values togerher
+	// such that 32 bit ingeger has AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB.
+
+	// (a << 24) | (r << 16) | (g << 8) | b
+
+	// a
+	col = (unsigned int)(alpha * scale) << 24;
+	// r
+	col |= (unsigned int)(color.X * scale) << 16;
+	// g
+	col |= (unsigned int)(color.Y * scale) << 8;
+	// b
+	col |= (unsigned int)(color.Z * scale);
+#endif
 	return col;
 }
 
