@@ -69,6 +69,8 @@
 #include "GameNetwork/IPEnumeration.h"
 #include "WWDownload/Registry.h"
 
+#include "Common/CopyProtection.h"
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -466,7 +468,7 @@ static MessageBoxReturnType cancelStartBecauseOfNoCD( void *userData )
 
 Bool IsFirstCDPresent(void)
 {
-#if !defined(_INTERNAL) && !defined(_DEBUG)
+#if !defined(_INTERNAL) && !defined(_DEBUG) && defined(DO_COPY_PROTECTION)
 	return TheFileSystem->areMusicFilesOnCD();
 #else
 	return TRUE;
