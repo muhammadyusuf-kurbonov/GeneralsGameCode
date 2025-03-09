@@ -526,7 +526,7 @@ void Matrix3D::Get_Inverse(Matrix3D & inv) const
 	Matrix4x4	mat4Inv;
 
 	float det;
-	D3DXMatrixInverse((D3DXMATRIX *)&mat4Inv, &det, (D3DXMATRIX*)&mat4);
+	D3DXMatrixInverse((D3DMATRIX *)&mat4Inv, &det, (D3DMATRIX*)&mat4);
 
 	inv.Row[0][0]=mat4Inv[0][0];
 	inv.Row[0][1]=mat4Inv[0][1];
@@ -543,23 +543,43 @@ void Matrix3D::Get_Inverse(Matrix3D & inv) const
 	inv.Row[2][2]=mat4Inv[2][2];
 	inv.Row[2][3]=mat4Inv[2][3];
 #else
-	glm::mat4 mat4x3 = glm::make_mat4x3(&Row[0][0]);
-	glm::mat4 mat4Inv = glm::inverse(mat4x3);
+	glm::mat4 mat4x4;
+	mat4x4[0][0] = Row[0][0];
+	mat4x4[1][0] = Row[0][1];
+	mat4x4[2][0] = Row[0][2];
+	mat4x4[3][0] = Row[0][3];
+
+	mat4x4[0][1] = Row[1][0];
+	mat4x4[1][1] = Row[1][1];
+	mat4x4[2][1] = Row[1][2];
+	mat4x4[3][1] = Row[1][3];
+
+	mat4x4[0][2] = Row[2][0];
+	mat4x4[1][2] = Row[2][1];
+	mat4x4[2][2] = Row[2][2];
+	mat4x4[3][2] = Row[2][3];
+
+	mat4x4[0][3] = 0.0f;
+	mat4x4[1][3] = 0.0f;
+	mat4x4[2][3] = 0.0f;
+	mat4x4[3][3] = 1.0f;
+
+	glm::mat4 mat4Inv = glm::inverse(mat4x4);
 
 	inv.Row[0][0] = mat4Inv[0][0];
-	inv.Row[0][1] = mat4Inv[0][1];
-	inv.Row[0][2] = mat4Inv[0][2];
-	inv.Row[0][3] = mat4Inv[0][3];
+	inv.Row[0][1] = mat4Inv[1][0];
+	inv.Row[0][2] = mat4Inv[2][0];
+	inv.Row[0][3] = mat4Inv[3][0];
 
-	inv.Row[1][0] = mat4Inv[1][0];
+	inv.Row[1][0] = mat4Inv[0][1];
 	inv.Row[1][1] = mat4Inv[1][1];
-	inv.Row[1][2] = mat4Inv[1][2];
-	inv.Row[1][3] = mat4Inv[1][3];
+	inv.Row[1][2] = mat4Inv[2][1];
+	inv.Row[1][3] = mat4Inv[3][1];
 
-	inv.Row[2][0] = mat4Inv[2][0];
-	inv.Row[2][1] = mat4Inv[2][1];
+	inv.Row[2][0] = mat4Inv[0][2];
+	inv.Row[2][1] = mat4Inv[1][2];
 	inv.Row[2][2] = mat4Inv[2][2];
-	inv.Row[2][3] = mat4Inv[2][3];
+	inv.Row[2][3] = mat4Inv[3][2];
 #endif
 }
 
