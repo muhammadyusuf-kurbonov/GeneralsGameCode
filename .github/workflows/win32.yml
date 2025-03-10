@@ -1,16 +1,11 @@
-name: ci
+name: Windows-32
 on:
   push:
 
 jobs:
   job:
-    name: ${{ matrix.os }}-${{ github.workflow }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-24.04, macos-15, windows-2022]
-
+    name: Windows 32-bit
+    runs-on: windows-2022
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,5 +20,5 @@ jobs:
       - name: Run CMake consuming CMakePreset.json and run vcpkg to build packages
         uses: lukka/run-cmake@v10
         with:
-          configurePreset: "default"
-          generator: "Ninja"
+          configurePreset: "win32-release"
+          buildPreset: "win32-release"
