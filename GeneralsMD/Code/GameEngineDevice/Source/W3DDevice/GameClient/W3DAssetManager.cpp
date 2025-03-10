@@ -799,7 +799,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 		const char *mesh_name = ::strchr (name, '.');
 		if (mesh_name != NULL) 
 		{
-			::strncpy(filename, name, ((int)mesh_name) - ((int)name) + 1);
+			::strncpy(filename, name, ((uintptr_t)mesh_name) - ((uintptr_t)name) + 1);
 #ifdef	INCLUDE_GRANNY_IN_BUILD
 			if (isGranny)
 				::strcat(filename, ".gr2");
