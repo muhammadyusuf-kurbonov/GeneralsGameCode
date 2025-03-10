@@ -132,6 +132,7 @@ extern CComObject<WebBrowser> *TheWebBrowser;
 #pragma message("WebBrowser is stubbed on this platform!")
 
 class GameWindow;
+struct FieldParse;
 
 class WebBrowserURL
 {
