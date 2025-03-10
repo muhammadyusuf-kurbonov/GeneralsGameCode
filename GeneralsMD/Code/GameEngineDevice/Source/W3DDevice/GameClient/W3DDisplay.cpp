@@ -3007,7 +3007,7 @@ void W3DDisplay::takeScreenShot(void)
 #endif
 		strcpy(pathname, TheGlobalData->getPath_UserData().str());
 		strcat(pathname, leafname);
-		if (_access( pathname, 0 ) == -1)
+		if (access( pathname, 0 ) == -1)
 			done = true;
 	}
 
