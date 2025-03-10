@@ -853,7 +853,7 @@ void WaterTracksRenderSystem::update()
 }
 
 
-void TestWaterUpdate(void);
+static void TestWaterUpdate(void);
 void setFPMode( void );
 
 //=============================================================================
