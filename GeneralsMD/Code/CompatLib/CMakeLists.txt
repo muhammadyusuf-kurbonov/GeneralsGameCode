@@ -26,8 +26,9 @@ target_include_directories(CompatLib PUBLIC
 
 # Add an empty library and link it to libdxvk_d3d8.so.0
 add_library(d3d8lib INTERFACE)
+find_package(glm REQUIRED)
 target_link_libraries(d3d8lib INTERFACE
-    dxvk_d3d8
+    dxvk_d3d8 glm::glm
 )
 
 target_include_directories(d3d8lib INTERFACE
