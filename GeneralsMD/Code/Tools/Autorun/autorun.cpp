@@ -2900,10 +2900,10 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 				for( j = 0; j < NUM_BUTTONS; j++ ) {
 					if ( ButtonList[j] != NULL ) {
-						buttons_rect.left	= __min( ButtonSizes[j].left							, buttons_rect.left	 ); 
-						buttons_rect.top  	= __min( ButtonSizes[j].top								, buttons_rect.top 	 );
-						buttons_rect.right	= __max( ButtonSizes[j].left + ButtonSizes[j].right		, buttons_rect.right  );                          
-						buttons_rect.bottom	= __max( ButtonSizes[j].top  + ButtonSizes[j].bottom	, buttons_rect.bottom );
+						buttons_rect.left	= min( ButtonSizes[j].left							, buttons_rect.left	 ); 
+						buttons_rect.top  	= min( ButtonSizes[j].top								, buttons_rect.top 	 );
+						buttons_rect.right	= max( ButtonSizes[j].left + ButtonSizes[j].right		, buttons_rect.right  );                          
+						buttons_rect.bottom	= max( ButtonSizes[j].top  + ButtonSizes[j].bottom	, buttons_rect.bottom );
 					}
 				}
 

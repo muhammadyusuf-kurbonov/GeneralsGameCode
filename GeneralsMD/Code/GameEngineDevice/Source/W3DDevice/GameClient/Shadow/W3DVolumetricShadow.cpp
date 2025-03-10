@@ -2822,7 +2822,7 @@ void W3DVolumetricShadow::constructVolume( Vector3 *lightPosObject,Real shadowEx
 #ifdef RECORD_SHADOW_STRIP_STATS
 		//Continuing strip.
 		stripLength++;
-		maxStripLength=__max(maxStripLength,stripLength);
+		maxStripLength=max(maxStripLength,stripLength);
 #endif
 	}
 
@@ -2984,7 +2984,7 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 	#ifdef RECORD_SHADOW_STRIP_STATS
 			//Continuing strip.
 			stripLength++;
-			maxStripLength=__max(maxStripLength,stripLength);
+			maxStripLength=max(maxStripLength,stripLength);
 	#endif
 		}
 	}	//initial pass to determine vertex/polygon counts.

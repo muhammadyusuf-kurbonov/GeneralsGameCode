@@ -584,8 +584,8 @@ void W3DShroud::render(CameraClass *cam)
 		pSurface->Get_Description(desc);
 
 		//Check if source data is larger than our current shroud
-		desc.Width = __min(desc.Width,m_numCellsX);
-		desc.Height = __min(desc.Height,m_numCellsY);
+		desc.Width = min(desc.Width,m_numCellsX);
+		desc.Height = min(desc.Height,m_numCellsY);
 
 		for (Int y=0; y<desc.Height; y++)
 		{

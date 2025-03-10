@@ -1663,10 +1663,10 @@ void EditWindow::drawImage( const Image *image,
 			//	Clip the polygons to the specified area
 			//
 			RectClass clipped_rect;
-			clipped_rect.Left		= __max (screen_rect.Left, m_clipRegion.lo.x);
-			clipped_rect.Right	= __min (screen_rect.Right, m_clipRegion.hi.x);
-			clipped_rect.Top		= __max (screen_rect.Top, m_clipRegion.lo.y);
-			clipped_rect.Bottom	= __min (screen_rect.Bottom, m_clipRegion.hi.y);
+			clipped_rect.Left		= max (screen_rect.Left, m_clipRegion.lo.x);
+			clipped_rect.Right	= min (screen_rect.Right, m_clipRegion.hi.x);
+			clipped_rect.Top		= max (screen_rect.Top, m_clipRegion.lo.y);
+			clipped_rect.Bottom	= min (screen_rect.Bottom, m_clipRegion.hi.y);
 
 			//
 			//	Clip the texture to the specified area

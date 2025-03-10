@@ -1103,9 +1103,9 @@ Bool BaseHeightMapRenderObjClass::isClearLineOfSight(const Coord3D& pos, const C
 
 		Int idx = x + y*xExtent;
 		float height = data[idx];
-		height = __max(height, data[idx + 1]);
-		height = __max(height, data[idx + xExtent]);
-		height = __max(height, data[idx + xExtent + 1]);
+		height = max(height, (float)data[idx + 1]);
+		height = max(height, (float)data[idx + xExtent]);
+		height = max(height, (float)data[idx + xExtent + 1]);
 		height *= MAP_HEIGHT_SCALE;
 
 		// if terrainHeight > z, we can't see, so punt.
@@ -1241,9 +1241,9 @@ Real BaseHeightMapRenderObjClass::getMaxCellHeight(Real x, Real y) const
 	p3=data[iX+(iY+offset)*logicHeightMap->getXExtent()]*MAP_HEIGHT_SCALE;
 
 	height=p0;
-	height=__max(height,p1);
-	height=__max(height,p2);
-	height=__max(height,p3);
+	height=max(height,p1);
+	height=max(height,p2);
+	height=max(height,p3);
 
 	return height;
 }
