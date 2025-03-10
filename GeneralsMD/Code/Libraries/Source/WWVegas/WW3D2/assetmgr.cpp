@@ -90,7 +90,7 @@
 #include "hanimmgr.h"
 #include "texture.h"
 #include "font3d.h"
-#include "render2dsentence.h"		// for FontCharsClass
+#include "Render2DSentence.h"		// for FontCharsClass
 #include "proto.h"
 #include "hanim.h"
 #include "hcanim.h"
@@ -111,10 +111,10 @@
 #include "dx8renderer.h"
 #include "metalmap.h"
 #include "w3dexclusionlist.h"
-#include <ini.h>
+#include "INI.H"
 #include <windows.h>
 #include <stdio.h>
-#include <D3dx8core.h>
+#include <d3dx8core.h>
 #include "texture.h"
 #include "wwprofile.h"
 #include "assetstatus.h"

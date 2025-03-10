@@ -64,7 +64,7 @@
 #include "wwmemlog.h"
 #include "ffactory.h"
 #include "font3d.h"
-#include "render2dsentence.h"
+#include "Render2DSentence.h"
 #include <stdio.h>
 #include "W3DDevice/GameClient/W3DGranny.h"
 #include "Common/PerfTimer.h"

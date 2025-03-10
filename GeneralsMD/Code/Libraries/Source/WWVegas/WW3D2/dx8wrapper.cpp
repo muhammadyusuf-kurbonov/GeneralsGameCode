@@ -65,13 +65,13 @@
 #include "render2d.h"
 #include "sortingrenderer.h"
 #include "shattersystem.h"
-#include "light.h"
+#include "Light.h"
 #include "assetmgr.h"
 #include "textureloader.h"
 #include "missingtexture.h"
 #include "thread.h"
 #include <stdio.h>
-#include <D3dx8core.h>
+#include <d3dx8core.h>
 #include "pot.h"
 #include "wwprofile.h"
 #include "ffactory.h"
