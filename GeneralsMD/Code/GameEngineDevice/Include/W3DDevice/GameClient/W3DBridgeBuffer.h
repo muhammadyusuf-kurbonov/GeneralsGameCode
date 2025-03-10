@@ -79,6 +79,8 @@ typedef enum {
 	SECTIONAL_BRIDGE = 1 
 } TBridgeType;
 
+enum BodyDamageType : int;
+
 class BridgeInfo;
 /// The individual data for a bridge.
 class W3DBridge 
