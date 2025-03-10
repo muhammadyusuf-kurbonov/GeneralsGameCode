@@ -10,6 +10,7 @@ add_subdirectory(GameEngineDevice)
 if(WIN32)
     add_executable(RTS WIN32 Main/WinMain.cpp)
     target_link_libraries(RTS GameEngine GameEngineDevice winmm Imm32 vfw32)
+    install(TARGETS RTS RUNTIME DESTINATION .)
 endif()
 
 if(SAGE_BUILD_TOOLS)

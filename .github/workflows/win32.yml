@@ -22,11 +22,10 @@ jobs:
         with:
           configurePreset: "win32-release"
           buildPreset: "win32-release"
+          packagePreset: "win32-release"
 
       - name: Upload RTS artifact
         uses: actions/upload-artifact@v4
         with:
-          # Name of the artifact to upload.
-          # Optional. Default is 'artifact'
           name: x86 Windows RTS
-          path: build/win32-release/GeneralsMD/Code/Release/RTS.exe
+          path: build/win32-release/SAGE-0.1-win32.zip

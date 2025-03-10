@@ -86,3 +86,5 @@ endif()
 if(SAGE_BUILD_ZEROHOUR)
   add_subdirectory(GeneralsMD/Code)
 endif()
+
+include(CPack)

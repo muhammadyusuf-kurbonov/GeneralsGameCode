@@ -23,7 +23,8 @@
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
         "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_CONFIGURATION_TYPES": "Release"
+        "CMAKE_CONFIGURATION_TYPES": "Release",
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreadedDLL"
       }
     }
   ],
@@ -38,6 +39,21 @@
       "configurePreset": "win32-release",
       "description": "Build the win32 release configuration",
       "configuration": "Release"
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "default",
+      "displayName": "Default Package",
+      "configurePreset": "default",
+      "description": "Package the default configuration"
+    },
+    {
+      "name": "win32-release",
+      "displayName": "Win32 Release Package",
+      "configurePreset": "win32-release",
+      "generators": ["ZIP"],
+      "description": "Package the win32 release configuration"
     }
   ]
 }
