@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stddef.h>
 
 typedef void *HANDLE;
 typedef HANDLE HWND;
@@ -11,9 +12,19 @@ typedef int32_t HRESULT;
 typedef int BOOL;
 typedef unsigned char BYTE;
 
-#define INVALID_HANDLE_VALUE NULL
+#define INVALID_HANDLE_VALUE ((HANDLE)-1)
 
 typedef void *LPVOID;
+
+typedef int32_t LONG;
+typedef uint32_t ULONG;
+typedef uint32_t DWORD;
+
+typedef uint32_t UINT;
+
+
+typedef int32_t *LPARAM;
+typedef size_t WPARAM;
 
 #define FALSE 0
 #define TRUE 1

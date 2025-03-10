@@ -37,6 +37,9 @@ static unsigned int GetDoubleClickTime()
 
 #include "types_compat.h"
 
+#define HIWORD(value) ((((uint32_t)(value) >> 16) & 0xFFFF))
+#define LOWORD(value) (((uint32_t)(value) & 0xFFFF))
+
 #ifndef _lrotl
 static inline uint32_t _lrotl(uint32_t value, int shift)
 {
@@ -48,6 +51,26 @@ static inline uint32_t _lrotl(uint32_t value, int shift)
 }
 #endif
 
+// Copied from windows_base.h from DXVK-Native
+#define MAKE_HRESULT(sev, fac, code) \
+	((HRESULT)(((unsigned long)(sev) << 31) | ((unsigned long)(fac) << 16) | ((unsigned long)(code))))
+
+#ifndef _MAX_PATH
+#define _MAX_PATH 1024
+#endif
+
+#ifndef MAX_PATH
+#define MAX_PATH _MAX_PATH
+#endif
+
+#ifndef _MAX_FNAME
+#define _MAX_FNAME 256
+#endif
+
+#ifndef _MAX_EXT
+#define _MAX_EXT 256
+#endif
+
 #include "thread_compat.h"
 #include "tchar_compat.h"
 #include "time_compat.h"
@@ -56,3 +79,5 @@ static inline uint32_t _lrotl(uint32_t value, int shift)
 #include "memory_compat.h"
 #include "module_compat.h"
 #include "wchar_compat.h"
+#include "gdi_compat.h"
+#include "wnd_compat.h"
