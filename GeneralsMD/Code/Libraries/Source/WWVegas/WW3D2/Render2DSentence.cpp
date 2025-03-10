@@ -1359,13 +1359,17 @@ FontCharsClass::Store_GDI_Char (WCHAR ch)
 	if (ch == 'W') {
 		xOrigin = 1;
 	}
+#ifdef _WIN32
 	::ExtTextOutW( MemDC, xOrigin, 0, ETO_OPAQUE, &rect, &ch, 1, NULL);
+#endif
 
 	//
 	//	Get the size of the character we just drew
 	//
 	SIZE char_size = { 0 };
+#ifdef _WIN32
 	::GetTextExtentPoint32W( MemDC, &ch, 1, &char_size );	
+#endif
 	char_size.cx += PixelOverlap + xOrigin;
 	//
 	//	Get a pointer to the surface that this character should use
@@ -1512,6 +1516,7 @@ FontCharsClass::Update_Current_Buffer (int char_width)
 void
 FontCharsClass::Create_GDI_Font (const char *font_name)
 {
+#ifdef _WIN32
 	HDC screen_dc = ::GetDC ((HWND)WW3D::Get_Window());
 
 	const char *fontToUseForGenerals = "Arial";
@@ -1603,6 +1608,7 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 	if (doingGenerals) {
 		CharOverhang = 0;
 	}
+#endif
 }
 
 
@@ -1614,6 +1620,7 @@ FontCharsClass::Create_GDI_Font (const char *font_name)
 void
 FontCharsClass::Free_GDI_Font (void)
 {
+#ifdef _WIN32
 	//
 	//	Select the old font back into the DC and delete
 	// our font object
@@ -1641,7 +1648,7 @@ FontCharsClass::Free_GDI_Font (void)
 		::DeleteDC( MemDC );
 		MemDC = NULL;
 	}
-
+#endif
 	return ;
 }
 

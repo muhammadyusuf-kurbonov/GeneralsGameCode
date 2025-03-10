@@ -36,7 +36,9 @@ static void drawFramerateBar(void);
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #include <stdlib.h>
 #include <windows.h>
+#ifdef _WIN32
 #include <io.h>
+#endif
 #include <time.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
@@ -108,6 +110,19 @@ static void drawFramerateBar(void);
 #endif
 
 #include "WinMain.h"
+
+
+#ifndef _WIN32
+static bool IsIconic(HWND hWnd)
+{
+	return false;
+}
+
+static void OutputDebugString(const char *str)
+{
+	printf("%s",str);
+}
+#endif
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -377,14 +392,22 @@ W3DAssetManager *W3DDisplay::m_assetManager = NULL;
 inline Int64 getPerformanceCounter()
 {
 	Int64 tmp;
+#ifdef _WIN32
 	QueryPerformanceCounter((LARGE_INTEGER*)&tmp);
+#else
+	tmp = timeGetTime();
+#endif
 	return tmp;
 }
 
 inline Int64 getPerformanceCounterFrequency()
 {
 	Int64 tmp;
+#ifdef _WIN32
 	QueryPerformanceFrequency((LARGE_INTEGER*)&tmp);
+#else
+	tmp = 1000;
+#endif
 	return tmp;
 }
 
@@ -557,6 +580,7 @@ void Reset_D3D_Device(bool active)
 		{	
 			//switch back to desired mode when user alt-tabs back into game
 			WW3D::Set_Render_Device( WW3D::Get_Render_Device(),TheDisplay->getWidth(),TheDisplay->getHeight(),TheDisplay->getBitDepth(),TheDisplay->getWindowed(),true, true);
+#ifdef _WIN32
 			OSVERSIONINFO	osvi;
 			osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
 			if (GetVersionEx(&osvi))
@@ -567,6 +591,7 @@ void Reset_D3D_Device(bool active)
 						WW3D::_Invalidate_Textures();
 				}
 			}
+#endif
 		}
 		else
 		{
@@ -2919,6 +2944,7 @@ void W3DDisplay::setShroudLevel( Int x, Int y, CellShroudStatus setting )
 ///Utility function to dump data into a .BMP file
 static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
 { 
+#ifdef _WIN32
      HANDLE hf;                 // file handle 
     BITMAPFILEHEADER hdr;       // bitmap file-header 
     PBITMAPINFOHEADER pbih;     // bitmap info-header 
@@ -2988,6 +3014,9 @@ static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
 
     // Free memory. 
 	LocalFree( (HLOCAL) pbmi);
+#else
+#pragma message("CreateBMPFile not implemented for this platform")
+#endif
 }
 
 ///Save Screen Capture to a file

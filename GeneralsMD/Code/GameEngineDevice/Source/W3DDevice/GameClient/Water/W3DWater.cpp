@@ -911,6 +911,7 @@ void WaterRenderObjClass::ReAcquireResources(void)
 
 	if (W3DShaderManager::getChipset() >= DC_GENERIC_PIXEL_SHADER_1_1)
 	{
+#ifdef _WIN32
 		ID3DXBuffer *compiledShader;
 		char *shader = 
 			"ps.1.1\n \
@@ -956,6 +957,9 @@ void WaterRenderObjClass::ReAcquireResources(void)
 			hr = 	DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader((DWORD*)compiledShader->GetBufferPointer(), &m_trapezoidWaterPixelShader);
 			compiledShader->Release();
 		}
+#else
+		#pragma message("Water shaders disabled on non-Windows platforms")
+#endif
 	}
 
 	//W3D Invalidate textures after losing the device and since we peek at the textures directly, it won't

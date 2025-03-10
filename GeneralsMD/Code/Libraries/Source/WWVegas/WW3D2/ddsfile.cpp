@@ -25,7 +25,12 @@
 #include "bitmaphandler.h"
 #include "colorspace.h"
 #include <string.h>
+#ifdef _WIN32
 #include <ddraw.h>
+#else
+#define DDSCAPS2_CUBEMAP	0x00000200
+#define DDSCAPS2_VOLUME   0x00200000
+#endif
 
 // ----------------------------------------------------------------------------
 

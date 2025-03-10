@@ -1124,6 +1124,8 @@ static void TestWaterUpdate(void)
 
 	pauseWaves=FALSE;
 
+#ifdef _WIN32
+
 	if (doInit)
 	{	//create the system
 		doInit=0;
@@ -1325,4 +1327,7 @@ static void TestWaterUpdate(void)
 //			OutputDebugString (buffer);
 		}
 	}
+#else
+	#pragma message("Water track editor not implemented for this platform")
+#endif
 }

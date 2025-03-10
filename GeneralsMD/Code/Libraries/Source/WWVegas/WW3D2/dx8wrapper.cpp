@@ -2059,7 +2059,7 @@ void DX8Wrapper::Draw(
 
 #ifdef MESH_RENDER_SNAPSHOT_ENABLED
 	if (WW3D::Is_Snapshot_Activated()) {
-		unsigned long passes=0;
+		DWORD passes=0;
 		SNAPSHOT_SAY(("ValidateDevice: "));
 		HRESULT res=D3DDevice->ValidateDevice(&passes);
 		switch (res) {

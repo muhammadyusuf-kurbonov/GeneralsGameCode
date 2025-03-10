@@ -57,11 +57,13 @@ Bool W3DWebBrowser::createBrowserWindow(char *tag, GameWindow *win)
 		return FALSE;
 	}
 
+#ifdef _WIN32
 	CComQIPtr<IDispatch> idisp(m_dispatch);
 	if (m_dispatch == NULL)
 	{
 		return FALSE;
 	}
+#endif
 
 	DX8WebBrowser::CreateBrowser(windowName.str(), url->m_url.str(), x, y, w, h, 0, BROWSEROPTION_SCROLLBARS | BROWSEROPTION_3DBORDER, (LPDISPATCH)this);
 

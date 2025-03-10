@@ -47,6 +47,7 @@
 #include <windows.h>
 #else
 #include "windows_compat.h"
+#include <filesystem>
 #endif
 
 
@@ -352,6 +353,7 @@ AggregateDefClass::Load_Assets (const char *passet_name)
 	// Param OK?
 	if (passet_name != NULL) {
 		
+#ifdef _WIN32
 		// Determine what the current working directory is
 		char path[MAX_PATH];
 		::GetCurrentDirectory (sizeof (path), path);
@@ -369,6 +371,14 @@ AggregateDefClass::Load_Assets (const char *passet_name)
 		if (::GetFileAttributes (path) != 0xFFFFFFFF) {
 			retval = WW3DAssetManager::Get_Instance()->Load_3D_Assets (path);
 		}
+#else
+		std::filesystem::path pathFile(passet_name);
+		pathFile.append(".w3d");
+		if (std::filesystem::exists(pathFile))
+		{
+			retval = WW3DAssetManager::Get_Instance()->Load_3D_Assets(pathFile.string().c_str());
+		}
+#endif
 	}
 
 	// Return the true/false result code
