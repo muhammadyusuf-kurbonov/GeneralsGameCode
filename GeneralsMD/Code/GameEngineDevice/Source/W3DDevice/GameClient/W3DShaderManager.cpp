@@ -259,7 +259,7 @@ FilterTypes W3DShaderManager::m_currentFilter=FT_NULL_FILTER; ///< Last filter t
 Int W3DShaderManager::m_currentShaderPass;
 ChipsetType W3DShaderManager::m_currentChipset;
 GraphicsVenderID W3DShaderManager::m_currentVendor;
-__int64 W3DShaderManager::m_driverVersion;
+Int64 W3DShaderManager::m_driverVersion;
 
 Bool W3DShaderManager::m_renderingToTexture = false;
 IDirect3DSurface8 *W3DShaderManager::m_oldRenderSurface=NULL;	///<previous render target
@@ -3150,6 +3150,23 @@ ChipsetType W3DShaderManager::getChipset( void )
 	return chip;
 }
 
+#ifndef _WIN32
+static void OutputDebugString(const char *str)
+{
+	printf("%s",str);
+}
+
+static void QueryPerformanceCounter(LARGE_INTEGER *li)
+{
+	li->QuadPart = 0;
+}
+
+static void QueryPerformanceFrequency(LARGE_INTEGER *li)
+{
+	li->QuadPart = 0;
+}
+#endif
+
 //=============================================================================
 // WaterRenderObjClass::LoadAndCreateShader
 //=============================================================================
@@ -3176,7 +3193,11 @@ HRESULT W3DShaderManager::LoadAndCreateD3DShader(char* strFilePath, const DWORD*
 		TheFileSystem->getFileInfo(AsciiString(strFilePath), &fileInfo);
 		DWORD dwFileSize = fileInfo.sizeLow;
 
+#ifdef _WIN32
 		const DWORD* pShader = (DWORD*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwFileSize);
+#else
+		const DWORD* pShader = new DWORD[dwFileSize];
+#endif
 		if (!pShader)
 		{
 			OutputDebugString( "Failed to allocate memory to load shader\n " );
@@ -3197,7 +3218,11 @@ HRESULT W3DShaderManager::LoadAndCreateD3DShader(char* strFilePath, const DWORD*
 			hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader(pShader, pHandle);
 		}
 
+#ifdef _WIN32
 		HeapFree(GetProcessHeap(), 0, (void*)pShader);
+#else
+		delete[] pShader;
+#endif
 
 		if (FAILED(hr))
 		{
@@ -3297,7 +3322,7 @@ Real W3DShaderManager::GetCPUBenchTime(void)
 	float ztot, yran, ymult, ymod, x, y, z, pi, prod;
     long int low, ixran, itot, j, iprod;
 
-  	__int64 endTime64,freq64,startTime64;
+  	Int64 endTime64,freq64,startTime64;
 	QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
 	QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
 
