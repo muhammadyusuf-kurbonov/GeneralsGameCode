@@ -333,7 +333,9 @@ Int parseNoDraw(char *args[], int argc)
 //=============================================================================
 Int parseLogToConsole(char *args[], int)
 {
+#ifdef DEBUG_LOGGING	
 	DebugSetFlags(DebugGetFlags() | DEBUG_FLAG_LOG_TO_CONSOLE);
+#endif
 	return 1;
 }
 

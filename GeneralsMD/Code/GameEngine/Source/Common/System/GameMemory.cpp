@@ -3065,8 +3065,10 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 {
 	//USE_PERF_TIMER(MemoryPoolDebugging) skip end-of-run reporting stuff
 
+#ifdef DEBUG_LOGGING
 	Int oldFlags = DebugGetFlags();
 	DebugSetFlags(oldFlags & ~DEBUG_FLAG_PREPEND_TIME);
+#endif
 
 #ifdef MEMORYPOOL_CHECKPOINTING
 	Bool doBlockReport = (flags & _REPORT_CP_ALLOCATED_DONTCARE) != 0 && (flags & _REPORT_CP_FREED_DONTCARE) != 0;
@@ -3221,7 +3223,9 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 	}
 #endif
 
+#ifdef DEBUG_LOGGING
 	DebugSetFlags(oldFlags);
+#endif
 }
 #endif
 
