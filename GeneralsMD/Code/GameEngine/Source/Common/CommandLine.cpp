@@ -33,6 +33,8 @@
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 
+#include "GameNetwork/NetworkDefs.h"
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)

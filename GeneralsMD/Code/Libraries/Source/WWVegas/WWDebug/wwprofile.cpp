@@ -56,6 +56,9 @@
 #ifdef _WIN32
 #include <windows.h>
 #include "systimer.h"
+	#ifdef _WIN64
+	#include <time.h>
+	#endif
 #else
 #include <time.h>
 #include "osdep.h"
@@ -106,7 +109,7 @@ WWINLINE double WWProfile_Get_Inv_Processor_Ticks_Per_Second(void)
  *=============================================================================================*/
 inline void WWProfile_Get_Ticks(_int64 * ticks)
 {
-#ifdef _UNIX
+#if defined(_UNIX) || defined(_WIN64)
        *ticks = clock();
 #else
 	__asm

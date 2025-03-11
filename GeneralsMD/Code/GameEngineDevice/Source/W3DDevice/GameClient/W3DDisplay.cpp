@@ -3176,7 +3176,7 @@ void dumpMeshAssets(MeshClass *mesh)
 					{
 						if ((texture=model->Peek_Texture(i,pass,stage)) != NULL)
 						{
-							fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name());
+							fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name().Peek_Buffer());
 						}
 					}
 				}
@@ -3184,7 +3184,7 @@ void dumpMeshAssets(MeshClass *mesh)
 				{
 					if ((texture=model->Peek_Single_Texture(pass,stage)) != NULL)
 					{
-						fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name());
+						fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name().Peek_Buffer());
 					}
 				}
 			}

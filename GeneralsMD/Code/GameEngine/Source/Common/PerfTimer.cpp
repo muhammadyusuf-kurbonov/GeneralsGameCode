@@ -37,7 +37,10 @@
 
 __forceinline void ProfileGetTime(int64_t &t)
 {
-#ifdef _WIN32 
+#if __has_builtin (__builtin_readcyclecounter)
+	// This is probably only supported by Clang, but is portable otherwise
+	t = __builtin_readcyclecounter();
+#else
   _asm
   {
     mov ecx,[t]
@@ -49,9 +52,6 @@ __forceinline void ProfileGetTime(int64_t &t)
     pop edx
     pop eax
   };
-#elif __has_builtin (__builtin_readcyclecounter)
-	// This is probably only supported by Clang, but is portable otherwise
-	t = __builtin_readcyclecounter();
 #endif
 }
 
