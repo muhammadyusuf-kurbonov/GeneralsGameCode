@@ -50,8 +50,8 @@ endif()
 if(SAGE_USE_MILES)
   FetchContent_Declare(
     miles
-    GIT_REPOSITORY https://github.com/feliwir/miles-sdk-stub.git
-    GIT_TAG 680e6cb112cbf407d5a69bc984c40bfab032ada9)
+    GIT_REPOSITORY https://github.com/Fighter19/miles-sdk-stub.git
+    GIT_TAG a4a0da4d6083f71357080e4a8021ad77ba2c62bf)
   FetchContent_MakeAvailable(miles)
 endif()
 
