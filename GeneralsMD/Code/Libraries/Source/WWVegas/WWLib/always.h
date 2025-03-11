@@ -42,11 +42,10 @@
 
 #include <assert.h>
 
-#ifndef _WIN32
-#include "windows_compat.h"
-#else
 // New needs to be included first to avoid collision with headers when building with Clang
 #include <new>
+#ifndef _WIN32
+#include "windows_compat.h"
 #endif
 
 // Disable warning about exception handling not being enabled. It's used as part of STL - in a part of STL we don't use.
