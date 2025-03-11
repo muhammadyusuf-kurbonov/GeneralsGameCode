@@ -1,4 +1,8 @@
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include "windows_compat.h"
+#endif
 #include "d3dx8core.h"
 
 #include "d3dx8math.h"
@@ -6,12 +10,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-D3DXMATRIX D3DXMATRIX::operator*(const D3DXMATRIX &other) const
-{
-  D3DXMATRIX result;
-  D3DXMatrixMultiply(&result, this, &other);
-  return result;
-}
 
 static void ConvertGLMToD3DX (const glm::mat4x4 &glm, D3DXMATRIX &d3dx)
 {

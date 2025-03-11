@@ -5,8 +5,17 @@
 typedef struct D3DXMATRIX : D3DMATRIX
 {
 #ifdef __cplusplus
-  D3DXMATRIX operator * (const D3DXMATRIX&) const;
-  D3DXMATRIX operator *= (const D3DXMATRIX&);
+  D3DXMATRIX D3DXMATRIX::operator*(const D3DXMATRIX &other) const
+  {
+    D3DXMATRIX result;
+    D3DXMatrixMultiply(&result, this, &other);
+    return result;
+  }
+  D3DXMATRIX operator *= (const D3DXMATRIX& other)
+  {
+    D3DXMatrixMultiply(this, this, &other);
+    return *this;
+  }
 #endif
 } D3DXMATRIX;
 
