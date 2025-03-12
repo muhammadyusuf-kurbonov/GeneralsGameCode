@@ -2,9 +2,12 @@ file(GLOB_RECURSE SOURCES_W3DDevice
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/W3DDevice/*.cpp
 )
 
-file(GLOB_RECURSE SOURCES_WIN32Device
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Win32Device/*.cpp
-)
+set(SOURCES_WIN32Device )
+if(WIN32)
+    file(GLOB_RECURSE SOURCES_WIN32Device
+        ${CMAKE_CURRENT_SOURCE_DIR}/Source/Win32Device/*.cpp
+    )
+endif()
 
 add_library(GameEngineDevice STATIC 
     ${SOURCES_W3DDevice} 
@@ -20,7 +23,7 @@ target_include_directories(GameEngineDevice PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../Main
 )
 
-target_link_libraries(GameEngineDevice PUBLIC WW3D2 WWShade GameEngine BrowserDispatch)
+target_link_libraries(GameEngineDevice PUBLIC WW3D2 GameEngine BrowserDispatch)
 
 if (SAGE_USE_MILES)
     target_sources(GameEngineDevice PRIVATE
