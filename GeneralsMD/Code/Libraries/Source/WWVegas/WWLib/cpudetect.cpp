@@ -178,6 +178,11 @@ static unsigned Calculate_Processor_Speed(sint64& ticks_per_second)
 
 void CPUDetectClass::Init_Processor_Speed()
 {
+#if !defined (_WIN32) || defined(_WIN64)
+	ProcessorSpeed=2100;
+	return;
+#endif
+
 	if (!Has_RDTSC_Instruction()) {
 		ProcessorSpeed=0;
 		return;
@@ -1122,8 +1127,8 @@ public:
 			CPUDetectClass::Init_Processor_String();
 			CPUDetectClass::Init_Processor_Features();
 		}
-			CPUDetectClass::Init_Memory();
-			CPUDetectClass::Init_OS();
+		CPUDetectClass::Init_Memory();
+		CPUDetectClass::Init_OS();
 		CPUDetectClass::Init_Processor_Speed();
 
 		CPUDetectClass::Init_Processor_Log();
