@@ -233,6 +233,10 @@ __forceinline float fast_float_trunc(float f)
 	// Arithmetic shift right
 	mantissa_mask >>= exponent;
 
+#ifdef __clang__
+	#pragma message("fast_float_trunc does not work properly with clang")
+#endif
+
 	*(unsigned int *)&f &= mantissa_mask;
 #endif	
 
