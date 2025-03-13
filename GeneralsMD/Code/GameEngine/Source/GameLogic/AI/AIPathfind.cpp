@@ -3827,6 +3827,8 @@ void PathfindLayer::classifyWallMapCell( Int i, Int j , PathfindCell *cell, Obje
 
 Pathfinder::Pathfinder( void ) :m_map(NULL)
 {
+	m_blockOfMapCells = NULL;
+	m_map = NULL;
 	debugPath = NULL;
 	PathfindCellInfo::allocateCellInfos();
 	reset();
