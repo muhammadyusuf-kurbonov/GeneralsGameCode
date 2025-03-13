@@ -1888,7 +1888,7 @@ void PartitionData::doSmallFill(
 		radius = halfCellSize;
 	}
 
-	Int cx1, cy1, cx2, cy2;
+	Int cx1=0, cy1=0, cx2=0, cy2=0;
 	ThePartitionManager->worldToCell(centerX - radius, centerY - radius, &cx1, &cy1);
 	ThePartitionManager->worldToCell(centerX + radius, centerY + radius, &cx2, &cy2);
 
@@ -5552,8 +5552,7 @@ Bool PartitionFilterStealthedAndUndetected::allow( Object *objOther )
 			{
 				//Check if the first object inside is detected (if one is detected, all are detected).
 				ContainedItemsList::const_iterator it = contain->getContainedItemsList()->begin();
-				Object *member = (*it);
-				if( member && !(*it)->getStatusBits().test( OBJECT_STATUS_DETECTED ) )
+				if( it != contain->getContainedItemsList()->end() && !(*it)->getStatusBits().test( OBJECT_STATUS_DETECTED ) )
 				{
 					//Finally check the relationship!
 					if( victimApparentController && m_obj->getTeam()->getRelationship( victimApparentController->getDefaultTeam() ) == ENEMIES )
