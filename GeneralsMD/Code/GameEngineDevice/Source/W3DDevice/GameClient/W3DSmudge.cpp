@@ -51,6 +51,7 @@ SmudgeManager *TheSmudgeManager=NULL;
 
 W3DSmudgeManager::W3DSmudgeManager(void)
 {
+	m_indexBuffer=NULL;
 }
 
 W3DSmudgeManager::~W3DSmudgeManager()

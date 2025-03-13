@@ -2122,6 +2122,8 @@ W3DProjectedShadow::W3DProjectedShadow(void)
 {
 	m_diffuse=0xffffffff;
 	m_shadowProjector=NULL;
+	m_robj=NULL;
+	m_next=NULL;
 	m_lastObjPosition.Set(0,0,0);
 	m_type = SHADOW_NONE;		/// type of projection
 	m_allowWorldAlign = FALSE;	/// wrap shadow around world geometry - else align perpendicular to local z-axis.

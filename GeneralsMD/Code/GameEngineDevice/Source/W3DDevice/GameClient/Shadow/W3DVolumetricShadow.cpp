@@ -616,8 +616,8 @@ class W3DShadowGeometry : public RefCountClass, public	HashableClass
 		char m_namebuf[2*W3D_NAME_LEN];	///<name of model hierarchy
 
 		W3DShadowGeometryMesh m_meshList[MAX_SHADOW_CASTER_MESHES]; ///<collection of meshes for this geometry.
-		Int m_meshCount;							///<number of meshes in hierarchy
-		Int m_numTotalsVerts;						///<number of verts in entire hierarchy
+		Int m_meshCount = 0;							///<number of meshes in hierarchy
+		Int m_numTotalsVerts = 0;						///<number of verts in entire hierarchy
 };
   
 #define MAX_SHADOW_VOLUME_VERTS 16384
