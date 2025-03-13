@@ -219,18 +219,21 @@ __forceinline float fast_float_trunc(float f)
     and [f],eax
   }
 #else
-	// TODO: 
-	// I have no idea what the above code did, but I think this is equivalent
-	// Write a test to verify this
-	int ecx = *(int *)&f;
-	ecx >>= 23;
-	int eax = 0xff800000;
-	int ebx = 0;
-	int cl = ecx & 0xff;
-	if (cl < 127)
-		eax = ebx;
-	eax >>= cl;
-	*(int *)&f &= eax;
+	unsigned int value_as_int = *(unsigned int *)&f;
+	// Mask to only keep exponent and sign
+	int mantissa_mask = 0xff800000;
+	
+	unsigned int sign_and_exponent = value_as_int >> 23;
+	unsigned char exponent = sign_and_exponent & 0xff;
+	if (exponent < 127)
+	{
+		mantissa_mask = 0;
+	}
+	exponent -= 127;
+	// Arithmetic shift right
+	mantissa_mask >>= exponent;
+
+	*(unsigned int *)&f &= mantissa_mask;
 #endif	
 
 
