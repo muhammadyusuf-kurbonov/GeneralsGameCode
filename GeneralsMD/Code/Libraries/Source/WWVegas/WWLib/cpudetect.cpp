@@ -1121,9 +1121,9 @@ public:
 			CPUDetectClass::Init_Processor_Family();
 			CPUDetectClass::Init_Processor_String();
 			CPUDetectClass::Init_Processor_Features();
+		}
 			CPUDetectClass::Init_Memory();
 			CPUDetectClass::Init_OS();
-		}
 		CPUDetectClass::Init_Processor_Speed();
 
 		CPUDetectClass::Init_Processor_Log();
