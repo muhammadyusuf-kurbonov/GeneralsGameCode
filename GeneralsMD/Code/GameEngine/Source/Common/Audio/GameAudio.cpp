@@ -487,8 +487,11 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 	} 
 	else 
 	{
-		//Possible to nuke audioEvent inside.
-		m_sound->addAudioEvent(audioEvent);
+		// Ensure that audio event won't get nuked
+		if (m_sound->canPlayNow(audioEvent))
+		{
+			m_sound->addAudioEvent(audioEvent);
+		}
 	}
 
 	if( audioEvent )
