@@ -1,11 +1,19 @@
 #pragma once
 
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include "windows_compat.h"
+#endif
 
 #include <d3d8.h>
 
 #define D3DX_DEFAULT                     UINT_MAX
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 typedef enum eD3DXFilters
 {
     D3DX_FILTER_NONE,
@@ -143,3 +151,7 @@ D3DXAssembleShaderFromFileA(
 
 
 UINT WINAPI D3DXGetFVFVertexSize(DWORD FVF);
+
+#ifdef __cplusplus
+}
+#endif

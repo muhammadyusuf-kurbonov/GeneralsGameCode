@@ -2,6 +2,11 @@
 
 #include <d3d8.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef struct D3DXMATRIX : D3DMATRIX
 {
 #ifdef __cplusplus
@@ -35,15 +40,18 @@ D3DXMATRIX *WINAPI D3DXMatrixRotationZ(D3DXMATRIX *pOut, FLOAT angle);
 D3DXVECTOR4 *WINAPI D3DXVec4Transform(D3DXVECTOR4 *pOut, CONST D3DXVECTOR4 *pV, CONST D3DXMATRIX *pM);
 
 #ifdef __cplusplus
-D3DXMATRIX D3DXMATRIX::operator*(const D3DXMATRIX &other) const
+
+inline D3DXMATRIX D3DXMATRIX::operator*(const D3DXMATRIX &other) const
 {
   D3DXMATRIX result;
   D3DXMatrixMultiply(&result, this, &other);
   return result;
 }
-D3DXMATRIX D3DXMATRIX::operator *= (const D3DXMATRIX& other)
+inline D3DXMATRIX D3DXMATRIX::operator *= (const D3DXMATRIX& other)
 {
   D3DXMatrixMultiply(this, this, &other);
   return *this;
+}
+
 }
 #endif
