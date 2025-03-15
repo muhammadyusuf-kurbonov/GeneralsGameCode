@@ -75,6 +75,10 @@ if(SAGE_USE_LZHL)
   FetchContent_MakeAvailable(liblzhl)
 endif()
 
+if(NOT MSVC)
+  add_compile_options(-Wuninitialized)
+endif()
+
 if(WIN32)
   add_definitions(-D_WINDOWS)
   add_definitions(-DWINVER=0x400)
