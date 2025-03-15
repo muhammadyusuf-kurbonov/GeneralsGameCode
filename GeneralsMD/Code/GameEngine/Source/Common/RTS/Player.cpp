@@ -511,9 +511,9 @@ void Player::init(const PlayerTemplate* pt)
 		while(it != m_specialPowerReadyTimerList.end())
 		{
 			SpecialPowerReadyTimerType *sprt = &(*it);
-			it = m_specialPowerReadyTimerList.erase( it );
 			if(sprt)
 				sprt->clear();
+			it = m_specialPowerReadyTimerList.erase( it );
 		}
 	}
 
