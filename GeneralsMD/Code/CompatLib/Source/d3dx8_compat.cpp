@@ -84,12 +84,26 @@ D3DXLoadSurfaceFromSurface(
 	{
 		imageFormat = gli::format::FORMAT_A1RGB5_UNORM_PACK16;
 	}
+	else
+	{
+		return D3DERR_INVALIDCALL;
+	}
 
 	D3DLOCKED_RECT srcRect;
 	pSrcSurface->LockRect(&srcRect, NULL, 0);
 
 	D3DLOCKED_RECT destRect;
 	pDestSurface->LockRect(&destRect, NULL, 0);
+
+	// Fast path: No scaling needs to be done if the dimensions are the same
+	if (descDest.Width == descSrc.Width && descDest.Height == descSrc.Height)
+	{
+		// Copy the data directly
+		memcpy(destRect.pBits, srcRect.pBits, srcRect.Pitch * descSrc.Height);
+		pDestSurface->UnlockRect();
+		pSrcSurface->UnlockRect();
+		return D3D_OK;
+	}
 
 	// Create two levels of mips, 0 and 1
 	gli::texture2d texSrc(imageFormat, gli::extent2d(descSrc.Width, descSrc.Height), 2);
@@ -99,8 +113,17 @@ D3DXLoadSurfaceFromSurface(
 	// Generate mip 1 from level 0
 	gli::texture2d mipMap = gli::generate_mipmaps(texSrc, gli::filter::FILTER_LINEAR);
 
+	if (mipMap.size(1) != destRect.Pitch * descDest.Height)
+	{
+		// The generated dimension would not be the same as the destination
+		// This does not happen in the game, yet let's not allow it
+		pDestSurface->UnlockRect();
+		pSrcSurface->UnlockRect();
+		return D3DERR_INVALIDCALL;
+	}
+
 	// Copy mip level 1 to the destination
-	memcpy(destRect.pBits, mipMap.data(0,0,1), mipMap.size(1));
+	memcpy(destRect.pBits, mipMap.data(0,0,1), destRect.Pitch * descDest.Height);
 
 	pDestSurface->UnlockRect();
 	pSrcSurface->UnlockRect();
