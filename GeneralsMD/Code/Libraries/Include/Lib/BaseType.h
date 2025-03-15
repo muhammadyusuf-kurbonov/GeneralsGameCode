@@ -202,46 +202,42 @@ __forceinline long fast_float2long_round(float f)
 	return i;
 }
 
+__forceinline unsigned int x86_shift_right_emu(unsigned int value, unsigned int shift, bool shift_ones)
+{
+  // This is what the CPU does
+  shift %= 32;
+	if (shift_ones)
+	{
+		return (value >> shift) | (0xFFFFFFFF << (32 - shift));
+	}
+	else
+	{
+		return value >> shift;
+	}
+  return value;
+}
+
 // super fast float trunc routine, works always (independent of any FPU modes)
 // code courtesy of Martin Hoffesommer (grin)
 __forceinline float fast_float_trunc(float f)
 {
-#if defined (_WIN32) && !defined (_WIN64)
-  _asm
-  {
-    mov ecx,[f]
-    shr ecx,23
-    mov eax,0xff800000
-    xor ebx,ebx
-    sub cl,127
-    cmovc eax,ebx
-    sar eax,cl
-    and [f],eax
-  }
-#else
 	unsigned int value_as_int = *(unsigned int *)&f;
 	// Mask to only keep exponent and sign
-	int mantissa_mask = 0xff800000;
+	unsigned int mantissa_mask = 0xff800000;
 	
 	unsigned int sign_and_exponent = value_as_int >> 23;
 	unsigned char exponent = sign_and_exponent & 0xff;
+  bool shift_ones = true;
 	if (exponent < 127)
 	{
 		mantissa_mask = 0;
+    shift_ones = false;
 	}
 	exponent -= 127;
 	// Arithmetic shift right
-	mantissa_mask >>= exponent;
-
-#ifdef __clang__
-	#pragma message("fast_float_trunc does not work properly with clang")
-#endif
-
-	*(unsigned int *)&f &= mantissa_mask;
-#endif	
-
-
-  return f;
+  mantissa_mask = x86_shift_right_emu(mantissa_mask, exponent, shift_ones);
+	value_as_int &= mantissa_mask;
+	return *(float *)&value_as_int;
 }
 
 // same here, fast floor function
