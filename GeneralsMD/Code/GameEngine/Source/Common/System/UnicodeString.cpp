@@ -157,7 +157,7 @@ void UnicodeString::set(const UnicodeString& stringSrc)
 	ScopedCriticalSection scopedCriticalSection(TheUnicodeStringCriticalSection);
 
 	validate();
-	if (&stringSrc != this)
+	if (&stringSrc != this && stringSrc.m_data != m_data)
 	{
 		releaseBuffer();
 		m_data = stringSrc.m_data;

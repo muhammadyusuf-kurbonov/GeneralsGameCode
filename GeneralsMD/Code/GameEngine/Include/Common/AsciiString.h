@@ -447,7 +447,7 @@ inline void AsciiString::set(const AsciiString& stringSrc)
 	//FastCriticalSectionClass::LockClass lock(TheAsciiStringCriticalSection);
 
 	validate();
-	if (&stringSrc != this)
+	if (&stringSrc != this && stringSrc.m_data != m_data)
 	{
 		// do not call releaseBuffer(); here, it locks the CS twice
 		// from the same thread which is illegal using fast CS's
