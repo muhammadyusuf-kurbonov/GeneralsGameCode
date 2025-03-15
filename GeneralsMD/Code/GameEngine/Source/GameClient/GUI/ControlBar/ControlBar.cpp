@@ -921,6 +921,7 @@ ControlBar::ControlBar( void )
 	}
 
 	m_specialPowerShortcutParent = NULL;
+	m_currentlyUsedSpecialPowersButtons = NULL;
 	m_specialPowerLayout = NULL;
 	m_scienceLayout = NULL;
 	m_rightHUDWindow = NULL;
