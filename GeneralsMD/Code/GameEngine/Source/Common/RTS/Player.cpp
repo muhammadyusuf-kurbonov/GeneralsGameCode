@@ -506,16 +506,7 @@ void Player::init(const PlayerTemplate* pt)
 	m_sciencesDisabled.clear();
 	m_sciencesHidden.clear();
 
-	{
-		SpecialPowerReadyTimerListIterator it = m_specialPowerReadyTimerList.begin();
-		while(it != m_specialPowerReadyTimerList.end())
-		{
-			SpecialPowerReadyTimerType *sprt = &(*it);
-			if(sprt)
-				sprt->clear();
-			it = m_specialPowerReadyTimerList.erase( it );
-		}
-	}
+	m_specialPowerReadyTimerList.clear();
 
 	KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionChangeList.begin();
 	while(it != m_kindOfPercentProductionChangeList.end())
