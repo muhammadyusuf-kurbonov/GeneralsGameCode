@@ -33,8 +33,8 @@ extern "C" {
 	extern void DebugCrash( const char *fmt, ... );
 	extern void DebugLog( const char *fmt, ... );
 	#else
-	#define DebugCrash( exp )   ((void)0)
-	#define DebugLog( exp )     ((void)0)
+	#define DebugCrash( ... )   ((void)0)
+	#define DebugLog( ... )     ((void)0)
 	#endif
 
 	/*
