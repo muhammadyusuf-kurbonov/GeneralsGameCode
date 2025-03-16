@@ -24,3 +24,9 @@ add_library(WWLib STATIC ${SOURCES_WWLIB})
 target_link_libraries(WWLib PUBLIC
     WWDebug
 )
+
+if(WIN32)
+    target_link_libraries(WWLib PUBLIC
+        winmm
+    )
+endif()
