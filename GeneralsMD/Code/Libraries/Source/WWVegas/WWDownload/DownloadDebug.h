@@ -21,17 +21,21 @@
 #ifndef __DOWNLOADDEBUG_H_
 #define __DOWNLOADDEBUG_H_
 
-#ifdef  NDEBUG
-#define DEBUG_LOG(exp) ((void)0)
-#else
+// Needs to be set according to Debug.h of GameEngine
+// #define DEBUG_LOGGING
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 	#include <stdarg.h>
+	#ifdef DEBUG_LOGGING
 	extern void DebugCrash( const char *fmt, ... );
 	extern void DebugLog( const char *fmt, ... );
+	#else
+	#define DebugCrash( exp )   ((void)0)
+	#define DebugLog( exp )     ((void)0)
+	#endif
 
 	/*
 		Yeah, it's a sleazy global, since we can't reasonably add
@@ -58,7 +62,5 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#endif // NDEBUG
 
 #endif //__DOWNLOADDEBUG_H_
