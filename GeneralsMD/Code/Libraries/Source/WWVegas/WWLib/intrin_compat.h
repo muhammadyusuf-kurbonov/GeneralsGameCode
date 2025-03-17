@@ -19,6 +19,7 @@ static inline uint32_t _lrotl(uint32_t value, int shift)
 #pragma intrinsic(__rdtsc)
 #endif
 
+#if !defined(__clang__)
 static inline uint64_t _rdtsc()
 {
 #if _WIN32
@@ -31,6 +32,7 @@ static inline uint64_t _rdtsc()
 #error "No implementation for _rdtsc"
 #endif
 }
+#endif
 #endif
 
 #ifdef _MSC_VER
