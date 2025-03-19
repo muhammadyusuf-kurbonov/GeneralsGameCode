@@ -77,6 +77,19 @@ void SDL3Keyboard::closeKeyboard( void )
 
 }  // end closeKeyboard
 
+static KeyDefType ConvertSDLKey(SDL_Keycode keycode)
+{
+	if (keycode == SDLK_RETURN)
+	{
+		return KEY_ENTER;
+	}
+	else if (keycode == SDLK_ESCAPE)
+	{
+		return KEY_ESC;
+	}
+	return KEY_NONE;
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Get a single keyboard event from direct input */
 //-------------------------------------------------------------------------------------------------
@@ -88,6 +101,27 @@ void SDL3Keyboard::getKey( KeyboardIO *key )
 	assert( key );
 	key->sequence = 0;
 	key->key = KEY_NONE;
+
+	// get 1 key, if available
+	SDL_Event event;
+	num = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENT_KEY_DOWN, SDL_EVENT_KEY_UP);
+	if(num > 0)
+	{
+		if(event.type == SDL_EVENT_KEY_DOWN)
+		{
+			key->key = ConvertSDLKey(event.key.key);
+			key->state = KEY_STATE_DOWN;
+		}
+		else if(event.type == SDL_EVENT_KEY_UP)
+		{
+			key->key = ConvertSDLKey(event.key.key);
+			key->state = KEY_STATE_UP;
+		}
+	}
+	else
+	{
+		key->key = KEY_NONE;
+	}
 
 }  // end getKey
 

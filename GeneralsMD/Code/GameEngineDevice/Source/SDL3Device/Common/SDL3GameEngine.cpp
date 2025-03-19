@@ -127,13 +127,19 @@ void SDL3GameEngine::update( void )
 //-------------------------------------------------------------------------------------------------
 void SDL3GameEngine::serviceWindowsOS( void )
 {
-  SDL_Event event;
-  while(SDL_PollEvent(&event)) {
-    TheMessageTime = event.common.timestamp;
-		// translate and dispatch the message
-		// TranslateMessage( &msg );
-		// DispatchMessage( &msg );
-		TheMessageTime = 0;
-  }
+	// Let SDL fill it's event queue
+	SDL_PumpEvents();
+
+	// Until we refactor the way keyboards are handled,
+	// we can't pop the events here, or we need to filter the keyboard events
+
+	// SDL_Event event;
+	// while(SDL_PollEvent(&event)) {
+	//   TheMessageTime = event.common.timestamp;
+	// 	// translate and dispatch the message
+	// 	// TranslateMessage( &msg );
+	// 	// DispatchMessage( &msg );
+	// 	TheMessageTime = 0;
+	// }
 }  // end ServiceWindowsOS
 
