@@ -146,7 +146,7 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 				(strcmp(iter->path().filename().string().c_str(), ".") && strcmp(iter->path().string().c_str(), ".."))) {
 			// if we haven't already, add this filename to the list.
 				// a stl set should only allow one copy of each filename
-				AsciiString newFilename = iter->path().string().c_str();
+				AsciiString newFilename = iter->path().filename().string().c_str();
 				if (filenameList.find(newFilename) == filenameList.end()) {
 					filenameList.insert(newFilename);
 				}
