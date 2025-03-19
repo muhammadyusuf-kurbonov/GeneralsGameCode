@@ -1091,7 +1091,10 @@ GlobalData::GlobalData()
 	if (xdgDataHome)
 		userDataDir = std::filesystem::path(xdgDataHome);
 	else
-		userDataDir = std::filesystem::path(getenv("HOME")) / ".local" / "share" / "generals_zh";
+		userDataDir = std::filesystem::path(getenv("HOME")) / ".local" / "share";
+
+	// Make sure the path ends with a slash
+	userDataDir = userDataDir / "generals_zh" / "";
 	std::filesystem::create_directories(userDataDir);
 	m_userDataDir = userDataDir.string().c_str();
 #endif
