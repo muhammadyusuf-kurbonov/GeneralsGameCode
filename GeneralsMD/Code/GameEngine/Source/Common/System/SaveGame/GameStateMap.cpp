@@ -530,7 +530,8 @@ void GameStateMap::clearScratchPadMaps( void )
 #else
 	std::filesystem::path saveDir = TheGameState->getSaveDirectory().str();
 	std::filesystem::directory_iterator end_itr;
-	for( std::filesystem::directory_iterator itr( saveDir ); itr != end_itr; ++itr )
+	std::error_code ec;
+	for( std::filesystem::directory_iterator itr( saveDir, ec ); itr != end_itr; ++itr )
 	{
 		if( std::filesystem::is_regular_file( *itr ) )
 		{
