@@ -755,12 +755,16 @@ protected:
 public: 
 
 	void deleteInstance() 
-	{	
+	{
 		if (this)
 		{
 			MemoryPool *pool = this->getObjectMemoryPool(); // save this, since the dtor will nuke our vtbl
 			this->~MemoryPoolObject();	// it's virtual, so the right one will be called.
 			pool->freeBlock((void *)this); 
+		}
+		else
+		{
+			DEBUG_LOG(("MemoryPoolObject::deleteInstance() called on NULL pointer\n"));
 		}
 	} 
 };
@@ -778,7 +782,11 @@ public:
 	MemoryPoolObjectHolder(MemoryPoolObject *mpo = NULL) : m_mpo(mpo) { }
 	void hold(MemoryPoolObject *mpo) { DEBUG_ASSERTCRASH(!m_mpo, ("already holding")); m_mpo = mpo; }
 	void release() { m_mpo = NULL; }
-	~MemoryPoolObjectHolder() { m_mpo->deleteInstance(); }
+	~MemoryPoolObjectHolder()
+	{
+		if (m_mpo)
+			m_mpo->deleteInstance();
+	}
 };
 
 
