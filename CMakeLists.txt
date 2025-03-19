@@ -82,7 +82,7 @@ elseif(UNIX)
 endif()
 
 if(NOT MSVC)
-  set( CMAKE_CXX_FLAGS_DEBUG "-D_DEBUG" )
+  set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG" )
 endif()
 
 include(FetchContent)
