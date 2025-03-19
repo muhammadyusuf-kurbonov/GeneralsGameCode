@@ -978,8 +978,8 @@ Bool GameTextManager::parseCSF( const Char *filename )
 #ifdef _WIN32
 				file->read ( m_tbuffer, len*sizeof(WideChar) );
 #else
-				int16_t convert_buffer[MAX_UITEXT_LENGTH*2];
-				file->read ( convert_buffer, len*sizeof(int16_t) );
+				uint16_t convert_buffer[MAX_UITEXT_LENGTH*2];
+				file->read ( convert_buffer, len*sizeof(uint16_t) );
 				for (int i = 0; i < len; i++)
 				{
 					m_tbuffer[i] = convert_buffer[i];
