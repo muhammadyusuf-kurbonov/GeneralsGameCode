@@ -50,7 +50,7 @@ typedef unsigned int    uint;
 
 typedef signed char		sint8;
 typedef signed short		sint16;
-typedef signed long		sint32;
+typedef int32_t	        sint32;
 typedef signed int      sint;
 
 typedef float				float32;

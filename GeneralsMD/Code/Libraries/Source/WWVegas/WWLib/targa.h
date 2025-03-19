@@ -38,6 +38,7 @@
 *
 ****************************************************************************/
 
+#include <stdint.h>
 #pragma pack(push, 1)
 
 // If you wish to display loading error messages call targa functions inside of
@@ -133,8 +134,8 @@ typedef struct _TGAHeader
  */
 typedef struct _TGA2Footer
 	{
-	long Extension;
-	long Developer;
+	int32_t Extension;
+	int32_t Developer;
 	char Signature[16];
 	char RsvdChar;
 	char BZST;
@@ -224,12 +225,12 @@ typedef struct _TGA2Extension
 	TGA2TimeStamp JobTime;
 	char          SoftID[41];
 	TGA2SoftVer   SoftVer;
-	long          KeyColor;
+	int32_t       KeyColor;
 	TGA2Ratio     Aspect;
 	TGA2Ratio     Gamma;
-	long          ColorCor;
-	long          PostStamp;
-	long          ScanLine;
+	int32_t       ColorCor;
+	int32_t       PostStamp;
+	int32_t       ScanLine;
 	char          Attributes;
 	} TGA2Extension;
 
