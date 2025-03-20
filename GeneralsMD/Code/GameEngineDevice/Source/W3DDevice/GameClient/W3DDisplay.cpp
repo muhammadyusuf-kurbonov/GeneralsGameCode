@@ -181,9 +181,9 @@ StatDumpClass::StatDumpClass( const char *fname )
 		}
 		pEnd--;
 	}
-	AsciiString fullPath;
-	fullPath.format( "%s\\%s", buffer, fname );
-	m_fp = fopen( fullPath.str(), "wt" );
+	char fullPath[ _MAX_PATH ];
+	sprintf( fullPath, "%s/%s", buffer, fname );
+	m_fp = fopen(fullPath, "wt");
 }
 
 //=============================================================================
