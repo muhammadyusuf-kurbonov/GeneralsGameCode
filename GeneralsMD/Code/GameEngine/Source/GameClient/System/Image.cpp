@@ -261,23 +261,24 @@ void ImageCollection::load( Int textureSize )
 	ini.loadDirectory("Data\\INI\\MappedImages\\HandCreated", TRUE, INI_LOAD_OVERWRITE, NULL );
 #else
 	std::filesystem::path userDataPath(TheGlobalData->getPath_UserData().str());
-	std::filesystem::path mappedImagesPath(userDataPath / "INI" / "MappedImages");
-	std::filesystem::path textureSizePath(mappedImagesPath / ("TextureSize_" + std::to_string(textureSize)));
-	std::filesystem::path handCreatedPath = "";
+	userDataPath = userDataPath / "INI" / "MappedImages";
+	std::filesystem::path textureSizePath;
+	textureSizePath = textureSizePath / "Data" / "INI" / "MappedImages" / ("TextureSize_" + std::to_string(textureSize));
+	std::filesystem::path handCreatedPath;
 	handCreatedPath = handCreatedPath / "Data" / "INI" / "MappedImages" / "HandCreated";
 
 	INI ini;
-	if (std::filesystem::exists(mappedImagesPath))
+	if (std::filesystem::exists(userDataPath))
 	{
 		// Find first ini file in the directory
 		std::filesystem::directory_iterator end;
-		std::filesystem::directory_iterator it(mappedImagesPath);
+		std::filesystem::directory_iterator it(userDataPath);
 		// If there is an ini file in the directory, load the directory
 		if (it != end)
 		{
 			if (std::filesystem::is_regular_file(it->path()) && it->path().extension() == ".ini")
 			{
-				ini.loadDirectory(mappedImagesPath.c_str(), TRUE, INI_LOAD_OVERWRITE, NULL);
+				ini.loadDirectory(userDataPath.c_str(), TRUE, INI_LOAD_OVERWRITE, NULL);
 			}
 		}
 	}
