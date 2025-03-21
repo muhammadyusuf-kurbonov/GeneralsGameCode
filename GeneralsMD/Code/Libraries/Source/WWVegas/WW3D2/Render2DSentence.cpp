@@ -1438,6 +1438,12 @@ const FontCharsClassCharDataStruct *FontCharsClass::Store_Freetype_Char(WCHAR ch
     int descent = CharHeight - CharAscent;
     int y_offset = (CharHeight - FtFace->glyph->bitmap_top) - descent;
 
+		// These checks are necessary to prevent invalid buffer access
+		if(x_offset < 0)
+			x_offset = 0;
+		if(y_offset < 0)
+			y_offset = 0;
+
     // Render the bitmap
     for (unsigned int row = 0; row < FtFace->glyph->bitmap.rows; row++) {
         int index = row * FtFace->glyph->bitmap.pitch;
