@@ -23,15 +23,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // FILE: SDL3Mouse.cpp ///////////////////////////////////////////////////////////////////////////
-// Created:    Colin Day, July 2001
-// Desc:       Interface for the mouse using only the Win32 messages
+// Created:    Stephan Vedder, March 2025
+// Desc:       Interface for the mouse using only the SDL3 events
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Common/Debug.h"
 #include "GameClient/GameClient.h"
 #include "SDL3Device/GameClient/SDL3Mouse.h"
 
-#include <SDL3/SDL.h>
 #include <SDL3/SDL_events.h>
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +72,7 @@ UnsignedByte SDL3Mouse::getMouseEvent( MouseIO *result, Bool flush )
 	if( m_eventBuffer[ m_nextGetIndex ].type == SDL_EVENT_FIRST )
 		return MOUSE_NONE;
 
-	// translate the win32 mouse message to our own system
+	// translate the SDL3 mouse message to our own system
 	translateEvent( m_nextGetIndex, result );
 
 	// remove this event from the buffer by setting msg to zero
@@ -98,9 +97,9 @@ UnsignedByte SDL3Mouse::getMouseEvent( MouseIO *result, Bool flush )
 void SDL3Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 {
 	SDL_EventType type = (SDL_EventType)m_eventBuffer[ eventIndex ].type;
-	SDL_MouseButtonEvent*  mouseBtnEvent = m_eventBuffer[ eventIndex ].button;
-	SDL_MouseMotionEvent*  mouseMotionEvent = m_eventBuffer[ eventIndex ].motion;
-	SDL_MouseWheelEvent*  mouseWheelEvent = m_eventBuffer[ eventIndex ].wheel;
+	SDL_MouseButtonEvent&  mouseBtnEvent = m_eventBuffer[ eventIndex ].button;
+	SDL_MouseMotionEvent&  mouseMotionEvent = m_eventBuffer[ eventIndex ].motion;
+	SDL_MouseWheelEvent&  mouseWheelEvent = m_eventBuffer[ eventIndex ].wheel;
 	UnsignedInt frame;
 
 	//
@@ -119,7 +118,7 @@ void SDL3Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 	result->pos.x = result->pos.y = result->wheelPos = 0;
 
 	// Time is the same for all events
-	result->time = m_eventBuffer[ eventIndex ].time;
+	result->time = m_eventBuffer[ eventIndex ].common.timestamp;
 	
 	switch( type )
 	{
@@ -128,55 +127,54 @@ void SDL3Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		case SDL_EVENT_MOUSE_BUTTON_DOWN:
 		{
 			// TODO: detect double click
-			if (mouseBtnEvent->button == SDL_BUTTON_LEFT)
+			if (mouseBtnEvent.button == SDL_BUTTON_LEFT)
 			{
 				result->leftState = MBS_Down;
 				result->leftFrame = frame;
 			}
-			else if (mouseBtnEvent->button == SDL_BUTTON_RIGHT)
+			else if (mouseBtnEvent.button == SDL_BUTTON_RIGHT)
 			{
 				result->rightState = MBS_Down;
 				result->rightFrame = frame;
 			}
-			else if (mouseBtnEvent->button == SDL_BUTTON_RIGHT)
+			else if (mouseBtnEvent.button == SDL_BUTTON_RIGHT)
 			{
 				result->middleState = MBS_Down;
 				result->middleFrame = frame;
 			}
-			result->pos.x = mouseBtnEvent->x;
-			result->pos.y = mouseBtnEvent->y;
+			result->pos.x = mouseBtnEvent.x;
+			result->pos.y = mouseBtnEvent.y;
 			break;
 
 		}
 		// ------------------------------------------------------------------------
 		case SDL_EVENT_MOUSE_BUTTON_UP:
 		{
-			if (mouseBtnEvent->button == SDL_BUTTON_LEFT)
+			if (mouseBtnEvent.button == SDL_BUTTON_LEFT)
 			{
 				result->leftState = MBS_Up;
 				result->leftFrame = frame;
 			}
-			else if (mouseBtnEvent->button == SDL_BUTTON_RIGHT)
+			else if (mouseBtnEvent.button == SDL_BUTTON_RIGHT)
 			{
 				result->rightState = MBS_Up;
 				result->rightFrame = frame;
 			}
-			else if (mouseBtnEvent->button == SDL_BUTTON_RIGHT)
+			else if (mouseBtnEvent.button == SDL_BUTTON_RIGHT)
 			{
 				result->middleState = MBS_Up;
 				result->middleFrame = frame;
 			}
-			result->pos.x = mouseBtnEvent->x;
-			result->pos.y = mouseBtnEvent->y;
+			result->pos.x = mouseBtnEvent.x;
+			result->pos.y = mouseBtnEvent.y;
 			break;
-
 		}  
 
 		// ------------------------------------------------------------------------
 		case SDL_EVENT_MOUSE_MOTION:
 		{
-			result->pos.x = mouseMotionEvent->x;
-			result->pos.y = mouseMotionEvent->y;
+			result->pos.x = mouseMotionEvent.x;
+			result->pos.y = mouseMotionEvent.y;
 			break;
 
 		}  // end mouse move
@@ -185,9 +183,9 @@ void SDL3Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		case SDL_EVENT_MOUSE_WHEEL:
 		{	
 			// note the short cast here to keep signed information in tact
-			result->wheelPos =  mouseWheelEvent->y;
-			result->pos.x = mouseWheelEvent->mouse_x;
-			result->pos.y = mouseWheelEvent->mouse_y;
+			result->wheelPos =  mouseWheelEvent.y;
+			result->pos.x = mouseWheelEvent.mouse_x;
+			result->pos.y = mouseWheelEvent.mouse_y;
 			break;
 
 		}  // end mouse wheel
@@ -219,7 +217,7 @@ SDL3Mouse::SDL3Mouse( void )
 
 	m_nextFreeIndex = 0;
 	m_nextGetIndex = 0;
-	m_currentWin32Cursor = NONE;
+	m_currentSdlCursor = NONE;
 	for (Int i=0; i<NUM_MOUSE_CURSORS; i++)
 		for (Int j=0; j<MAX_2D_CURSOR_DIRECTIONS; j++)
 			cursorResources[i][j]=NULL;
@@ -275,11 +273,24 @@ void SDL3Mouse::update( void )
 }  // end update
 
 //-------------------------------------------------------------------------------------------------
-/** Add a window message event along with its WPARAM and LPARAM parameters
-	* to our input storage buffer */
+/** Add a SDL event to our input storage buffer */
 //-------------------------------------------------------------------------------------------------
 void SDL3Mouse::addSDLEvent( SDL_Event* ev )
 {
+	DEBUG_LOG(("SDL3Mouse::addSDLEvent: %d", ev->type));
+
+	// check if this is a relevant event for us
+	switch( ev->type )
+	{
+		case SDL_EVENT_MOUSE_BUTTON_DOWN:
+		case SDL_EVENT_MOUSE_BUTTON_UP:
+		case SDL_EVENT_MOUSE_MOTION:
+		case SDL_EVENT_MOUSE_WHEEL:
+			break;
+		default:
+			DEBUG_LOG(("SDL3Mouse::addSDLEvent: No mouse event [%d]", ev->type));
+			return;
+	}
 
 	//
 	// we can only add this event if our next free index does not already
@@ -289,20 +300,16 @@ void SDL3Mouse::addSDLEvent( SDL_Event* ev )
 	if( m_eventBuffer[ m_nextFreeIndex ].type != SDL_EVENT_FIRST )
 		return;
 
-	// add to this index
-	m_eventBuffer[ m_nextFreeIndex ].type = ev->type;
-	// TODO: we probably need to copy the event data here
-	m_eventBuffer[ m_nextFreeIndex ].button = &ev->button;
-	m_eventBuffer[ m_nextFreeIndex ].motion = &ev->motion;
-	m_eventBuffer[ m_nextFreeIndex ].wheel = &ev->wheel;
-	m_eventBuffer[ m_nextFreeIndex ].time = ev->button.timestamp;
+	// copy this event to our next free slot
+	m_eventBuffer[ m_nextFreeIndex ] = *ev;
+
 
 	// wrap index at max
 	m_nextFreeIndex++;
 	if( m_nextFreeIndex >= Mouse::NUM_MOUSE_EVENTS )
 		m_nextFreeIndex = 0;
 
-}  // end addWin32Event
+}  // end addSDLEvent
 
 
 void SDL3Mouse::setVisibility(Bool visible)
@@ -356,7 +363,7 @@ void SDL3Mouse::setCursor( MouseCursor cursor )
 	}  // end switch
 
 	// save current cursor
-	m_currentWin32Cursor=m_currentCursor = cursor;
+	m_currentSdlCursor=m_currentCursor = cursor;
 	
 }  // end setCursor
 

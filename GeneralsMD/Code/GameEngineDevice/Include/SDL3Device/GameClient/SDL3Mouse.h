@@ -53,18 +53,14 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "GameClient/Mouse.h"
+#include <SDL3/SDL.h>
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
-union SDL_Event;
-struct SDL_MouseMotionEvent;
-struct SDL_MouseButtonEvent;
-struct SDL_MouseWheelEvent;
-struct SDL_Cursor;
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 
 // SDL3Mouse -----------------------------------------------------------------
-/** Mouse interface for when using only the Win32 messages */
+/** Mouse interface for when using only the SDL3 events */
 //-----------------------------------------------------------------------------
 class SDL3Mouse : public Mouse {
 
@@ -85,7 +81,7 @@ public:
 
   virtual void setVisibility(Bool visible);
 
-  /// add an event from a win32 window procedure
+  /// add an event from the SDL3 event loop
   void addSDLEvent(SDL_Event *ev);
   void lostFocus(Bool state) { m_lostFocus = state; }
 
@@ -98,22 +94,13 @@ protected:
 
   SDL_Cursor* loadCursorFromFile(const char* file);
 
-  struct SDL3MouseEvent
-	{
-		uint32_t type = 0;				///< SDL EventType
-    SDL_MouseMotionEvent* motion;            /**< Mouse motion event data */
-    SDL_MouseButtonEvent* button;            /**< Mouse button event data */
-    SDL_MouseWheelEvent* wheel;              /**< Mouse wheel event data */
-		uint64_t time;			///< TIME from the WM_* message
-	};
   /// this is our buffer of events that we receive via a WndProc message
-  SDL3MouseEvent m_eventBuffer[Mouse::NUM_MOUSE_EVENTS];
+  SDL_Event m_eventBuffer[Mouse::NUM_MOUSE_EVENTS];
   UnsignedInt m_nextFreeIndex; ///< insert new events at this index
   UnsignedInt m_nextGetIndex;  /** events retrieved through getMouseEvent
                                will come from this index, then it will be
                                incremented to the next index */
-  MouseCursor
-      m_currentWin32Cursor; ///< keep track of last cursor image sent to D3D.
+  MouseCursor m_currentSdlCursor; ///< keep track of last cursor image sent to D3D.
   Int m_directionFrame; ///< current frame of directional cursor (frome 0 points
                         ///< up).
   Bool m_lostFocus; ///< flag if window has lost focues and mouse should stop

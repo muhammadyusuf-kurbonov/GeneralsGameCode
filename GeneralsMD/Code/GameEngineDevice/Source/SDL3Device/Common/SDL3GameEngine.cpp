@@ -30,6 +30,8 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "SDL3Device/Common/SDL3GameEngine.h"
+#include "SDL3Device/GameClient/SDL3Mouse.h"
+#include "SDL3Device/GameClient/SDL3Keyboard.h"
 #include "Common/PerfTimer.h"
 
 #include "GameNetwork/LANAPICallbacks.h"
@@ -133,13 +135,28 @@ void SDL3GameEngine::serviceWindowsOS( void )
 	// Until we refactor the way keyboards are handled,
 	// we can't pop the events here, or we need to filter the keyboard events
 
-	// SDL_Event event;
-	// while(SDL_PollEvent(&event)) {
-	//   TheMessageTime = event.common.timestamp;
-	// 	// translate and dispatch the message
-	// 	// TranslateMessage( &msg );
-	// 	// DispatchMessage( &msg );
-	// 	TheMessageTime = 0;
-	// }
+	SDL_Event event;
+	while(SDL_PollEvent(&event)) {
+	  TheMessageTime = event.common.timestamp;
+
+		SDL3Mouse* mouse = dynamic_cast<SDL3Mouse*>(TheMouse);
+		SDL3Keyboard* keyboard = dynamic_cast<SDL3Keyboard*>(TheKeyboard);
+		
+		switch(event.type) {
+			case SDL_EVENT_MOUSE_BUTTON_UP:
+			case SDL_EVENT_MOUSE_BUTTON_DOWN:
+			case SDL_EVENT_MOUSE_MOTION:
+			case SDL_EVENT_MOUSE_WHEEL:
+				if(mouse) {
+					mouse->addSDLEvent(&event);
+				}
+				break;
+			// default:
+			// 	SDL_PushEvent(&event);
+				break;
+		}
+
+		TheMessageTime = 0;
+	}
 }  // end ServiceWindowsOS
 
