@@ -18,7 +18,19 @@ char* itoa(int value, char* str, int base)
 
 int _vsnwprintf(wchar_t* buffer, size_t count, const wchar_t* format, va_list args)
 {
-  return vswprintf(buffer, count, format, args);
+  std::wstring format_fixup(format);
+
+  // Replace all %s with %ls
+  size_t pos = format_fixup.find(L"%s", 0);
+  while (pos != std::wstring::npos)
+  {
+    format_fixup.replace(pos, 3, L"%ls");
+    pos += 3;
+    pos = format_fixup.find(L"%s", pos);
+  }
+
+
+  return vswprintf(buffer, count, format_fixup.c_str(), args);
 }
 
 // Also defined in GameSpy gsplatformutil
