@@ -277,8 +277,6 @@ void SDL3Mouse::update( void )
 //-------------------------------------------------------------------------------------------------
 void SDL3Mouse::addSDLEvent( SDL_Event* ev )
 {
-	DEBUG_LOG(("SDL3Mouse::addSDLEvent: %d", ev->type));
-
 	// check if this is a relevant event for us
 	switch( ev->type )
 	{
