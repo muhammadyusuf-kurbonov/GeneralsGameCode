@@ -10,6 +10,7 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(SageTests
   TestMain.cpp
+  TestString.cpp
   FastFloatTest.cpp
 )
 
