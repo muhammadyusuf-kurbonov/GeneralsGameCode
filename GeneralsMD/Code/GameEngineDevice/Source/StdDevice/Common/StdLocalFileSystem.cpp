@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////// StdLocalFileSystem.cpp /////////////////////////
-// Bryan Cleveland, August 2002
+// Stephan Vedder, March 2025
 ////////////////////////////////////////////////////////////
 
 #include "Common/AsciiString.h"
@@ -52,24 +52,26 @@ File * StdLocalFileSystem::openFile(const Char *filename, Int access /* = 0 */)
 		return NULL;
 	}
 
+	// Convert the filename to a std::filesystem::path and pass that
+	// Replace backslashes with forward slashes on unix
+	std::filesystem::path path(filename);
+	path = path.make_preferred();
+
 	if (access & File::WRITE) {
 		// if opening the file for writing, we need to make sure the directory is there
 		// before we try to create the file.
-		AsciiString string;
-		string = filename;
-		AsciiString token;
-		AsciiString dirName;
-		string.nextToken(&token, "\\/");
-		dirName = token;
-		while ((token.find('.') == NULL) || (string.find('.') != NULL)) {
-			createDirectory(dirName);
-			string.nextToken(&token, "\\/");
-			dirName.concat('\\');
-			dirName.concat(token);
+		std::filesystem::path dir = path.parent_path();
+		if (!std::filesystem::exists(dir)) {
+			std::error_code ec;
+			if(!std::filesystem::create_directories(dir,ec ) || ec) {
+				DEBUG_LOG(("StdLocalFileSystem::openFile - Error creating directory %s\n", dir.string().c_str()));
+				file->deleteInstance();
+				return NULL;
+			}
 		}
 	}
-
-	if (file->open(filename, access) == FALSE) {
+	
+	if (file->open(path.c_str(), access) == FALSE) {
 		file->close();
 		file->deleteInstance();
 		file = NULL;
@@ -114,7 +116,11 @@ void StdLocalFileSystem::reset()
 //DECLARE_PERF_TIMER(StdLocalFileSystem_doesFileExist)
 Bool StdLocalFileSystem::doesFileExist(const Char *filename) const
 {
-	return std::filesystem::exists(filename);
+	// Convert to host path
+	std::filesystem::path path(filename);
+	path = path.make_preferred();
+
+	return std::filesystem::exists(path);
 }
 
 void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList & filenameList, Bool searchSubdirectories) const
@@ -191,14 +197,18 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 
 Bool StdLocalFileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const 
 {
+		// Convert to host path
+		std::filesystem::path path(filename.str());
+		path = path.make_preferred();
+	
     std::error_code ec;
-    auto file_size = std::filesystem::file_size(filename.str(), ec);
+    auto file_size = std::filesystem::file_size(path, ec);
     if (ec)
     {
         return FALSE;
     }
 
-	auto write_time = std::filesystem::last_write_time(filename.str(), ec);
+	auto write_time = std::filesystem::last_write_time(path, ec);
     if (ec)
     {
         return FALSE;
@@ -209,15 +219,24 @@ Bool StdLocalFileSystem::getFileInfo(const AsciiString& filename, FileInfo *file
 	fileInfo->timestampHigh = time >> 32;
 	fileInfo->timestampLow = time & UINT32_MAX;
 	fileInfo->sizeHigh      = file_size >> 32;
-    fileInfo->sizeLow  = file_size & UINT32_MAX;
+	fileInfo->sizeLow  = file_size & UINT32_MAX;
 
 	return TRUE;
 }
 
 Bool StdLocalFileSystem::createDirectory(AsciiString directory) 
 {
+	bool result = FALSE;
 	if ((directory.getLength() > 0) && (directory.getLength() < _MAX_DIR)) {
-		return std::filesystem::create_directory(directory.str());
+		// Convert to host path
+		std::filesystem::path path(directory.str());
+		path = path.make_preferred();
+
+		std::error_code ec;
+		result = std::filesystem::create_directory(directory.str(), ec);
+		if (ec) {
+			result = FALSE;
+		}
 	}
-	return FALSE;
+	return result;
 }
