@@ -79,14 +79,37 @@ void SDL3Keyboard::closeKeyboard( void )
 
 static KeyDefType ConvertSDLKey(SDL_Keycode keycode)
 {
-	if (keycode == SDLK_RETURN)
+	if (keycode >= SDLK_A && keycode <= SDLK_Z)
 	{
-		return KEY_ENTER;
+		return (KeyDefType)(KEY_A + (keycode - SDLK_A));
 	}
-	else if (keycode == SDLK_ESCAPE)
+	else if (keycode >= SDLK_0 && keycode <= SDLK_9)
 	{
-		return KEY_ESC;
+		return (KeyDefType)(KEY_0 + (keycode - SDLK_0));
 	}
+
+	switch (keycode)
+	{
+		case SDLK_RETURN:
+			return KEY_ENTER;
+		case SDLK_ESCAPE:
+			return KEY_ESC;
+		case SDLK_SPACE:
+			return KEY_SPACE;
+		case SDLK_BACKSPACE:
+			return KEY_BACKSPACE;
+		case SDLK_TAB:
+			return KEY_TAB;
+		case SDLK_LCTRL:
+			return KEY_LCTRL;
+		case SDLK_RCTRL:
+			return KEY_RCTRL;
+		case SDLK_LSHIFT:
+			return KEY_LSHIFT;
+		default:
+			break;
+	}
+
 	return KEY_NONE;
 }
 
