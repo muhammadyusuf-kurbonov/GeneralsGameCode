@@ -151,6 +151,15 @@ void SDL3GameEngine::serviceWindowsOS( void )
 					mouse->addSDLEvent(&event);
 				}
 				break;
+			case SDL_EVENT_KEY_DOWN:
+			case SDL_EVENT_KEY_UP:
+			case SDL_EVENT_KEYBOARD_ADDED:
+			case SDL_EVENT_KEYBOARD_REMOVED:
+			case SDL_EVENT_KEYMAP_CHANGED:
+				if(keyboard) {
+					keyboard->addSDLEvent(&event);
+				}
+				break;
 			// default:
 			// 	SDL_PushEvent(&event);
 				break;

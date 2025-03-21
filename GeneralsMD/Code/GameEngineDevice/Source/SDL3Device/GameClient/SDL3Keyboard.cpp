@@ -102,11 +102,10 @@ void SDL3Keyboard::getKey( KeyboardIO *key )
 	key->sequence = 0;
 	key->key = KEY_NONE;
 
-	// get 1 key, if available
-	SDL_Event event;
-	num = SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENT_KEY_DOWN, SDL_EVENT_KEY_UP);
-	if(num > 0)
+	if(m_events.size() > 0)
 	{
+		SDL_Event event = m_events.front();
+		m_events.erase(m_events.begin());
 		if(event.type == SDL_EVENT_KEY_DOWN)
 		{
 			key->key = ConvertSDLKey(event.key.key);
@@ -212,3 +211,13 @@ Bool SDL3Keyboard::getCapsState( void )
   SDL_Keymod mod = SDL_GetModState();
 	return (mod & SDL_KMOD_CAPS) ? TRUE : FALSE;
 }  // end getCapsState
+
+void SDL3Keyboard::addSDLEvent(SDL_Event *ev)
+{
+	m_events.push_back(*ev);
+	// Make sure to never have more than 256 events in the buffer
+	if (m_events.size() >= 256)
+	{
+		m_events.erase(m_events.begin());
+	}
+}

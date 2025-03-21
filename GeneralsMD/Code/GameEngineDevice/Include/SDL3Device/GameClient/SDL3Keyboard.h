@@ -53,6 +53,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "GameClient/Keyboard.h"
+union SDL_Event;
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 
@@ -76,6 +77,8 @@ public:
 	virtual void update( void );  ///< update call, extending update functionality
 	virtual Bool getCapsState( void );		///< get state of caps lock key, return TRUE if down
 
+	void addSDLEvent(SDL_Event *ev);
+
 protected:
 
 	// extended methods from the base class
@@ -86,6 +89,9 @@ protected:
 	// new methods to this derived class
 	void openKeyboard( void );  ///< create direct input keyboard
 	void closeKeyboard( void );  ///< release direct input keyboard
+
+private:
+	std::vector<SDL_Event> m_events;
  
 };  // end class SDL3Keyboard
 
