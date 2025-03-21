@@ -137,7 +137,7 @@ void SDL3Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 				result->rightState = MBS_Down;
 				result->rightFrame = frame;
 			}
-			else if (mouseBtnEvent.button == SDL_BUTTON_RIGHT)
+			else if (mouseBtnEvent.button == SDL_BUTTON_MIDDLE)
 			{
 				result->middleState = MBS_Down;
 				result->middleFrame = frame;
@@ -160,7 +160,7 @@ void SDL3Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 				result->rightState = MBS_Up;
 				result->rightFrame = frame;
 			}
-			else if (mouseBtnEvent.button == SDL_BUTTON_RIGHT)
+			else if (mouseBtnEvent.button == SDL_BUTTON_MIDDLE)
 			{
 				result->middleState = MBS_Up;
 				result->middleFrame = frame;
