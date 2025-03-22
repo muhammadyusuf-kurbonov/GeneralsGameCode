@@ -21,8 +21,8 @@
       "inherits": "default",
       "displayName": "Deploy Config",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_CONFIGURATION_TYPES": "Release",
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_CONFIGURATION_TYPES": "RelWithDebInfo",
         "SAGE_USE_GLM": "ON",
         "SAGE_USE_FFMPEG": "ON",
         "SAGE_USE_OPENAL": "ON"
@@ -79,7 +79,7 @@
       "name": "deploy",
       "configurePreset": "deploy",
       "description": "Build the deploy configuration",
-      "configuration": "Release"
+      "configuration": "RelWithDebInfo"
     },
     {
       "name": "win32-deploy",
