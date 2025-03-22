@@ -39,6 +39,15 @@
       }
     },
     {
+      "name": "linux64-deploy",
+      "inherits": "deploy",
+      "displayName": "Linux Release Config",
+      "cacheVariables": {
+        "VCPKG_INSTALL_OPTIONS": "--allow-unsupported",
+        "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic"
+      }
+    },
+    {
       "name": "testing",
       "inherits": "default",
       "displayName": "Test Config",
@@ -67,6 +76,15 @@
       "cacheVariables": {
         "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreadedDLL"
       }
+    },
+    {
+      "name": "linux64-testing",
+      "inherits": "testing",
+      "displayName": "Linux Test Config",
+      "cacheVariables": {
+        "VCPKG_INSTALL_OPTIONS": "--debug;--allow-unsupported",
+        "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic"
+      }
     }
   ],
   "buildPresets": [
@@ -88,6 +106,12 @@
       "inherits": "deploy"
     },
     {
+      "name": "linux64-deploy",
+      "configurePreset": "linux64-deploy",
+      "description": "Build the linux deploy configuration",
+      "configuration": "RelWithDebInfo"
+    },
+    {
       "name": "testing",
       "configurePreset": "testing",
       "description": "Build the testing configuration",
@@ -103,6 +127,12 @@
       "name": "win64-testing",
       "configurePreset": "win64-testing",
       "description": "Build the win64 testing configuration",
+      "configuration": "Debug"
+    },
+    {
+      "name": "linux64-testing",
+      "configurePreset": "linux64-testing",
+      "description": "Build the linux testing configuration",
       "configuration": "Debug"
     }
   ],
@@ -122,6 +152,13 @@
       "configurePreset": "win32-deploy",
       "inherits": "deploy",
       "description": "Package the win32 deploy configuration"
+    },
+    {
+      "name": "linux64-deploy",
+      "displayName": "Linux Release Package",
+      "configurePreset": "linux64-deploy",
+      "inherits": "deploy",
+      "description": "Package the linux deploy configuration"
     }
   ],
   "testPresets": [
@@ -139,6 +176,11 @@
       "name": "win64-testing",
       "configurePreset": "win64-testing",
       "description": "Run the win64 configuration tests"
+    },
+    {
+      "name": "linux64-testing",
+      "configurePreset": "linux64-testing",
+      "description": "Run the linux configuration tests"
     }
   ]
 }
