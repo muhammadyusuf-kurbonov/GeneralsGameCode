@@ -9,7 +9,7 @@ on:
 jobs:
   testing:
     name: Linux 64-bit Testing
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     env:
       X_VCPKG_ASSET_SOURCES: x-azurl,https://s3.hilton.rwth-aachen.de/assetcache,,read
       VCPKG_DEFAULT_TRIPLET: x64-linux-dynamic
@@ -42,7 +42,7 @@ jobs:
           generator: "Ninja"
   deploy:
     name: Linux 64-bit Deploy
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     env:
       X_VCPKG_ASSET_SOURCES: x-azurl,https://s3.hilton.rwth-aachen.de/assetcache,,read
       VCPKG_DEFAULT_TRIPLET: x64-linux-dynamic
