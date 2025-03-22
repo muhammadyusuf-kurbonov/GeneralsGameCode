@@ -754,6 +754,14 @@ protected:
 	
 public: 
 
+#ifdef __GNUC__
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
+#elif defined(_MSC_VER)
+	#pragma optimize("", off)
+#elif defined(__clang__)
+	#pragma clang optimize off
+#endif
 	void deleteInstance() 
 	{
 		if (this)
@@ -766,7 +774,14 @@ public:
 		{
 			DEBUG_LOG(("MemoryPoolObject::deleteInstance() called on NULL pointer\n"));
 		}
-	} 
+	}
+#ifdef __GNUC__
+#pragma GCC pop_options
+#elif defined(_MSC_VER)
+	#pragma optimize("", on)
+#elif defined(__clang__)
+	#pragma clang optimize on
+#endif
 };
 
 // ----------------------------------------------------------------------------
