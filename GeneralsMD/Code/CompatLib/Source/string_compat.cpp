@@ -29,6 +29,15 @@ int _vsnwprintf(wchar_t* buffer, size_t count, const wchar_t* format, va_list ar
     pos = format_fixup.find(L"%s", pos);
   }
 
+  // Replace all %S with %s
+  pos = format_fixup.find(L"%S", 0);
+  while (pos != std::wstring::npos)
+  {
+    format_fixup.replace(pos, 2, L"%s");
+    pos += 2;
+    pos = format_fixup.find(L"%S", pos);
+  }
+
 
   return vswprintf(buffer, count, format_fixup.c_str(), args);
 }

@@ -1482,7 +1482,7 @@ void RecorderClass::cullBadCommands() {
  */
 AsciiString RecorderClass::getReplayDir() 
 {
-	const char* replayDir = "Replays\\";
+	const char* replayDir = "Replays/";
 
 	AsciiString tmp = TheGlobalData->getPath_UserData();
 	tmp.concat(replayDir);

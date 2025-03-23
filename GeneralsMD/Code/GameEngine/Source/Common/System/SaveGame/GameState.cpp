@@ -829,7 +829,7 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 AsciiString GameState::getSaveDirectory() const
 {
 	AsciiString tmp = TheGlobalData->getPath_UserData();
-	tmp.concat("Save\\");
+	tmp.concat("Save/");
 	return tmp;
 }
 
@@ -1378,7 +1378,8 @@ void GameState::iterateSaveFiles( IterateSaveFileCallback callback, void *userDa
 #else
 	// iterate all items in the directory
 	std::filesystem::directory_iterator end_itr;
-	for (std::filesystem::directory_iterator itr(getSaveDirectory().str()); itr != end_itr; ++itr)
+	std::error_code ec;
+	for (std::filesystem::directory_iterator itr(getSaveDirectory().str(), ec); itr != end_itr; ++itr)
 	{
 		if (std::filesystem::is_regular_file(itr->status()))
 		{
