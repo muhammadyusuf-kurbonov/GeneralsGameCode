@@ -61,6 +61,8 @@
 	#include "Common/StackDump.h"
 #endif
 
+#include "Common/OSDisplay.h"
+
 // Horrible reference, but we really, really need to know if we are windowed.
 extern bool DX8Wrapper_IsWindowed;
 extern HWND ApplicationHWnd;
@@ -766,6 +768,8 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 		::SetWindowPos(ApplicationHWnd, HWND_NOTOPMOST, 0, 0, 0, 0,SWP_NOSIZE |SWP_NOMOVE);
 		#ifdef _WIN32
 		::MessageBoxA(NULL, mesgA.str(), promptA.str(), MB_OK|MB_TASKMODAL|MB_ICONERROR);
+		#else
+		OSDisplayWarningBox(p, m, OSDBT_OK, OSDOF_ERRORICON);
 		#endif
 	}
 
@@ -783,7 +787,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 	theReleaseCrashLogFile = fopen(curbuf, "w");
 	if (theReleaseCrashLogFile)
 	{
-		fprintf(theReleaseCrashLogFile, "Release Crash at %s; Reason %s\n", getCurrentTimeString(), mesg.str());
+		fprintf(theReleaseCrashLogFile, "Release Crash at %s; Reason %ls\n", getCurrentTimeString(), mesg.str());
 #if defined(DEBUG_STACKTRACE) || defined(IG_DEBUG_STACKTRACE)
 		const int STACKTRACE_SIZE	= 12;
 		const int STACKTRACE_SKIP = 6;
