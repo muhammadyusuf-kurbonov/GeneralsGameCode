@@ -593,7 +593,7 @@ void GameEngine::init( int argc, char *argv[] )
 		AsciiString dirName;
     dirName = TheArchiveFileSystem->getArchiveFilenameForFile("generalsbzh.sec");
 
-    if (dirName.compareNoCase("genseczh.big") != 0)
+    if (dirName.compareNoCase("genseczh.big") != 0 && dirName.compareNoCase("./genseczh.big") != 0)
 		{
 			DEBUG_LOG(("generalsbzh.sec was not found in genseczh.big - it was in '%s'\n", dirName.str()));
 			m_quitting = TRUE;
@@ -605,7 +605,7 @@ void GameEngine::init( int argc, char *argv[] )
 			dirName = noPath + 1;
 		}
 
-		if (dirName.compareNoCase("musiczh.big") != 0)
+		if (dirName.compareNoCase("musiczh.big") != 0 && dirName.compareNoCase("./musiczh.big") != 0)
 		{
 			DEBUG_LOG(("generalsazh.sec was not found in musiczh.big - it was in '%s'\n", dirName.str()));
 			m_quitting = TRUE;
