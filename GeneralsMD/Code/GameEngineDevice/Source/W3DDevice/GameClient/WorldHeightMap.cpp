@@ -508,6 +508,7 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 	}
 
 	DataChunkInput file( pStrm );
+	file.m_userData = this;
 
 	if (logicalDataOnly) {
 		file.registerParser( AsciiString("HeightMapData"), AsciiString::TheEmptyString, ParseSizeOnlyInChunk );
