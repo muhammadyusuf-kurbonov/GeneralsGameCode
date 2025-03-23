@@ -85,7 +85,10 @@ SidesInfo::~SidesInfo(void)
 
 void SidesInfo::init(const Dict* d)
 {
-	m_pBuildList->deleteInstance();
+	if (m_pBuildList)
+	{
+		m_pBuildList->deleteInstance();
+	}
 	m_pBuildList = NULL;
 	m_dict.clear();
 	if (m_scripts) 
@@ -303,7 +306,10 @@ Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, v
 	for (i=0; i<count; i++) {
 		if (i<TheSidesList->getNumSides()) {
 			ScriptList *pSL = TheSidesList->getSideInfo(i)->getScriptList();
-			pSL->deleteInstance();
+			if (pSL)
+			{
+				pSL->deleteInstance();
+			}
 			TheSidesList->getSideInfo(i)->setScriptList(scripts[i]);
 			scripts[i] = NULL;
 		} else {
