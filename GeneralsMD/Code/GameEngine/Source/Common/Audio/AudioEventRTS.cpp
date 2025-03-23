@@ -81,6 +81,7 @@ AudioEventRTS::AudioEventRTS()
 										m_playingAudioIndex(-1),
 										m_allCount(0),
 										m_playerIndex(-1),
+										m_portionToPlayNext(PP_Attack),
 										m_delay(0.0f),
 										m_uninterruptable(FALSE)
 {
@@ -108,6 +109,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName )
 										m_playingAudioIndex(-1),
 										m_allCount(0),
 										m_playerIndex(-1),
+										m_portionToPlayNext(PP_Attack),
 										m_delay(0.0f),
 										m_uninterruptable(FALSE)
 {
@@ -136,6 +138,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, ObjectID ownerID )
 										m_playingAudioIndex(-1),
 										m_allCount(0),
 										m_playerIndex(-1),
+										m_portionToPlayNext(PP_Attack),
 										m_delay(0.0f),
 										m_uninterruptable(FALSE)
 {						
@@ -172,6 +175,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, DrawableID drawableI
 										m_playingAudioIndex(-1),
 										m_allCount(0),
 										m_playerIndex(-1),
+										m_portionToPlayNext(PP_Attack),
 										m_delay(0.0f),
 										m_uninterruptable(FALSE)
 {
@@ -207,6 +211,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, const Coord3D *posit
 										m_playingAudioIndex(-1),
 										m_allCount(0),
 										m_playerIndex(-1),
+										m_portionToPlayNext(PP_Attack),
 										m_delay(0.0f),
 										m_uninterruptable(FALSE)
 {
