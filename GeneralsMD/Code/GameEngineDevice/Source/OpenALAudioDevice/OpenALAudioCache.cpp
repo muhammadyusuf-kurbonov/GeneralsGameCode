@@ -286,7 +286,7 @@ void OpenALAudioFileCache::releaseOpenAudioFile(OpenAudioFile* fileToRelease)
 		if (fileToRelease->m_file)
 		{
 			// Otherwise, we read it, we own it, blow it away.
-			delete[] fileToRelease->m_file;
+			av_free(fileToRelease->m_file);
 		}
 		fileToRelease->m_ffmpegFile = NULL;
 		fileToRelease->m_file = NULL;
