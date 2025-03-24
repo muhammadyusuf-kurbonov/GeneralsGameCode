@@ -748,6 +748,7 @@ W3DBridgeBuffer::W3DBridgeBuffer(void)
 	m_bridgeTexture = NULL;
 	m_curNumBridgeVertices=0;
 	m_curNumBridgeIndices=0;
+	m_numBridges=0;
 	clearAllBridges();
 	allocateBridgeBuffers();
 	m_initialized = true;
