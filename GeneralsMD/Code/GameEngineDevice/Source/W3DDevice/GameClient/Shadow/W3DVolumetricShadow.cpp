@@ -1252,7 +1252,6 @@ void W3DVolumetricShadow::getRenderCost(RenderCost & rc) const
 	{
 		Int i,j;
 
-		HLodClass *hlod=(HLodClass *)m_robj;
 		MeshClass *mesh;
 		Int meshIndex;
 
@@ -1263,7 +1262,10 @@ void W3DVolumetricShadow::getRenderCost(RenderCost & rc) const
 				meshIndex=m_geometry->getMesh(j)->m_meshRobjIndex;
 
 				if (meshIndex >= 0)
+				{
+					HLodClass *hlod = static_cast<HLodClass *>(m_robj);
 					mesh = (MeshClass *)hlod->Peek_Lod_Model(0,meshIndex);
+				}
 				else
 					mesh = (MeshClass *)m_robj;
 
@@ -1280,13 +1282,15 @@ void W3DVolumetricShadow::getRenderCost(RenderCost & rc) const
 /************************************ New Buffered Rendering Code ************************/
 void W3DVolumetricShadow::RenderVolume(Int meshIndex, Int lightIndex)
 {
-	HLodClass *hlod=(HLodClass *)m_robj;
 	MeshClass *mesh=NULL;
 
 	Int meshRobjIndex=m_geometry->getMesh(meshIndex)->m_meshRobjIndex;
 
 	if (meshRobjIndex >= 0)
+	{
+		HLodClass *hlod = static_cast<HLodClass *>(m_robj);
 		mesh = (MeshClass *)hlod->Peek_Lod_Model(0,meshRobjIndex);
+	}
 	else
 		mesh = (MeshClass *)m_robj;
 
@@ -1825,13 +1829,12 @@ void W3DVolumetricShadow::updateVolumes(Real zoffset)
 {
 	Int i,j;
 
-	HLodClass *hlod=(HLodClass *)m_robj;
 	MeshClass *mesh;
 	static AABoxClass aaBox;
 	static SphereClass sphere;
 	Int meshIndex;
 
-	DEBUG_ASSERTCRASH(hlod != NULL,("updateVolumes : hlod is NULL!"));
+	DEBUG_ASSERTCRASH(m_robj != NULL,("updateVolumes : m_robj is NULL!"));
 
 	Bool parentVis=m_robj->Is_Really_Visible();
 
@@ -1842,7 +1845,10 @@ void W3DVolumetricShadow::updateVolumes(Real zoffset)
 			meshIndex=m_geometry->getMesh(j)->m_meshRobjIndex;
 
 			if (meshIndex >= 0)
+			{
+				HLodClass *hlod=static_cast<HLodClass *>(m_robj);
 				mesh = (MeshClass *)hlod->Peek_Lod_Model(0,meshIndex);
+			}
 			else
 				mesh = (MeshClass *)m_robj;
 
