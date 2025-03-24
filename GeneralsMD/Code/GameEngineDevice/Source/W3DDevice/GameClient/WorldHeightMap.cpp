@@ -455,7 +455,7 @@ WorldHeightMap::WorldHeightMap():
 	m_tileMode(TILE_4x4),
 #endif
 	m_numCliffInfo(1),
-	m_terrainTex(NULL), m_alphaTerrainTex(NULL), m_numBitmapTiles(0), m_numBlendedTiles(1)
+	m_terrainTex(NULL), m_alphaTerrainTex(NULL), m_alphaEdgeTex(NULL), m_numBitmapTiles(0), m_numBlendedTiles(1)
 {
 	Int i;
 	for (i=0; i<NUM_SOURCE_TILES; i++) {
