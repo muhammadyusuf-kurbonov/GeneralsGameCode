@@ -193,7 +193,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  char *cmdlineCStr = strdup(cmdline.c_str()); // Ensure mutable
+  char *cmdlineCStr = cmdline.data();
   char *token = nextParam(cmdlineCStr, "\" ");
 
   int local_argc = 1;
