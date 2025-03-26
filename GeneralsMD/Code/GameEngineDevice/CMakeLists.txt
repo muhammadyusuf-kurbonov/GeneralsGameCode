@@ -66,8 +66,10 @@ if(SAGE_USE_SDL3)
         ${CMAKE_CURRENT_SOURCE_DIR}/Source/SDL3Device/GameClient/SDL3Keyboard.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/Source/SDL3Device/GameClient/SDL3Mouse.cpp
     )
-    find_package(SDL3 REQUIRED)
-    target_link_libraries(GameEngineDevice PUBLIC SDL3::SDL3)
+    find_package(SDL3 CONFIG REQUIRED)
+    find_package(SDL3_image CONFIG REQUIRED)
+    find_package(riffcpp CONFIG REQUIRED)
+    target_link_libraries(GameEngineDevice PUBLIC SDL3::SDL3 SDL3_image::SDL3_image libdmusic::riffcpp)
     target_compile_definitions(GameEngineDevice PUBLIC SAGE_USE_SDL3)
 endif()
 

@@ -28,35 +28,128 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "Common/Debug.h"
+#include "Common/File.h"
+#include "Common/FileSystem.h"
 #include "GameClient/GameClient.h"
 #include "SDL3Device/GameClient/SDL3Mouse.h"
 
 #include <SDL3/SDL_events.h>
+#include <SDL3_image/SDL_image.h>
+#include <riffcpp.hpp>
+
+// a helper struct that holds the frames of an animated cursor
+struct AnimatedCursor {
+	std::array<SDL_Cursor*, MAX_2D_CURSOR_ANIM_FRAMES> m_frameCursors;
+	std::array<SDL_Surface*, MAX_2D_CURSOR_ANIM_FRAMES> m_frameSurfaces;
+	int m_currentFrame = 0;
+	int m_frameCount = 0;
+	int m_frameRate = 0; // the time a frame is displayed in ms
+	int m_lastFrameChange = 0; // the time passed since the last frame change in ms
+};
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
+AnimatedCursor* cursorResources[Mouse::NUM_MOUSE_CURSORS][MAX_2D_CURSOR_DIRECTIONS];
 
-
-SDL_Cursor* cursorResources[Mouse::NUM_MOUSE_CURSORS][MAX_2D_CURSOR_DIRECTIONS];
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+constexpr riffcpp::FourCC acon_id = {'A', 'C', 'O', 'N'};
+constexpr riffcpp::FourCC anih_id = {'a', 'n', 'i', 'h'};
+constexpr riffcpp::FourCC fram_id = {'f', 'r', 'a', 'm'};
+constexpr riffcpp::FourCC icon_id = {'i', 'c', 'o', 'n'};
+constexpr riffcpp::FourCC seq_id = {'s', 'e', 'q', ' '};
+constexpr riffcpp::FourCC rate_id = {'r', 'a', 't', 'e'};
 
-SDL_Cursor* SDL3Mouse::loadCursorFromFile(const char* file)
+struct ANIHeader
 {
-	// TODO: this should parse the ANI file and load the cursor correctly
-	SDL_Surface *surface = SDL_LoadBMP(file);
-	if (!surface) {
-			// Failed to load surface
-			DEBUG_LOG(("loadCursorFromFile: Failed to load ANI cursor [%s]", file));
-			return NULL;
-	}
-	SDL_Cursor *cursor = SDL_CreateColorCursor(surface, 0, 0);
-	if (!cursor) {
-			// Failed to create cursor
-			DEBUG_LOG(("loadCursorFromFile: Failed to create SDL2 color cursor [%s]", file));
-			return NULL;
+	uint32_t size; // Should be 32 bytes (all fields below)
+	uint32_t frames;
+	uint32_t steps;
+	uint32_t width;
+	uint32_t height;
+	uint32_t bitsPerPixel;
+	uint32_t planes;
+	uint32_t displayRate;
+	uint32_t flags;
+};
+
+static_assert(sizeof(ANIHeader) == 36, "ANIHeader size is not 36 bytes");
+
+AnimatedCursor* SDL3Mouse::loadCursorFromFile(const char* filepath)
+{
+	File* file = TheFileSystem->openFile(filepath);
+	if (!file)
+	{
+		DEBUG_LOG(("loadCursorFromFile: Failed to open ANI cursor [%s]", filepath));
+		return NULL;
 	}
 
+	// Read entire file and close it
+	Int size  = file->size();
+	char* file_buffer = file->readEntireAndClose();
+
+	riffcpp::Chunk chunk(file_buffer, size);
+	if(chunk.id() != riffcpp::riff_id) {
+		DEBUG_LOG(("loadCursorFromFile: Not a RIFF file"));
+		return NULL;
+	}
+
+	if(chunk.type() != acon_id) {
+		DEBUG_LOG(("loadCursorFromFile: Not an animated cursor file"));
+		return NULL;
+	}
+	
+	DEBUG_LOG(("loadCursorFromFile: loading %s", filepath));
+	AnimatedCursor* cursor = new AnimatedCursor();
+	ANIHeader header;
+	try {
+		for(auto subchunk : chunk)
+		{
+			if (subchunk.id() == anih_id) {
+				if (subchunk.size() != sizeof(ANIHeader))
+				{
+					DEBUG_LOG(("loadCursorFromFile: Invalid ANI header size"));
+					return NULL;
+				}
+
+				subchunk.read_data((char*)&header, sizeof(ANIHeader));
+
+				cursor->m_frameCount = header.frames;
+				cursor->m_frameRate = header.displayRate;
+			}
+			else if (subchunk.id() == riffcpp::list_id && subchunk.type() == fram_id)
+			{
+				int frame_index = 0;
+				for(auto frame : subchunk)
+				{
+					if (frame.id() == icon_id)
+					{
+						char* frame_buffer = new char[frame.size()];
+						frame.read_data(frame_buffer, frame.size());
+						SDL_IOStream* io_stream = SDL_IOFromConstMem(frame_buffer, frame.size());
+						SDL_Surface* surface = cursor->m_frameSurfaces[frame_index] = IMG_Load_IO(io_stream, true);
+						delete[] frame_buffer;
+
+						if (!surface)
+						{
+							DEBUG_LOG(("loadCursorFromFile: Failed to load frame"));
+							return NULL;
+						}
+
+						cursor->m_frameCursors[frame_index++] = SDL_CreateColorCursor(surface, 0, 0);
+					}
+				}
+				break;
+			}
+			else {
+				DEBUG_LOG(("loadCursorFromFile: Unhandled chunk"));
+			}
+		}
+	} catch (riffcpp::Error& e) {
+		DEBUG_LOG(("loadCursorFromFile: Riff Error: %s", e.what()));
+	}
+
+	delete[] file_buffer;
 	return cursor;
 }
 
@@ -225,7 +318,7 @@ SDL3Mouse::SDL3Mouse( void )
 	m_currentSdlCursor = NONE;
 	for (Int i=0; i<NUM_MOUSE_CURSORS; i++)
 		for (Int j=0; j<MAX_2D_CURSOR_DIRECTIONS; j++)
-			cursorResources[i][j]=NULL;
+				cursorResources[i][j]= NULL;
 	m_directionFrame=0; //points up.
 	m_lostFocus = FALSE;
 }  // end SDL3Mouse
@@ -335,9 +428,9 @@ void SDL3Mouse::initCursorResources(void)
 				char resourcePath[256];
 				//Check if this is a directional cursor
 				if (m_cursorInfo[cursor].numDirections > 1)
-					sprintf(resourcePath,"data\\cursors\\%s%d.ANI",m_cursorInfo[cursor].textureName.str(),direction);
+					sprintf(resourcePath,"Data/Cursors/%s%d.ani",m_cursorInfo[cursor].textureName.str(),direction);
 				else
-					sprintf(resourcePath,"data\\cursors\\%s.ANI",m_cursorInfo[cursor].textureName.str());
+					sprintf(resourcePath,"Data/Cursors/%s.ani",m_cursorInfo[cursor].textureName.str());
 
 				cursorResources[cursor][direction]=loadCursorFromFile(resourcePath);
 				DEBUG_ASSERTCRASH(cursorResources[cursor][direction], ("MissingCursor %s\n",resourcePath));
@@ -362,7 +455,9 @@ void SDL3Mouse::setCursor( MouseCursor cursor )
 		SDL_SetCursor( NULL );
 	else
 	{
-		SDL_SetCursor(cursorResources[cursor][m_directionFrame]);
+		AnimatedCursor* currentCursor = cursorResources[cursor][m_directionFrame];
+		if (currentCursor)
+			SDL_SetCursor(currentCursor->m_frameCursors[0]);
 	}  // end switch
 
 	// save current cursor
@@ -375,8 +470,7 @@ void SDL3Mouse::setCursor( MouseCursor cursor )
 //-------------------------------------------------------------------------------------------------
 void SDL3Mouse::capture( void )
 {
-
-//	SetCapture( ApplicationHWnd );
+	SDL_CaptureMouse(true);
 
 }  // end capture
 
@@ -386,7 +480,7 @@ void SDL3Mouse::capture( void )
 void SDL3Mouse::releaseCapture( void )
 {
 
-//	ReleaseCapture();
+	SDL_CaptureMouse(false);
 
 }  // end releaseCapture
 

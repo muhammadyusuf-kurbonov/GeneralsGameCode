@@ -56,6 +56,7 @@
 #include <SDL3/SDL.h>
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
+class AnimatedCursor;
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 
@@ -92,7 +93,7 @@ protected:
   /// translate a win32 mouse event to our own info
   void translateEvent(UnsignedInt eventIndex, MouseIO *result);
 
-  SDL_Cursor* loadCursorFromFile(const char* file);
+  AnimatedCursor* loadCursorFromFile(const char* file);
 
   /// this is our buffer of events that we receive via a WndProc message
   SDL_Event m_eventBuffer[Mouse::NUM_MOUSE_EVENTS];

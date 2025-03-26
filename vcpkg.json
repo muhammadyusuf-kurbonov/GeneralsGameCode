@@ -16,6 +16,8 @@
       "features": [
         "vulkan"
       ]
-    }
+    },
+    "sdl3-image",
+    "riffcpp"
   ]
 }
