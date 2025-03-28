@@ -76,7 +76,7 @@ public:
 
 	struct W3DRenderTask
 	{
-		W3DRenderTask	*m_nextTask;	///<next rendering task
+		W3DRenderTask	*m_nextTask=NULL;	///<next rendering task
 	};
 
 	struct W3DVertexBuffer;	//forward reference
@@ -101,7 +101,7 @@ public:
 		Int m_size;							///<number of vertices allowed in VB.
 		W3DVertexBuffer *m_nextVB;			///<next vertex buffer of same type.
 		DX8VertexBufferClass *m_DX8VertexBuffer;	///<actual DX8 vertex buffer interface
-		W3DRenderTask	*m_renderTaskList;	///<used to help app sort its D3D access by VB.
+		W3DRenderTask	*m_renderTaskList = NULL;	///<used to help app sort its D3D access by VB.
 	};
 
 	struct W3DIndexBufferSlot
