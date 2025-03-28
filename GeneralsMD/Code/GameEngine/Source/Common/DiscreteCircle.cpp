@@ -49,8 +49,8 @@
 DiscreteCircle::DiscreteCircle(Int xCenter, Int yCenter, Int radius)
 {
 	m_yPos = yCenter;
-	m_yPosDoubled = (yCenter << 1);
-	m_edges.reserve(radius << 1);	// largest that it should ever be.
+	m_yPosDoubled = (yCenter * 2);
+	m_edges.reserve(radius * 2);	// largest that it should ever be.
 
 	generateEdgePairs(xCenter, yCenter, radius);
 	removeDuplicates();
@@ -73,7 +73,7 @@ void DiscreteCircle::generateEdgePairs(Int xCenter, Int yCenter, Int radius)
 	// Uses Bresenham to generate points.
 	Int x = 0;
 	Int y = radius;
-	Int d = (1 - radius) << 1;
+	Int d = (1 - radius) * 2;
 
 	while (y >= 0) {
 		HorzLine hl;
@@ -84,12 +84,12 @@ void DiscreteCircle::generateEdgePairs(Int xCenter, Int yCenter, Int radius)
 		
 		if (d + y > 0) {
 			--y;
-			d -= ((y << 1) - 1);
+			d -= ((y * 2) - 1);
 		} 
 
 		if (x > d) {
 			++x;
-			d += ((x << 1) + 1);
+			d += ((x * 2) + 1);
 		}
 	}
 }
