@@ -267,7 +267,7 @@ private:
 	void releaseData();
 	DictPair *ensureUnique(int numPairsNeeded, Bool preserveData, DictPair *pairToTranslate);
 	
-	enum DictPairKeyType
+	enum DictPairKeyType : UnsignedInt
 	{
 		DICTPAIRKEY_ILLEGAL = 0
 	};
