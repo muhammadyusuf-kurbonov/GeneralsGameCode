@@ -140,8 +140,11 @@ RoadType::RoadType(void):
 m_roadTexture(NULL),
 m_vertexRoad(NULL),
 m_indexRoad(NULL),
-m_stackingOrder(0),
-m_uniqueID(-1)
+m_numRoadVertices(0),
+m_numRoadIndices(0),
+m_uniqueID(-1),
+m_isAutoLoaded(false),
+m_stackingOrder(0)
 {
 }
 
@@ -1660,9 +1663,17 @@ void W3DRoadBuffer::addMapObjects()
 			curRoad.m_pt1.loc = loc1;
 			curRoad.m_pt1.isAngled = pMapObj->getFlag(FLAG_ROAD_CORNER_ANGLED);
 			curRoad.m_pt1.isJoin = pMapObj->getFlag(FLAG_ROAD_JOIN);
+			// These will get overwritten soon after in updateCounts
+			curRoad.m_pt1.last = false;
+			curRoad.m_pt1.multi = false;
+
 			curRoad.m_pt2.loc =loc2;
 			curRoad.m_pt2.isAngled = pMapObj2->getFlag(FLAG_ROAD_CORNER_ANGLED);
 			curRoad.m_pt2.isJoin = pMapObj2->getFlag(FLAG_ROAD_JOIN);
+			// Same here
+			curRoad.m_pt2.last = false;
+			curRoad.m_pt2.multi = false;			
+
 			curRoad.m_type = SEGMENT; 
 			curRoad.m_curveRadius = pMapObj->getFlag(FLAG_ROAD_CORNER_TIGHT)?TIGHT_CORNER_RADIUS:CORNER_RADIUS;
 

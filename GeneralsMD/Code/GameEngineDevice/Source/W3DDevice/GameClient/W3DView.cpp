@@ -167,6 +167,11 @@ W3DView::W3DView()
 	m_shakeOffset.x = 0.0f;
 	m_shakeOffset.y = 0.0f;
 	m_shakeIntensity = 0.0f;
+
+	m_doingRotateCamera = false;
+	m_doingPitchCamera = false;
+	m_doingScriptedCameraLock = false;
+
 	m_FXPitch = 1.0f;
 	m_freezeTimeForCameraMovement = false;
 	m_cameraHasMovedSinceRequest = true;
@@ -181,6 +186,7 @@ W3DView::W3DView()
 	m_shakerAngles.Y =0.0f;
 	m_shakerAngles.Z =0.0f;
 
+	m_cameraConstraintValid = false;
 }  // end W3DView
 
 //-------------------------------------------------------------------------------------------------

@@ -1056,6 +1056,12 @@ InGameUI::InGameUI()
 	m_attackMoveToMode	= false;
 	m_preferSelection		= false;
 
+	m_cameraRotatingLeft = false;
+	m_cameraRotatingRight = false;
+	m_cameraZoomingIn = false;
+	m_cameraTrackingDrawable = false;
+	m_cameraZoomingOut = false;
+
 	m_curRcType = RADIUSCURSOR_NONE;
 	
 	m_soloNexusSelectedDrawableID = INVALID_DRAWABLE_ID;

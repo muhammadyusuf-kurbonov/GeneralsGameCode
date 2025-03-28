@@ -3689,6 +3689,7 @@ W3DVolumetricShadowManager::W3DVolumetricShadowManager( void )
 {
 
 	m_shadowList = NULL;
+	m_dynamicShadowVolumesToRender = NULL;
 
 	m_W3DShadowGeometryManager = NEW W3DShadowGeometryManager;
 
