@@ -147,7 +147,11 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 	for (it = replayFilenames.begin(); it != replayFilenames.end(); ++it)
 	{
 		// just want the filename
+#ifdef _WIN32
 		asciistr.set((*it).reverseFind('\\') + 1);
+#else
+		asciistr.set((*it).reverseFind('/') + 1);
+#endif
 
 		// lets get some info about the replay
 		RecorderClass::ReplayHeader header;
