@@ -316,6 +316,8 @@ private:
 		unsigned short	m_numPairsAllocated;  // length of data allocated
 		unsigned short	m_numPairsUsed;				// length of data allocated
 		//DictPair m_pairs[];
+		// Padding for 32/64-bit alignment
+		unsigned short  m_padding1;
 
 		inline DictPair* peek() { return (DictPair*)(this+1); }
 	};
