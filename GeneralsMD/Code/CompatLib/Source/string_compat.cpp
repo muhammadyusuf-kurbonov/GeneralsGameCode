@@ -24,7 +24,7 @@ int _vsnwprintf(wchar_t* buffer, size_t count, const wchar_t* format, va_list ar
   size_t pos = format_fixup.find(L"%s", 0);
   while (pos != std::wstring::npos)
   {
-    format_fixup.replace(pos, 3, L"%ls");
+    format_fixup.replace(pos, 2, L"%ls");
     pos += 3;
     pos = format_fixup.find(L"%s", pos);
   }
