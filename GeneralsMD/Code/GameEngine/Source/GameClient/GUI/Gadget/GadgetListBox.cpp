@@ -1367,7 +1367,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 					cells[j].userData = NULL;
 					cells[j].data = NULL;
 				}
-				delete(list->listData[i].cell);
+				delete[](list->listData[i].cell);
 				list->listData[i].cell = NULL;
 			}
 			//zero out the header structure
@@ -1734,7 +1734,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 						cells[j].cellType = 0;
 					}
 				
-				delete(list->listData[i].cell);
+				delete[](list->listData[i].cell);
 				list->listData[i].cell = NULL;
 			}
 
@@ -2432,7 +2432,7 @@ void GadgetListBoxAddMultiSelect( GameWindow *listbox )
 	if( listboxData->selections == NULL )
 	{
 
-		delete( listboxData->listData );
+		delete[]( listboxData->listData );
 		return;
 
 	}  // end if
@@ -2458,7 +2458,7 @@ void GadgetListBoxRemoveMultiSelect( GameWindow *listbox )
 	if( listData->selections )
 	{
 
-		delete( listData->selections );
+		delete[]( listData->selections );
 		listData->selections = NULL;
 
 	}  // end if
@@ -2546,14 +2546,14 @@ void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength )
 			}
 		}
 		if ( i >= newLength )
-			delete(listboxData->listData[i].cell);
+			delete[](listboxData->listData[i].cell);
 		listboxData->listData[i].cell = NULL;
 	}
 
 	listboxData->listLength = newLength;
 
 	if( listboxData->listData )
-		delete( listboxData->listData );
+		delete[]( listboxData->listData );
 	listboxData->listData = newData;
 	
 	//reset the total height
