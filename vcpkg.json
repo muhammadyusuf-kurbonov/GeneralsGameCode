@@ -17,7 +17,6 @@
         "vulkan"
       ]
     },
-    "sdl3-image",
-    "riffcpp"
+    "sdl3-image"
   ]
 }

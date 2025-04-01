@@ -35,7 +35,8 @@
 
 #include <SDL3/SDL_events.h>
 #include <SDL3_image/SDL_image.h>
-#include <riffcpp.hpp>
+
+#include <array>
 
 // a helper struct that holds the frames of an animated cursor
 struct AnimatedCursor {
@@ -53,12 +54,16 @@ AnimatedCursor* cursorResources[Mouse::NUM_MOUSE_CURSORS][MAX_2D_CURSOR_DIRECTIO
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-constexpr riffcpp::FourCC acon_id = {'A', 'C', 'O', 'N'};
-constexpr riffcpp::FourCC anih_id = {'a', 'n', 'i', 'h'};
-constexpr riffcpp::FourCC fram_id = {'f', 'r', 'a', 'm'};
-constexpr riffcpp::FourCC icon_id = {'i', 'c', 'o', 'n'};
-constexpr riffcpp::FourCC seq_id = {'s', 'e', 'q', ' '};
-constexpr riffcpp::FourCC rate_id = {'r', 'a', 't', 'e'};
+
+typedef std::array<char, 4> FourCC;
+constexpr FourCC riff_id = {'R', 'I', 'F', 'F'};
+constexpr FourCC acon_id = {'A', 'C', 'O', 'N'};
+constexpr FourCC anih_id = {'a', 'n', 'i', 'h'};
+constexpr FourCC fram_id = {'f', 'r', 'a', 'm'};
+constexpr FourCC icon_id = {'i', 'c', 'o', 'n'};
+constexpr FourCC seq_id = {'s', 'e', 'q', ' '};
+constexpr FourCC rate_id = {'r', 'a', 't', 'e'};
+constexpr FourCC list_id = {'L', 'I', 'S', 'T'};
 
 struct ANIHeader
 {
@@ -73,7 +78,25 @@ struct ANIHeader
 	uint32_t flags;
 };
 
+struct RIFFChunk
+{
+	FourCC id; // Should be 'RIFF' for the first 4 bytes
+	uint32_t size; // Size of the file minus 8 bytes
+	FourCC type; // Should be 'ACON' in the first chunk
+};
+
 static_assert(sizeof(ANIHeader) == 36, "ANIHeader size is not 36 bytes");
+
+static RIFFChunk* getNextChunk(RIFFChunk* chunk)
+{
+	return (RIFFChunk*)((char*)chunk + sizeof(RIFFChunk) + chunk->size - 4);
+}
+
+static void* getChunkData(RIFFChunk* chunk)
+{
+	// Type is also part of the chunk, but also data, remove it from the size
+	return (char*)chunk + sizeof(RIFFChunk) - 4;
+}
 
 AnimatedCursor* SDL3Mouse::loadCursorFromFile(const char* filepath)
 {
@@ -88,66 +111,96 @@ AnimatedCursor* SDL3Mouse::loadCursorFromFile(const char* filepath)
 	Int size  = file->size();
 	char* file_buffer = file->readEntireAndClose();
 
-	riffcpp::Chunk chunk(file_buffer, size);
-	if(chunk.id() != riffcpp::riff_id) {
-		DEBUG_LOG(("loadCursorFromFile: Not a RIFF file"));
+	if (!file_buffer)
+	{
+		DEBUG_LOG(("loadCursorFromFile: Failed to read ANI cursor [%s]", filepath));
+		file->close();
 		return NULL;
 	}
 
-	if(chunk.type() != acon_id) {
+	RIFFChunk *riff_header = (RIFFChunk*)file_buffer;
+	if (riff_header->id != riff_id)
+	{
+		DEBUG_LOG(("loadCursorFromFile: Not a RIFF file"));
+		delete[] file_buffer;
+		return NULL;
+	}
+
+	if(riff_header->type != acon_id) {
 		DEBUG_LOG(("loadCursorFromFile: Not an animated cursor file"));
 		return NULL;
 	}
 	
 	DEBUG_LOG(("loadCursorFromFile: loading %s", filepath));
 	AnimatedCursor* cursor = new AnimatedCursor();
-	ANIHeader header;
-	try {
-		for(auto subchunk : chunk)
+
+	RIFFChunk* chunk = (RIFFChunk*)((char*)file_buffer + sizeof(RIFFChunk));
+
+	while (chunk != NULL && (char *)chunk < file_buffer + size)
+	{
+		if (chunk->id == anih_id)
 		{
-			if (subchunk.id() == anih_id) {
-				if (subchunk.size() != sizeof(ANIHeader))
-				{
-					DEBUG_LOG(("loadCursorFromFile: Invalid ANI header size"));
-					return NULL;
-				}
-
-				subchunk.read_data((char*)&header, sizeof(ANIHeader));
-
-				cursor->m_frameCount = header.frames;
-				cursor->m_frameRate = header.displayRate;
-			}
-			else if (subchunk.id() == riffcpp::list_id && subchunk.type() == fram_id)
+			if (chunk->size != sizeof(ANIHeader))
 			{
-				int frame_index = 0;
-				for(auto frame : subchunk)
-				{
-					if (frame.id() == icon_id)
-					{
-						char* frame_buffer = new char[frame.size()];
-						frame.read_data(frame_buffer, frame.size());
-						SDL_IOStream* io_stream = SDL_IOFromConstMem(frame_buffer, frame.size());
-						SDL_Surface* surface = cursor->m_frameSurfaces[frame_index] = IMG_Load_IO(io_stream, true);
-						delete[] frame_buffer;
-
-						if (!surface)
-						{
-							DEBUG_LOG(("loadCursorFromFile: Failed to load frame"));
-							return NULL;
-						}
-
-						cursor->m_frameCursors[frame_index++] = SDL_CreateColorCursor(surface, 0, 0);
-					}
-				}
-				break;
+				DEBUG_LOG(("loadCursorFromFile: Invalid ANI header size"));
+				return NULL;
 			}
-			else {
-				DEBUG_LOG(("loadCursorFromFile: Unhandled chunk"));
-			}
+
+			ANIHeader *ani_header = (ANIHeader*)getChunkData(chunk);
+
+			cursor->m_frameCount = ani_header->frames;
+			cursor->m_frameRate = ani_header->displayRate;
 		}
-	} catch (riffcpp::Error& e) {
-		DEBUG_LOG(("loadCursorFromFile: Riff Error: %s", e.what()));
+		else if (chunk->id == list_id && chunk->type == fram_id)
+		{
+			int frame_index = 0;
+			size_t frame_offset = 0;
+
+			RIFFChunk *frame = (RIFFChunk*)((char *)chunk + sizeof(RIFFChunk));
+			while (frame != NULL && (char *)frame < file_buffer + size)
+			{
+				if (frame->id == icon_id)
+				{
+					const void *frame_buffer = getChunkData(frame);
+					SDL_IOStream *io_stream = SDL_IOFromConstMem(frame_buffer, frame->size);
+					SDL_Surface *surface = cursor->m_frameSurfaces[frame_index] = IMG_LoadTyped_IO(io_stream, true, "ico");
+
+					if (!surface)
+					{
+						DEBUG_LOG(("loadCursorFromFile: Failed to load frame"));
+						return NULL;
+					}
+
+					cursor->m_frameCursors[frame_index++] = SDL_CreateColorCursor(surface, 0, 0);
+				}
+
+				if (frame_index >= MAX_2D_CURSOR_ANIM_FRAMES)
+				{
+					DEBUG_LOG(("loadCursorFromFile: Too many frames"));
+					break;
+				}
+
+				frame = getNextChunk(frame);
+			}
+			break;
+		}
+		else
+		{
+			DEBUG_LOG(("loadCursorFromFile: Unhandled chunk"));
+		}
+		chunk = getNextChunk(chunk);
 	}
+
+#ifdef _DEBUG
+	size_t loaded_frames = 0;
+	for (int i = 0; i < MAX_2D_CURSOR_ANIM_FRAMES; i++)
+	{
+		if (cursor->m_frameCursors[i])
+			loaded_frames++;
+	}
+
+	DEBUG_ASSERTCRASH(loaded_frames == cursor->m_frameCount, ("Loaded frames do not match header"));
+#endif
 
 	delete[] file_buffer;
 	return cursor;
