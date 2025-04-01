@@ -187,7 +187,12 @@ AnimatedCursor* SDL3Mouse::loadCursorFromFile(const char* filepath)
 						return NULL;
 					}
 
-					cursor->m_frameCursors[frame_index++] = SDL_CreateColorCursor(surface, 0, 0);
+					// Allow specifying the hot spot via properties on the surface
+					SDL_PropertiesID props = SDL_GetSurfaceProperties(surface);
+					int hot_spot_x = (int)SDL_GetNumberProperty(props, SDL_PROP_SURFACE_HOTSPOT_X_NUMBER, 0);
+					int hot_spot_y = (int)SDL_GetNumberProperty(props, SDL_PROP_SURFACE_HOTSPOT_Y_NUMBER, 0);
+
+					cursor->m_frameCursors[frame_index++] = SDL_CreateColorCursor(surface, hot_spot_x, hot_spot_y);
 				}
 
 				if (frame_index >= MAX_2D_CURSOR_ANIM_FRAMES)
