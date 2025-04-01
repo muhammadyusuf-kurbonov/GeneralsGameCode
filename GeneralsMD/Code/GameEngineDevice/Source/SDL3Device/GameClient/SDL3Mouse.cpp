@@ -46,6 +46,23 @@ struct AnimatedCursor {
 	int m_frameCount = 0;
 	int m_frameRate = 0; // the time a frame is displayed in ms
 	int m_lastFrameChange = 0; // the time passed since the last frame change in ms
+
+	~AnimatedCursor()
+	{
+		for (int i = 0; i < MAX_2D_CURSOR_ANIM_FRAMES; i++)
+		{
+			if (m_frameCursors[i])
+			{
+				SDL_DestroyCursor(m_frameCursors[i]);
+				m_frameCursors[i] = nullptr;
+			}
+			if (m_frameSurfaces[i])
+			{
+				SDL_DestroySurface(m_frameSurfaces[i]);
+				m_frameSurfaces[i] = nullptr;
+			}
+		}
+	}
 };
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
@@ -380,7 +397,17 @@ SDL3Mouse::SDL3Mouse( void )
 //-------------------------------------------------------------------------------------------------
 SDL3Mouse::~SDL3Mouse( void )
 {
-
+	for (Int i = 0; i < NUM_MOUSE_CURSORS; i++)
+	{
+		for (Int j = 0; j < MAX_2D_CURSOR_DIRECTIONS; j++)
+		{
+			if (cursorResources[i][j])
+			{
+				delete cursorResources[i][j];
+				cursorResources[i][j] = NULL;
+			}
+		}
+	}
 }  // end ~SDL3Mouse
 
 //-------------------------------------------------------------------------------------------------
