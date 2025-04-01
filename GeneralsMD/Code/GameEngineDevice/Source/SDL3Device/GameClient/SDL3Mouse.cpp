@@ -44,8 +44,7 @@ struct AnimatedCursor {
 	std::array<SDL_Surface*, MAX_2D_CURSOR_ANIM_FRAMES> m_frameSurfaces;
 	int m_currentFrame = 0;
 	int m_frameCount = 0;
-	int m_frameRate = 0; // the time a frame is displayed in ms
-	int m_lastFrameChange = 0; // the time passed since the last frame change in ms
+	int m_frameRate = 0; // the time a frame is displayed in 1/60th of a second
 
 	~AnimatedCursor()
 	{
@@ -531,14 +530,39 @@ void SDL3Mouse::setCursor( MouseCursor cursor )
 	if (m_lostFocus)
 		return;	//stop messing with mouse cursor if we don't have focus.
 
+	bool bUseDefaultCursor = false;
 	if (cursor == NONE || !m_visible)
-		SDL_SetCursor( NULL );
+	{
+		bUseDefaultCursor = true;
+	}
 	else
 	{
 		AnimatedCursor* currentCursor = cursorResources[cursor][m_directionFrame];
 		if (currentCursor)
-			SDL_SetCursor(currentCursor->m_frameCursors[0]);
+		{
+			// The game runs at 30FPS, the frame rate within the metadata is for 60FPS
+			size_t index = m_inputFrame * 2 / currentCursor->m_frameRate;
+			SDL_SetCursor(currentCursor->m_frameCursors[index % currentCursor->m_frameCount]);
+		}
+		else
+		{
+			bUseDefaultCursor = true;
+		}
 	}  // end switch
+
+	if (bUseDefaultCursor)
+	{
+		if (cursorResources[NORMAL][0])
+		{
+			SDL_SetCursor(cursorResources[NORMAL][0]->m_frameCursors[0]);
+		}
+		else
+		{
+			// Fallback to SDL's default cursor in case of failure
+			// This is to avoid crashing in case of case sensitivity issues
+			SDL_SetCursor(SDL_GetDefaultCursor());
+		}
+	}
 
 	// save current cursor
 	m_currentSdlCursor=m_currentCursor = cursor;
