@@ -56,10 +56,14 @@ Int REPLAY_CRC_INTERVAL = 100;
 const char *replayExtention = ".rep";
 const char *lastReplayFileName = "00000000";	// a name the user is unlikely to ever type, but won't cause panic & confusion
 
+static_assert(sizeof(Bool) == 1, "Bool size is not 1 byte");
+static_assert(sizeof(SYSTEMTIME) == 16, "SYSTEMTIME size is not 16 bytes");
+static const size_t SIZE_OF_TIME = 4;
+
 static time_t startTime;
 static const UnsignedInt startTimeOffset = 6;
-static const UnsignedInt endTimeOffset = startTimeOffset + sizeof(time_t);
-static const UnsignedInt framesOffset = endTimeOffset + sizeof(time_t);
+static const UnsignedInt endTimeOffset = startTimeOffset + SIZE_OF_TIME;
+static const UnsignedInt framesOffset = endTimeOffset + SIZE_OF_TIME;
 static const UnsignedInt desyncOffset = framesOffset + sizeof(UnsignedInt);
 static const UnsignedInt quitEarlyOffset = desyncOffset + sizeof(Bool);
 static const UnsignedInt disconOffset = quitEarlyOffset + sizeof(Bool);
@@ -117,7 +121,7 @@ void RecorderClass::logGameStart(AsciiString options)
 	if (!fseek(m_file, startTimeOffset, SEEK_SET))
 	{
 		// save off start time
-		fwrite(&startTime, sizeof(time_t), 1, m_file);
+		fwrite(&startTime, SIZE_OF_TIME, 1, m_file);
 	}
 	// move back to end of stream
 #ifdef DEBUG_CRASHING
@@ -271,7 +275,7 @@ void RecorderClass::logGameEnd( void )
 	if (!fseek(m_file, endTimeOffset, SEEK_SET))
 	{
 		// save off end time
-		fwrite(&t, sizeof(time_t), 1, m_file);
+		fwrite(&t, SIZE_OF_TIME, 1, m_file);
 	}
 	// move to appropriate offset
 	if (!fseek(m_file, framesOffset, SEEK_SET))
@@ -600,8 +604,8 @@ void RecorderClass::startRecording(GameDifficulty diff, Int originalGameMode, In
 	// **** if this changes, change the LAN code above ****
 	//
 	time_t t = 0;
-	fwrite(&t, sizeof(time_t), 1, m_file);	// reserve space for start time
-	fwrite(&t, sizeof(time_t), 1, m_file);	// reserve space for end time
+	fwrite(&t, SIZE_OF_TIME, 1, m_file);	// reserve space for start time
+	fwrite(&t, SIZE_OF_TIME, 1, m_file);	// reserve space for end time
 
 	UnsignedInt frames = 0;
 	fwrite(&frames, sizeof(UnsignedInt), 1, m_file);	// reserve space for duration in frames
@@ -875,8 +879,10 @@ Bool RecorderClass::readReplayHeader(ReplayHeader& header)
 	}
 
 	// read in some stats
-	fread(&header.startTime, sizeof(time_t), 1, m_file);
-	fread(&header.endTime, sizeof(time_t), 1, m_file);
+	header.startTime = 0;
+	fread(&header.startTime, SIZE_OF_TIME, 1, m_file);
+	header.endTime = 0;
+	fread(&header.endTime, SIZE_OF_TIME, 1, m_file);
 
 	fread(&header.frameDuration, sizeof(UnsignedInt), 1, m_file);
 
