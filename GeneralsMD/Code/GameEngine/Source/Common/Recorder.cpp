@@ -1171,8 +1171,9 @@ UnicodeString RecorderClass::readUnicodeString() {
 	Int c = fgetwc(m_file);
 	if (c == EOF) {
 		str[index] = 0;
+	} else {
+		str[index] = c;
 	}
-	str[index] = c;
 
 	while (index < 1024 && str[index] != 0) {
 		++index;
