@@ -16,7 +16,7 @@ RUN mkdir -pm755 /etc/apt/keyrings \
 
 # Clean up APT
 RUN apt clean \
-    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build/tools/
 
