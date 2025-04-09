@@ -41,7 +41,7 @@
 #define CONVERT_H
 
 #include	"blitter.h"
-#include	"palette.h"
+#include	"PALETTE.H"
 #include	"surface.h"
 
 /*

@@ -87,7 +87,7 @@ inline void GadgetSliderSetPosition( GameWindow *win, Int pos )
 {
 	TheWindowManager->winSendSystemMsg( win,
 																			GSM_SET_SLIDER,
-																			pos,
+																			(WindowMsgData)pos,
 																			0 );
 }
 

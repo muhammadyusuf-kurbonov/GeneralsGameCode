@@ -50,15 +50,7 @@ class WeaponTemplate;
 	* enumeration being in sequential order
 	*/
 //-------------------------------------------------------------------------------------------------
-enum BodyDamageType
-{
-	BODY_PRISTINE,				///< unit should appear in pristine condition
-	BODY_DAMAGED,					///< unit has been damaged
-	BODY_REALLYDAMAGED,		///< unit is extremely damaged / nearly destroyed
-	BODY_RUBBLE,					///< unit has been reduced to rubble/corpse/exploded-hulk, etc
-
-	BODYDAMAGETYPE_COUNT
-};
+#include "Common/BodyModuleTypes.h"
 
 #ifdef DEFINE_BODYDAMAGETYPE_NAMES
 static const char* TheBodyDamageTypeNames[] =
@@ -72,7 +64,7 @@ static const char* TheBodyDamageTypeNames[] =
 };
 #endif
 
-enum MaxHealthChangeType
+enum MaxHealthChangeType : int
 {
 	SAME_CURRENTHEALTH,
 	PRESERVE_RATIO,

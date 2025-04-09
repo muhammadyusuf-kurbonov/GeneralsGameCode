@@ -43,7 +43,7 @@
 
 #include "GameClient/ShellHooks.h"
 
-#include "GameSpy/ghttp/ghttp.h"
+#include "gamespy/ghttp/ghttp.h"
 
 #include "GameNetwork/DownloadManager.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
@@ -52,7 +52,7 @@
 #include "GameNetwork/GameSpy/PeerThread.h"
 
 #include "WWDownload/Registry.h"
-#include "WWDownload/URLBuilder.h"
+#include "WWDownload/urlBuilder.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -153,13 +153,13 @@ static Bool hasWriteAccess()
 
 	remove(filename);
 
-	int handle = _open( filename, _O_CREAT | _O_RDWR, _S_IREAD | _S_IWRITE);
+	int handle = open( filename, O_CREAT | O_RDWR, S_IREAD | S_IWRITE);
 	if (handle == -1)
 	{
 		return false;
 	}
 
-	_close(handle);
+	close(handle);
 	remove(filename);
 	
 	unsigned int val;
@@ -241,12 +241,12 @@ static void startOnline( void )
 	pref.load("GameSpyLogin.ini");
 	UserPreferences::const_iterator it = pref.find("useProfiles");
 	if (it != pref.end() && it->second.compareNoCase("yes") == 0)
-#endif ALLOW_NON_PROFILED_LOGIN
+#endif // ALLOW_NON_PROFILED_LOGIN
 		TheShell->push( AsciiString("Menus/GameSpyLoginProfile.wnd") );
 #ifdef ALLOW_NON_PROFILED_LOGIN
 	else
 		TheShell->push( AsciiString("Menus/GameSpyLoginQuick.wnd") );
-#endif ALLOW_NON_PROFILED_LOGIN
+#endif // ALLOW_NON_PROFILED_LOGIN
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -316,9 +316,9 @@ static void queuePatch(Bool mandatory, AsciiString downloadURL)
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
-															char * buffer, GHTTPByteCount bufferLen, void * param )
+															char * buffer, GHTTPByteCount  bufferLen, void * param )
 {
-	Int run = (Int)param;
+	Int run = (uintptr_t)param;
 	if (run != timeThroughOnline)
 	{
 		DEBUG_CRASH(("Old callback being called!"));
@@ -356,9 +356,9 @@ static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
-																char * buffer, GHTTPByteCount bufferLen, void * param )
+								char * buffer, GHTTPByteCount  bufferLen, void * param )
 {
-	Int run = (Int)param;
+	Int run = (uintptr_t)param;
 	if (run != timeThroughOnline)
 	{
 		DEBUG_CRASH(("Old callback being called!"));
@@ -421,9 +421,9 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
-																		char * buffer, GHTTPByteCount bufferLen, void * param )
+									 char * buffer, GHTTPByteCount bufferLen, void * param )
 {
-	Int run = (Int)param;
+	Int run = (uintptr_t)param;
 	if (run != timeThroughOnline)
 	{
 		DEBUG_CRASH(("Old callback being called!"));
@@ -508,9 +508,9 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
+static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount  bufferLen, void * param )
 {
-	Int run = (Int)param;
+	Int run = (uintptr_t)param;
 	if (run != timeThroughOnline)
 	{
 		DEBUG_CRASH(("Old callback being called!"));

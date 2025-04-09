@@ -31,15 +31,25 @@
 #ifndef __BEZIERSEGMENT_H__
 #define __BEZIERSEGMENT_H__
 
-#include <D3DX8Math.h>
-#include "Common/STLTypeDefs.h"
+#ifdef SAGE_USE_GLM
+#include <glm/glm.hpp>
+#elif defined(_WIN32)
+#include <d3dx8math.h>
+#else
+#error "Missing a math library"
+#endif
+#include "Common/STLTypedefs.h"
 
 #define USUAL_TOLERANCE 1.0f
 
 class BezierSegment
 {
 	protected:
+#ifndef SAGE_USE_GLM
 		static const D3DXMATRIX s_bezBasisMatrix;
+#else // SAGE_USE_GLM
+		static const glm::mat4 s_bezBasisMatrix;
+#endif
 		Coord3D m_controlPoints[4];
 
 	public:	// Constructors

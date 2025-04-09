@@ -51,8 +51,8 @@
 #include <string.h>
 #include <assetmgr.h>
 #include <texture.h>
-#include "common/GlobalData.h"
-#include "common/RandomValue.h"
+#include "Common/GlobalData.h"
+#include "Common/RandomValue.h"
 //#include "Common/GameFileSystem.h"
 #include "Common/FileSystem.h" // for LOAD_TEST_ASSETS
 #include "GameClient/TerrainRoads.h"
@@ -62,11 +62,11 @@
 #include "W3DDevice/GameClient/W3DDynamicLight.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
-#include "WW3D2/Camera.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/DX8Renderer.h"
-#include "WW3D2/Mesh.h"
-#include "WW3D2/MeshMdl.h"
+#include "WW3D2/camera.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/dx8renderer.h"
+#include "WW3D2/mesh.h"
+#include "WW3D2/meshmdl.h"
 
 static const Real TEE_WIDTH_ADJUSTMENT = 1.03f;
 
@@ -140,8 +140,11 @@ RoadType::RoadType(void):
 m_roadTexture(NULL),
 m_vertexRoad(NULL),
 m_indexRoad(NULL),
-m_stackingOrder(0),
-m_uniqueID(-1)
+m_numRoadVertices(0),
+m_numRoadIndices(0),
+m_uniqueID(-1),
+m_isAutoLoaded(false),
+m_stackingOrder(0)
 {
 }
 
@@ -268,7 +271,7 @@ RoadSegment::~RoadSegment(void)
 void RoadSegment::SetVertexBuffer(VertexFormatXYZDUV1 *vb, Int numVertex)
 {
 	if (m_vb) {
-		delete m_vb;
+		delete[] m_vb;
 		m_vb = NULL;
 		m_numVertex = 0;
 	}
@@ -296,7 +299,7 @@ void RoadSegment::SetVertexBuffer(VertexFormatXYZDUV1 *vb, Int numVertex)
 void RoadSegment::SetIndexBuffer(UnsignedShort *ib, Int numIndex)
 {
 	if (m_ib) {
-		delete m_ib;
+		delete[] m_ib;
 		m_ib = NULL;
 		m_numIndex = 0;
 	}
@@ -1440,7 +1443,7 @@ void W3DRoadBuffer::checkLinkBefore(Int ndx)
 		} else if (m_roads[checkNdx].m_pt2.loc == loc2) {
 #ifdef _DEBUG
 			if (m_roads[checkNdx].m_pt2.count!=1) {
-				::OutputDebugString("fooey.\n");
+				DEBUG_LOG(("fooey.\n"));
 			}
 			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt2.count==1, ("Bad count\n"));
 #endif
@@ -1493,7 +1496,7 @@ void W3DRoadBuffer::checkLinkAfter(Int ndx)
 #ifdef _DEBUG
 			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt1.count==1, ("Wrong m_pt1.count.\n"));
 			if ( m_roads[checkNdx].m_pt1.count!=1) {
-				::OutputDebugString("Wrong m_pt1.count.\n");
+				DEBUG_LOG(("Wrong m_pt1.count.\n"));
 			}
 #endif
 			flipTheRoad(&m_roads[checkNdx]);
@@ -1660,9 +1663,17 @@ void W3DRoadBuffer::addMapObjects()
 			curRoad.m_pt1.loc = loc1;
 			curRoad.m_pt1.isAngled = pMapObj->getFlag(FLAG_ROAD_CORNER_ANGLED);
 			curRoad.m_pt1.isJoin = pMapObj->getFlag(FLAG_ROAD_JOIN);
+			// These will get overwritten soon after in updateCounts
+			curRoad.m_pt1.last = false;
+			curRoad.m_pt1.multi = false;
+
 			curRoad.m_pt2.loc =loc2;
 			curRoad.m_pt2.isAngled = pMapObj2->getFlag(FLAG_ROAD_CORNER_ANGLED);
 			curRoad.m_pt2.isJoin = pMapObj2->getFlag(FLAG_ROAD_JOIN);
+			// Same here
+			curRoad.m_pt2.last = false;
+			curRoad.m_pt2.multi = false;			
+
 			curRoad.m_type = SEGMENT; 
 			curRoad.m_curveRadius = pMapObj->getFlag(FLAG_ROAD_CORNER_TIGHT)?TIGHT_CORNER_RADIUS:CORNER_RADIUS;
 

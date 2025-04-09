@@ -48,6 +48,8 @@
 #ifndef ASCIISTRING_H
 #define ASCIISTRING_H
 
+#include "always.h"
+#include <atomic>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -56,8 +58,6 @@
 #include "Common/Errors.h"
 
 class UnicodeString;
-
-#include "windows.h"
 
 // -----------------------------------------------------
 /**
@@ -94,7 +94,7 @@ private:
 #if defined(_DEBUG) || defined(_INTERNAL)
 		const char* m_debugptr;	// just makes it easier to read in the debugger
 #endif
-		unsigned short	m_refCount;						// reference count
+		std::atomic<unsigned short>	m_refCount;						// reference count
 		unsigned short	m_numCharsAllocated;  // length of data allocated
 		// char m_stringdata[];
 
@@ -107,7 +107,7 @@ private:
 	inline void validate() const { }
 	#endif
 
-  void freeBytes(void);
+	void freeBytes(void);
 
 protected:
 	AsciiStringData* m_data;   // pointer to ref counted string data
@@ -228,12 +228,12 @@ public:
 	void concat(const char c);
 
 	/**
-	  Remove leading and trailing whitespace from the string.
+		Remove leading and trailing whitespace from the string.
 	*/
 	void trim( void );
 
 	/**
-	  Make the string lowercase
+		Make the string lowercase
 	*/
 	void toLower( void );
 
@@ -374,24 +374,21 @@ inline AsciiString::AsciiString(const char* s) : m_data(0)
 // -----------------------------------------------------
 inline AsciiString::AsciiString(const AsciiString& stringSrc) : m_data(stringSrc.m_data)
 {
-  // don't need this if we're using InterlockedIncrement
-  // FastCriticalSectionClass::LockClass lock(TheAsciiStringCriticalSection);
+	// FastCriticalSectionClass::LockClass lock(TheAsciiStringCriticalSection);
 	if (m_data)
-		// ++m_data->m_refCount;
-    // yes, I know it's not a DWord but we're incrementing so we're safe
-    InterlockedIncrement((long *)&m_data->m_refCount);
+		m_data->m_refCount++;
 	validate();
 }
 
 // -----------------------------------------------------
 inline void AsciiString::releaseBuffer()
 {
-  // FastCriticalSectionClass::LockClass lock(TheAsciiStringCriticalSection);
+	// FastCriticalSectionClass::LockClass lock(TheAsciiStringCriticalSection);
 
 	validate();
 	if (m_data)
 	{
-    InterlockedDecrement((long *)&m_data->m_refCount);
+		m_data->m_refCount--;
 		if (!m_data->m_refCount)
 			freeBytes();
 		m_data = 0;
@@ -447,23 +444,23 @@ inline const char* AsciiString::str() const
 // -----------------------------------------------------
 inline void AsciiString::set(const AsciiString& stringSrc)
 {
-  //FastCriticalSectionClass::LockClass lock(TheAsciiStringCriticalSection);
+	//FastCriticalSectionClass::LockClass lock(TheAsciiStringCriticalSection);
 
 	validate();
-	if (&stringSrc != this)
+	if (&stringSrc != this && stringSrc.m_data != m_data)
 	{
-    // do not call releaseBuffer(); here, it locks the CS twice
-    // from the same thread which is illegal using fast CS's
+		// do not call releaseBuffer(); here, it locks the CS twice
+		// from the same thread which is illegal using fast CS's
 		if (m_data)
-    {
-      InterlockedDecrement((long *)&m_data->m_refCount);
-		  if (!m_data->m_refCount)
-			  freeBytes();
-    }
+		{
+			m_data->m_refCount--;
+			if (!m_data->m_refCount)
+				freeBytes();
+		}
 
 		m_data = stringSrc.m_data;
 		if (m_data)
-      InterlockedIncrement((long *)&m_data->m_refCount);
+			m_data->m_refCount++;
 	}
 	validate();
 }

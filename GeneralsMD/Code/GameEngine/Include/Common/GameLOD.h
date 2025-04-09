@@ -36,13 +36,13 @@
 #ifndef _GAME_LOD_H_
 #define _GAME_LOD_H_
 
-enum ParticlePriorityType;
+enum ParticlePriorityType : int;
 
 #define MAX_LOD_PRESETS_PER_LEVEL	32	//number of hardware configs preset for each low,medium,high
 #define MAX_BENCH_PROFILES	16
 
 //Make sure this enum stays in sync with GameLODNames[]
-enum StaticGameLODLevel
+enum StaticGameLODLevel : int
 {
 	STATIC_GAME_LOD_UNKNOWN=-1,
 	STATIC_GAME_LOD_LOW,
@@ -52,7 +52,7 @@ enum StaticGameLODLevel
 	STATIC_GAME_LOD_COUNT
 };
 
-enum DynamicGameLODLevel
+enum DynamicGameLODLevel : int
 {
 	DYNAMIC_GAME_LOD_UNKNOWN=-1,
 	DYNAMIC_GAME_LOD_LOW,
@@ -63,7 +63,7 @@ enum DynamicGameLODLevel
 };
 
 //Make sure this stays in sync with CPUNames[] in gamelod.cpp
-enum CpuType
+enum CpuType : int
 {
 	XX,	//unknown type
 	P3,
@@ -72,7 +72,7 @@ enum CpuType
 };
 
 //Keep this in sync with VideoNames in Gamelod.cpp
-enum ChipsetType
+enum ChipsetType : int
 {	DC_UNKNOWN,
 	DC_VOODOO2,
 	DC_VOODOO3,
@@ -214,7 +214,7 @@ protected:
 	StaticGameLODLevel m_idealDetailLevel;
 	ChipsetType m_videoChipType;
 	CpuType m_cpuType;
-	Int m_numRAM;
+	UnsignedInt m_numRAM;
 	Int m_cpuFreq;
 	Real m_intBenchIndex;
 	Real m_floatBenchIndex;
@@ -250,4 +250,4 @@ ParticlePriorityType GameLODManager::getMinDynamicParticleSkipPriority(void)
 }
 
 extern GameLODManager *TheGameLODManager;
-#endif _GAME_LOD_H_
+#endif // _GAME_LOD_H_

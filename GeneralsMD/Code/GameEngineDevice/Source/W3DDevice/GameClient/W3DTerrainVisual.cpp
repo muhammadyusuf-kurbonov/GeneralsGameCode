@@ -57,14 +57,14 @@
 #include "W3DDevice/GameClient/W3DTerrainTracks.h"
 #include "W3DDevice/GameClient/W3DGranny.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
-#include "W3DDevice/GameClient/heightmap.h"
-#include "W3DDevice/GameClient/FlatHeightmap.h"
+#include "W3DDevice/GameClient/HeightMap.h"
+#include "W3DDevice/GameClient/FlatHeightMap.h"
 #include "W3DDevice/GameClient/W3DSmudge.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "WW3D2/Light.h"
-#include "WW3D2/RendObj.h"
+#include "WW3D2/rendobj.h"
 #include "WW3D2/ColType.h"
-#include "WW3D2/ColTest.h"
+#include "WW3D2/coltest.h"
 #include "WW3D2/assetmgr.h"
 
 
@@ -130,7 +130,7 @@ class TestSeismicFilter : public SeismicSimulationFilterBase
       }
 
       // stuff the values from the workspace into the heightmap's velocities
-      for (x = 0; x < workspaceWidth; ++x)
+      for (Int x = 0; x < workspaceWidth; ++x)
         for (Int y = 0; y < workspaceWidth; ++y)
     			heightMap->setSeismicZVelocity( centerX - radius + x, centerY - radius + y,  workspace[  x + workspaceWidth * y ]  );
 

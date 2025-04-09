@@ -37,7 +37,7 @@
 #ifndef DRAW_H
 #define DRAW_H
 
-#include	"convert.h"
+#include	"Convert.h"
 #include	"point.h"
 #include	"shapeset.h"
 

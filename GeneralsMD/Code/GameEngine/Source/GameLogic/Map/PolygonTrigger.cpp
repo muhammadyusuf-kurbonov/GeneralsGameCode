@@ -310,7 +310,8 @@ void PolygonTrigger::addPolygonTrigger(PolygonTrigger *pTrigger)
 void PolygonTrigger::removePolygonTrigger(PolygonTrigger *pTrigger)
 {	
 	PolygonTrigger *pPrev = NULL;
-	for (PolygonTrigger *pTrig=getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
+	PolygonTrigger *pTrig;
+	for (pTrig=getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
 		if (pTrig==pTrigger) break;
 		pPrev = pTrig;
 	}
@@ -335,7 +336,10 @@ void PolygonTrigger::deleteTriggers(void)
 	PolygonTrigger *pList = ThePolygonTriggerListPtr;	
 	ThePolygonTriggerListPtr = NULL;
 	s_currentID = 1;
-	pList->deleteInstance();
+	if (pList)
+	{
+		pList->deleteInstance();
+	}
 }
 
 /**

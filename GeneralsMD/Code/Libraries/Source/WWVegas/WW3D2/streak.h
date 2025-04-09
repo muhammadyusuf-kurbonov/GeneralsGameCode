@@ -45,7 +45,7 @@
 #include "shader.h"
 #include "simplevec.h"
 #include "seglinerenderer.h"
-#include "streakrender.h"
+#include "streakRender.h"
 
 class TextureClass;
 
@@ -64,7 +64,7 @@ class StreakLineClass : public RenderObjClass
 
 		StreakLineClass(void);
 		StreakLineClass(const StreakLineClass & src);
-		StreakLineClass & StreakLineClass::operator = (const StreakLineClass &that);
+		StreakLineClass & operator = (const StreakLineClass &that);
 //		virtual ~StreakLineClass(void);
 
 		void					Reset_Line(void);
@@ -209,12 +209,4 @@ class StreakLineClass : public RenderObjClass
 	StreakRendererClass		StreakRenderer;//special, per-point alpha/color/size
 };
 
-
-
-
-
-
-
-
-
-#endif SEGLINE_H
+#endif // SEGLINE_H

@@ -46,6 +46,8 @@
 #include "GameNetwork/RankPointValue.h"
 #include "GameLogic/GameLogic.h"
 
+#include "Common/FileSystem.h"
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -618,11 +620,15 @@ void SetUpGameSpy( const char *motdBuffer, const char *configBuffer )
 	TearDownGameSpy();
 
 	AsciiString dir = TheGlobalData->getPath_UserData();
-	CreateDirectory(dir.str(), NULL);
+	TheFileSystem->createDirectory(dir.str());
 	dir.format("%sGeneralsOnline", TheGlobalData->getPath_UserData().str());
-	CreateDirectory(dir.str(), NULL);
+	TheFileSystem->createDirectory(dir.str());
+#ifdef _WIN32
 	dir.format("%sGeneralsOnline\\Ladders", TheGlobalData->getPath_UserData().str());
-	CreateDirectory(dir.str(), NULL);
+#else
+	dir.format("%sGeneralsOnline/Ladders", TheGlobalData->getPath_UserData().str());
+#endif
+	TheFileSystem->createDirectory(dir.str());
 
 	TheGameSpyBuddyMessageQueue = GameSpyBuddyMessageQueueInterface::createNewMessageQueue();
 	TheGameSpyBuddyMessageQueue->startThread();

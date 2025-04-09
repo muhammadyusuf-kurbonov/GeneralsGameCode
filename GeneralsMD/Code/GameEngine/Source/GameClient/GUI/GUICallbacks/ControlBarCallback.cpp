@@ -62,9 +62,11 @@ WindowLayout *popupCommunicatorLayout = NULL;
 /** Input procedure for the left HUD */
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
-																	 WindowMsgData mData1, WindowMsgData mData2 )
+																	 WindowMsgData mData1Orig, WindowMsgData mData2Orig )
 {
-	
+	UnsignedInt mData1 = (uintptr_t)mData1Orig;
+	// UnsignedInt mData2 = (uintptr_t)mData2Orig;
+
 	// get player
 	Player *player = ThePlayerList->getLocalPlayer();
 
@@ -105,7 +107,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 			const CommandButton *command = TheInGameUI->getGUICommand();
 			if( command 
 					&& (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER || command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT)
-					&& BitTest( command->getOptions(), NEED_TARGET_POS ) )
+					&& BitTestEA( command->getOptions(), NEED_TARGET_POS ) )
 				targeting = TRUE;
 
 			if( targeting == FALSE )
@@ -178,7 +180,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 				const CommandButton *command = TheInGameUI->getGUICommand();
 				if( command 
 						&& (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER || command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT)
-						&& BitTest( command->getOptions(), NEED_TARGET_POS ) )
+						&& BitTestEA( command->getOptions(), NEED_TARGET_POS ) )
 				{
 					Int index = TheMouse->getCursorIndex( command->getCursorName() );
 
@@ -276,7 +278,7 @@ WindowMsgHandledType LeftHUDInput( GameWindow *window, UnsignedInt msg,
 				const CommandButton *command = TheInGameUI->getGUICommand();
 				if( command 
 					&& (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER || command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT)
-					&& BitTest( command->getOptions(), NEED_TARGET_POS ) 
+					&& BitTestEA( command->getOptions(), NEED_TARGET_POS ) 
 					)
 				{
 

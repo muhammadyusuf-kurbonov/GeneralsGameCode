@@ -102,7 +102,7 @@
 #include "igr.h"
 #include "viewhtml.h"
 
-#include "utils.h"
+#include "Utils.h"
 #include "locale_api.h"
 //#include "resources.h"
 #include "getcd.h"
@@ -2900,10 +2900,10 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 				for( j = 0; j < NUM_BUTTONS; j++ ) {
 					if ( ButtonList[j] != NULL ) {
-						buttons_rect.left	= __min( ButtonSizes[j].left							, buttons_rect.left	 ); 
-						buttons_rect.top  	= __min( ButtonSizes[j].top								, buttons_rect.top 	 );
-						buttons_rect.right	= __max( ButtonSizes[j].left + ButtonSizes[j].right		, buttons_rect.right  );                          
-						buttons_rect.bottom	= __max( ButtonSizes[j].top  + ButtonSizes[j].bottom	, buttons_rect.bottom );
+						buttons_rect.left	= min( ButtonSizes[j].left							, buttons_rect.left	 ); 
+						buttons_rect.top  	= min( ButtonSizes[j].top								, buttons_rect.top 	 );
+						buttons_rect.right	= max( ButtonSizes[j].left + ButtonSizes[j].right		, buttons_rect.right  );                          
+						buttons_rect.bottom	= max( ButtonSizes[j].top  + ButtonSizes[j].bottom	, buttons_rect.bottom );
 					}
 				}
 
@@ -5290,14 +5290,14 @@ unsigned int LaunchObjectClass::Launch ( void )
 void Debug_Date_And_Time_Stamp ( void )
 {
 	//-------------------------------------------------------------------------
-	//	tm_sec	- Seconds after minute (0 – 59)
-	//	tm_min	- Minutes after hour (0 – 59)
-	//	tm_hour	- Hours after midnight (0 – 23)
-	//	tm_mday	- Day of month (1 – 31)
-	//	tm_mon	- Month (0 – 11; January = 0)
+	//	tm_sec	- Seconds after minute (0 ï¿½ 59)
+	//	tm_min	- Minutes after hour (0 ï¿½ 59)
+	//	tm_hour	- Hours after midnight (0 ï¿½ 23)
+	//	tm_mday	- Day of month (1 ï¿½ 31)
+	//	tm_mon	- Month (0 ï¿½ 11; January = 0)
 	//	tm_year	- Year (current year minus 1900)
-	//	tm_wday	- Day of week (0 – 6; Sunday = 0)
-	//	tm_yday	- Day of year (0 – 365; January 1 = 0)
+	//	tm_wday	- Day of week (0 ï¿½ 6; Sunday = 0)
+	//	tm_yday	- Day of year (0 ï¿½ 365; January 1 = 0)
 	//-------------------------------------------------------------------------
 	static char *Month_Strings[ 12 ] = {
 		"January",

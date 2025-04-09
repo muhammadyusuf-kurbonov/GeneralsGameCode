@@ -42,7 +42,7 @@
 class INI;
 class Xfer;
 class File;
-enum ScienceType;
+#include "ScienceTypes.h"
 
 //-------------------------------------------------------------------------------------------------
 /** These control the behavior of loading the INI data into items */
@@ -356,7 +356,7 @@ public:
 		utility routine that does a sscanf() on the string to get the Science, and throws
 		an exception if not of the right form.
 	*/
-	static ScienceType scanScience(const char* token);
+	static enum ScienceType scanScience(const char* token);
 
 	/**
 		utility routine that does a sscanf() on the string to get the int, and throws

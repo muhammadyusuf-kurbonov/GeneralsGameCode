@@ -76,7 +76,7 @@ static void addScrollbar( GameWindow *listbox )
 {
 
 	// create scrollbar stuffs
-	GadgetListboxCreateScrollbar( listbox );
+	GadgetListBoxCreateScrollbar( listbox );
 
 	//
 	// get the colors for the listbox and reset them to recolor the
@@ -953,7 +953,7 @@ HWND InitListboxPropertiesDialog( GameWindow *window )
 
 	}
 	// WordWrap Check Box
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ONE_LINE ) )
+	if( BitTestEA( window->winGetStatus(), WIN_STATUS_ONE_LINE ) )
 		CheckDlgButton( dialog, CHECK_NO_WORDWRAP, BST_CHECKED );
 
 

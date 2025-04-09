@@ -36,7 +36,9 @@ IPEnumeration::~IPEnumeration( void )
 {
 	if (m_isWinsockInitialized)
 	{
+#ifdef _WIN32
 		WSACleanup();
+#endif
 		m_isWinsockInitialized = false;
 	}
 
@@ -56,6 +58,7 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 
 	if (!m_isWinsockInitialized)
 	{
+#ifdef _WIN32
 		WORD verReq = MAKEWORD(2, 2);
 		WSADATA wsadata;
 
@@ -68,6 +71,7 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 			WSACleanup();
 			return NULL;
 		}
+#endif
 		m_isWinsockInitialized = true;
 	}
 
@@ -75,16 +79,20 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 	char hostname[256];
 	if (gethostname(hostname, sizeof(hostname)))
 	{
+		#ifdef _WIN32
 		DEBUG_LOG(("Failed call to gethostname; WSAGetLastError returned %d\n", WSAGetLastError()));
+		#endif
 		return NULL;
 	}
 	DEBUG_LOG(("Hostname is '%s'\n", hostname));
 	
 	// get host information from the host name
-	HOSTENT* hostEnt = gethostbyname(hostname);
+	hostent* hostEnt = gethostbyname(hostname);
 	if (hostEnt == NULL)
 	{
+		#ifdef _WIN32
 		DEBUG_LOG(("Failed call to gethostnyname; WSAGetLastError returned %d\n", WSAGetLastError()));
+		#endif
 		return NULL;
 	}
 	
@@ -156,6 +164,7 @@ AsciiString IPEnumeration::getMachineName( void )
 {
 	if (!m_isWinsockInitialized)
 	{
+#ifdef _WIN32
 		WORD verReq = MAKEWORD(2, 2);
 		WSADATA wsadata;
 
@@ -168,6 +177,7 @@ AsciiString IPEnumeration::getMachineName( void )
 			WSACleanup();
 			return NULL;
 		}
+#endif
 		m_isWinsockInitialized = true;
 	}
 
@@ -175,7 +185,9 @@ AsciiString IPEnumeration::getMachineName( void )
 	char hostname[256];
 	if (gethostname(hostname, sizeof(hostname)))
 	{
+		#ifdef _WIN32
 		DEBUG_LOG(("Failed call to gethostname; WSAGetLastError returned %d\n", WSAGetLastError()));
+		#endif
 		return NULL;
 	}
 

@@ -146,9 +146,9 @@ protected:
 		Vector3			Direction;
 		Vector3			Ambient;
 		Vector3			Diffuse;
-		bool				DiffuseRejected;
+		bool				DiffuseRejected = false;
 		
-		bool				m_point;
+		bool				m_point = false;
 		Vector3			m_center;
 		float				m_innerRadius;
 		float				m_outerRadius;

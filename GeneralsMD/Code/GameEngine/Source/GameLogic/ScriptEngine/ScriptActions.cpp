@@ -517,7 +517,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 
 	destination = *way->getLocation();
 	if (!theTeamProto) {
-		DEBUG_LOG(("***WARNING - Team %s not found.\n", team));
+		DEBUG_LOG(("***WARNING - Team %s not found.\n", team.str()));
 		return;
 	}
 	const TeamTemplateInfo *pInfo = theTeamProto->getTemplateInfo();
@@ -2044,7 +2044,7 @@ void ScriptActions::doTeamHuntWithCommandButton(const AsciiString& teamName, con
 			case GUI_COMMAND_SPECIAL_POWER:
 				if( commandButton->getSpecialPowerTemplate() )
 				{
-					if (BitTest( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET )) 
+					if (BitTestEA( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET )) 
 					{
 						// OK, we can hunt with a power that targets an object.
 						break;
@@ -2575,7 +2575,7 @@ void ScriptActions::doDisplayCinematicText(const AsciiString& displayText, const
 	char buf[256];
 	char *c;
 	strcpy(buf, fontType.str());
-	for( c = buf; c != '\0'; *c++ )
+	for( c = buf; *c != '\0'; *c++ )
 	{
 		if( *c != ' ' && *c++ != '-' ) 
 			fontName.concat(c);
@@ -5316,7 +5316,7 @@ void ScriptActions::doMoveTeamTowardsNearest( const AsciiString& teamName, const
 			}
 		}
 	}
-	for( iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance() )
+	for( DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance() )
 	{
 		Object *obj = iter.cur();
 		if( !obj )

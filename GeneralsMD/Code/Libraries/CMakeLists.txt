@@ -1,8 +1,9 @@
-# WW common libraries decended from earliest C&C games
-add_subdirectory(Source/WWVegas)
-
-# profiling library
-add_subdirectory(Source/profile)
-
-add_subdirectory(Source/EABrowserDispatch)
 add_subdirectory(Source/Compression)
+add_subdirectory(Source/EABrowserDispatch)
+add_subdirectory(Source/WWVegas/WWDebug)
+add_subdirectory(Source/WWVegas/WWLib)
+add_subdirectory(Source/WWVegas/WWDownload)
+add_subdirectory(Source/WWVegas/WWSaveLoad)
+add_subdirectory(Source/WWVegas/WWMath)
+add_subdirectory(Source/WWVegas/WWAudio)
+add_subdirectory(Source/WWVegas/WW3D2)

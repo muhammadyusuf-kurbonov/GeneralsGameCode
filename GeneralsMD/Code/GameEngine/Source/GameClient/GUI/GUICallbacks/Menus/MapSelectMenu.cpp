@@ -278,14 +278,14 @@ WindowMsgHandledType MapSelectMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestEA( state, KEY_STATE_UP ) )
 					{
 						AsciiString buttonName( "MapSelectMenu.wnd:ButtonBack" );
 						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																								(WindowMsgData)button, buttonID );
+																								(WindowMsgData)button, (WindowMsgData)buttonID );
 
 					}  // end if
 
@@ -451,7 +451,7 @@ WindowMsgHandledType MapSelectMenuSystem( GameWindow *window, UnsignedInt msg,
 				Int controlID = control->winGetWindowId();
 				if( controlID == listboxMap ) 
 				{
-					int rowSelected = mData2;
+					int rowSelected = (uintptr_t)mData2;
 				
 					if (rowSelected >= 0)
 					{
@@ -461,7 +461,7 @@ WindowMsgHandledType MapSelectMenuSystem( GameWindow *window, UnsignedInt msg,
 						GameWindow *buttonOK = TheWindowManager->winGetWindowFromId( NULL, buttonOKID );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																								(WindowMsgData)buttonOK, buttonOKID );
+																								(WindowMsgData)buttonOK, (WindowMsgData)buttonOKID );
 					}
 				}
 				break;

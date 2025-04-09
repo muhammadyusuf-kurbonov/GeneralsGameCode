@@ -101,6 +101,12 @@ LANAPI::~LANAPI( void )
 		delete m_transport;
 }
 
+#ifndef _WIN32
+#define UNLEN 256
+#define GetUserName(a,b) false
+#define GetComputerName(a,b) false
+#endif
+
 void LANAPI::init( void )
 {
 	m_gameStartTime = 0;

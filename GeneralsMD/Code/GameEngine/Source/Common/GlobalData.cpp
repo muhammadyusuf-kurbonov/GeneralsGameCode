@@ -32,7 +32,6 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#define DEFINE_TERRAIN_LOD_NAMES
 #define DEFINE_TIME_OF_DAY_NAMES
 #define DEFINE_WEATHER_NAMES
 #define DEFINE_BODYDAMAGETYPE_NAMES
@@ -43,7 +42,7 @@
 #include "Common/FileSystem.h"
 #include "Common/GameAudio.h"
 #include "Common/INI.h"
-#include "Common/registry.h"
+#include "Common/Registry.h"
 #include "Common/UserPreferences.h"
 #include "Common/Version.h"
 
@@ -55,6 +54,10 @@
 #include "GameClient/TerrainVisual.h"
 
 #include "GameNetwork/FirewallHelper.h"
+
+#ifndef _WIN32
+#include <filesystem>
+#endif
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 GlobalData* TheWritableGlobalData = NULL;				///< The global data singleton
@@ -990,8 +993,10 @@ GlobalData::GlobalData()
 	const Int blockSize = 65536;
 	Char buffer[ _MAX_PATH ];
 	CRC exeCRC;
-	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
-	File *fp = TheFileSystem->openFile(buffer, File::READ | File::BINARY);
+	File *fp = NULL;
+#ifdef _WIN32
+	GetModuleFileName( NULL, buffer, sizeof( buffer ) );	
+	fp = TheFileSystem->openFile(buffer, File::READ | File::BINARY);
 	if (fp != NULL) {
 		unsigned char crcBlock[blockSize];
 		Int amtRead = 0;
@@ -1002,6 +1007,7 @@ GlobalData::GlobalData()
 		fp->close();
 		fp = NULL;
 	}
+#endif
 	if (TheVersion)
 	{
 		UnsignedInt version = TheVersion->getVersionNumber();
@@ -1054,6 +1060,7 @@ GlobalData::GlobalData()
   // Set user data directory based on registry settings instead of INI parameters. This allows us to 
   // localize the leaf name.
   char temp[_MAX_PATH + 1];
+#ifdef _WIN32
   if (::SHGetSpecialFolderPath(NULL, temp, CSIDL_PERSONAL, true))
   {
     AsciiString myDocumentsDirectory = temp;
@@ -1077,6 +1084,20 @@ GlobalData::GlobalData()
     CreateDirectory(myDocumentsDirectory.str(), NULL);
     m_userDataDir = myDocumentsDirectory;
   }
+#else
+	// Get the user data directory according to the XDG Base Directory Specification
+	std::filesystem::path userDataDir;
+	const char* xdgDataHome = getenv("XDG_DATA_HOME");
+	if (xdgDataHome)
+		userDataDir = std::filesystem::path(xdgDataHome);
+	else
+		userDataDir = std::filesystem::path(getenv("HOME")) / ".local" / "share";
+
+	// Make sure the path ends with a slash
+	userDataDir = userDataDir / "generals_zh" / "";
+	std::filesystem::create_directories(userDataDir);
+	m_userDataDir = userDataDir.string().c_str();
+#endif
 	
 	//-allAdvice feature
 	//m_allAdvice = FALSE;

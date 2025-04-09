@@ -312,6 +312,10 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	// allocate the publicModule arrays
 // pool[]ify
 	m_behaviors = MSGNEW("ModulePtrs") BehaviorModule*[totalModules + 1];
+	for (i = 0; i < totalModules; ++i)
+	{
+		m_behaviors[i] = NULL;
+	}
 	BehaviorModule** curB = m_behaviors;
 	const ModuleInfo& mi = tt->getBehaviorModuleInfo();
 
@@ -1764,7 +1768,7 @@ void Object::reactToTurretChange( WhichTurretType turret, Real oldRotation, Real
 void Object::reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle)
 {
 	//USE_PERF_TIMER(Object_reactToTransformChange)
-	if(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)) {
+	if(isnan(getPosition()->x) || isnan(getPosition()->y) || isnan(getPosition()->z)) {
 		DEBUG_CRASH(("Object pos is nan."));
 		TheGameLogic->destroyObject(this);
 	}
@@ -1872,7 +1876,7 @@ void Object::attemptDamage( DamageInfo *damageInfo )
 			damageInfo->in.m_damageType != DAMAGE_PENALTY &&
 			damageInfo->in.m_damageType != DAMAGE_HEALING &&
 			getControllingPlayer() &&
-			!BitTest(damageInfo->in.m_sourcePlayerMask, getControllingPlayer()->getPlayerMask()) && 
+			!BitTestEA(damageInfo->in.m_sourcePlayerMask, getControllingPlayer()->getPlayerMask()) && 
 			m_radarData != NULL &&
 			getControllingPlayer() == ThePlayerList->getLocalPlayer() )
 		TheRadar->tryUnderAttackEvent( this );
@@ -3685,7 +3689,7 @@ void Object::updateObjValuesFromMapProperties(Dict* properties)
           }
 
           valInt = properties->getInt( TheKey_objectSoundAmbientLoopCount, &exists );
-          if ( exists && BitTest( audioToModify->m_control, AC_LOOP ) )
+          if ( exists && BitTestEA( audioToModify->m_control, AC_LOOP ) )
           {
             audioToModify->overrideLoopCount( valInt );
             infoModified = true;
@@ -3899,7 +3903,7 @@ void Object::crc( Xfer *xfer )
 		tmp.format("CRC of Object %d (%s), owned by player %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex());
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	xfer->xferUnsignedByte(&m_privateStatus);
 #ifdef DEBUG_CRC
@@ -3921,7 +3925,7 @@ void Object::crc( Xfer *xfer )
 		tmpXfer.close();
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 	
 
 #ifdef DEBUG_CRC
@@ -3931,7 +3935,7 @@ void Object::crc( Xfer *xfer )
 		CRCDEBUG_LOG(("CRC of Object %d (%s), owned by player %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex()));
 		DUMPMATRIX3D(mtx);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 
 
@@ -3950,7 +3954,7 @@ void Object::crc( Xfer *xfer )
 		tmp.format("m_id: %d, ", m_id);
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 	xfer->xferUser(&m_objectUpgradesCompleted,				sizeof(Int64));
 #ifdef DEBUG_CRC
 	if (doLogging)
@@ -3958,7 +3962,7 @@ void Object::crc( Xfer *xfer )
 		tmp.format("m_objectUpgradesCompleted: %I64X, ", m_objectUpgradesCompleted);
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 	if (m_experienceTracker)
 		xfer->xferSnapshot( m_experienceTracker );
 #ifdef DEBUG_CRC
@@ -3971,7 +3975,7 @@ void Object::crc( Xfer *xfer )
 		tmpXfer.close();
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	Real health = getBodyModule()->getHealth();
 	xfer->xferUser(&health,														sizeof(health));
@@ -3981,7 +3985,7 @@ void Object::crc( Xfer *xfer )
 		tmp.format("health: %g/%8.8X, ", health, AS_INT(health));
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	xfer->xferUnsignedInt(&m_weaponBonusCondition);
 #ifdef DEBUG_CRC
@@ -3990,7 +3994,7 @@ void Object::crc( Xfer *xfer )
 		tmp.format("m_weaponBonusCondition: %8.8X, ", m_weaponBonusCondition);
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	Real scalar = getBodyModule()->getDamageScalar();
 	xfer->xferUser(&scalar,														sizeof(scalar));
@@ -4002,7 +4006,7 @@ void Object::crc( Xfer *xfer )
 
 		CRCDEBUG_LOG(("%s", logString.str()));
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	for (Int i=0; i<WEAPONSLOT_COUNT; ++i)
 	{
@@ -5453,7 +5457,7 @@ void Object::doCommandButton( const CommandButton *commandButton, CommandSourceT
 			case GUI_COMMAND_FIRE_WEAPON:
 				if( ai )
 				{
-					if( !BitTest( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) && !BitTest( commandButton->getOptions(), NEED_TARGET_POS ) )
+					if( !BitTestEA( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) && !BitTestEA( commandButton->getOptions(), NEED_TARGET_POS ) )
 					{
 						setWeaponLock( commandButton->getWeaponSlot(), LOCKED_TEMPORARILY );
 						//LOCATION BASED FIRE WEAPON
@@ -5581,7 +5585,7 @@ void Object::doCommandButtonAtObject( const CommandButton *commandButton, Object
 			case GUI_COMMAND_FIRE_WEAPON:
 				if( ai )
 				{
-					if( BitTest( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
+					if( BitTestEA( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 					{
 						//OBJECT BASED FIRE WEAPON
 						if( !obj )
@@ -5596,7 +5600,7 @@ void Object::doCommandButtonAtObject( const CommandButton *commandButton, Object
 
 						setWeaponLock( commandButton->getWeaponSlot(), LOCKED_TEMPORARILY );
 
-						if( BitTest( commandButton->getOptions(), ATTACK_OBJECTS_POSITION ) )
+						if( BitTestEA( commandButton->getOptions(), ATTACK_OBJECTS_POSITION ) )
 						{
 							//Actually, you know what.... we want to attack the object's location instead.
 							ai->aiAttackPosition( obj->getPosition(), commandButton->getMaxShotsToFire(), cmdSource );
@@ -5702,7 +5706,7 @@ void Object::doCommandButtonAtPosition( const CommandButton *commandButton, cons
 			case GUI_COMMAND_FIRE_WEAPON:
 				if( ai )
 				{
-					if( BitTest( commandButton->getOptions(), NEED_TARGET_POS ) )
+					if( BitTestEA( commandButton->getOptions(), NEED_TARGET_POS ) )
 					{
 						//LOCATION BASED FIRE WEAPON
 						if( !pos )
@@ -5765,7 +5769,7 @@ void Object::doCommandButtonUsingWaypoints( const CommandButton *commandButton, 
 	
 	if( commandButton )
 	{
-		if( !BitTest( commandButton->getOptions(), CAN_USE_WAYPOINTS ) )
+		if( !BitTestEA( commandButton->getOptions(), CAN_USE_WAYPOINTS ) )
 		{
 			//Our button doesn't support waypoints.
 			DEBUG_CRASH( ("WARNING: Script doCommandButtonUsingWaypoints for button %s lacks CAN_USE_WAYPOINTS option. Doing nothing.", commandButton->getName().str()) );

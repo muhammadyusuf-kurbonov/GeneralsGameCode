@@ -1,42 +1,49 @@
-# z stands for Zero Hour, i stands for Interface
-add_library(zi_gameengine INTERFACE)
-add_library(zi_gameengine_include INTERFACE)
-add_library(zi_gameenginedevice_include INTERFACE)
-add_library(zi_libraries_include INTERFACE)
-add_library(zi_libraries_source INTERFACE)
-add_library(zi_libraries_source_wwvegas INTERFACE)
-add_library(zi_libraries_source_wwvegas_ww3d2 INTERFACE)
-add_library(zi_libraries_source_wwvegas_wwdebug INTERFACE)
-add_library(zi_libraries_source_wwvegas_wwlib INTERFACE)
-add_library(zi_libraries_source_wwvegas_wwmath INTERFACE)
-add_library(zi_libraries_source_wwvegas_wwsaveload INTERFACE)
-add_library(zi_main INTERFACE)
+cmake_minimum_required(VERSION 3.23)
+project(ZeroHour LANGUAGES C CXX)
 
-target_include_directories(zi_gameengine INTERFACE "GameEngine")
-target_include_directories(zi_gameengine_include INTERFACE "GameEngine/Include")
-target_include_directories(zi_gameenginedevice_include INTERFACE "GameEngineDevice/Source")
-target_include_directories(zi_libraries_include INTERFACE "Libraries/Include")
-target_include_directories(zi_libraries_source INTERFACE "Libraries/Source")
-target_include_directories(zi_libraries_source_wwvegas INTERFACE "Libraries/Source/WWVegas")
-target_include_directories(zi_libraries_source_wwvegas_ww3d2 INTERFACE "Libraries/Source/WWVegas/WW3D2")
-target_include_directories(zi_libraries_source_wwvegas_wwdebug INTERFACE "Libraries/Source/WWVegas/WWDebug")
-target_include_directories(zi_libraries_source_wwvegas_wwlib INTERFACE "Libraries/Source/WWVegas/WWLib")
-target_include_directories(zi_libraries_source_wwvegas_wwmath INTERFACE "Libraries/Source/WWVegas/WWMath")
-target_include_directories(zi_libraries_source_wwvegas_wwsaveload INTERFACE "Libraries/Source/WWVegas/WWSaveLoad")
-target_include_directories(zi_main INTERFACE "Main")
+add_subdirectory(CompatLib)
 
-# Contains internal libraries
 add_subdirectory(Libraries)
-
-# Base GameEngine library
 add_subdirectory(GameEngine)
-
-# Platform specific GameEngine code
 add_subdirectory(GameEngineDevice)
 
-# Contains the main game exe target.
-add_subdirectory(Main)
+if(WIN32)
+    add_executable(RTS WIN32 Main/WinMain.cpp)
+    target_link_libraries(RTS GameEngine GameEngineDevice winmm Imm32 vfw32)
+    install(TARGETS RTS RUNTIME_DEPENDENCIES
+        PRE_EXCLUDE_REGEXES
+            "api-ms-.*" # windows API
+            "ext-ms-.*" # windows API
+            "^hvsifiletrust\\.dll$"
+            "^pdmutilities\\.dll$"
+            "^wpaxholder\\.dll$"
+            "^vc.*"
+            "^msvcp.*"
+            "^concrt.*"
+            "^mss32\\.dll$" # Miles Sound System
+        POST_EXCLUDE_REGEXES
+            ".*system32/.*\.dll" # windows system dlls
+        RUNTIME DESTINATION .
+    )
+elseif(SAGE_USE_SDL3)
+    add_executable(RTS Main/SDL3Main.cpp)
 
-if (GENZH_BUILD_ZEROHOUR_TOOLS)
-    add_subdirectory(Tools)
+    target_include_directories(RTS PRIVATE
+        ${CMAKE_SOURCE_DIR}/extern/dxvk-native/usr/include/dxvk
+    )
+
+    find_package(SDL3 REQUIRED)
+    target_link_libraries(RTS GameEngine GameEngineDevice SDL3::SDL3 milesstub)
+    install(TARGETS RTS RUNTIME_DEPENDENCIES 
+        DIRECTORIES ${dxvk_SOURCE_DIR}/lib
+        RUNTIME DESTINATION .)
+endif()
+
+if(SAGE_BUILD_TOOLS)
+    add_subdirectory(Tools/Compress)
+    add_subdirectory(Tools/CRCDiff)
+endif()
+
+if(SAGE_BUILD_TESTS)
+    add_subdirectory(Tests)
 endif()

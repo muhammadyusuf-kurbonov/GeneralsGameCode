@@ -61,15 +61,15 @@ class Object;
 class SoundManager;
 
 
-enum AudioAffect;
-enum AudioType;
+#include "AudioAffect.h"
+#include "AudioEventInfo.h"
 
 struct AudioEventInfo;
 struct AudioRequest;
 struct AudioSettings;
 struct MiscAudio;
 
-typedef std::hash_map<AsciiString, AudioEventInfo*, rts::hash<AsciiString>, rts::equal_to<AsciiString> > AudioEventInfoHash;
+typedef std::unordered_map<AsciiString, AudioEventInfo*, rts::hash<AsciiString>, rts::equal_to<AsciiString> > AudioEventInfoHash;
 typedef AudioEventInfoHash::iterator AudioEventInfoHashIt;
 typedef UnsignedInt AudioHandle;
 
@@ -262,7 +262,7 @@ class AudioManager : public SubsystemInterface
 		const MiscAudio *getMiscAudio( void ) const;
 
 		// This function should only be called by AudioManager, MusicManager and SoundManager
-		virtual void releaseAudioEventRTS( AudioEventRTS *eventToRelease );
+		virtual void releaseAudioEventRTS( AudioEventRTS *&eventToRelease );
 
 		// For INI
 		AudioSettings *friend_getAudioSettings( void );

@@ -26,7 +26,11 @@
 // Pull in the gnu_regex library's definitions.
 #define __STDC__ 1
 extern "C" {
+#ifdef _WIN32
 #include "gnu_regex.h"
+#else
+#include <regex.h>
+#endif
 }
 
 

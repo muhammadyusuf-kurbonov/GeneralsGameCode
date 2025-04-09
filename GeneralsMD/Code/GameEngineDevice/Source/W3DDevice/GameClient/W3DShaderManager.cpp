@@ -53,6 +53,16 @@
 //
 //-----------------------------------------------------------------------------
 
+#ifdef SAGE_USE_GLM
+#define D3DXMatrixInverse MatrixInverseWrapped
+#define D3DXMatrixScaling MatrixScalingWrapped
+#define D3DXMatrixTranslation MatrixTranslationWrapped
+#define D3DXMatrixMultiply MatrixMultiplyWrapped
+#define D3DXVec3Transform Vec3TransformWrapped
+#define D3DXMatrixTranspose MatrixTransposeWrapped
+#define D3DXMatrixRotationZ MatrixRotationZWrapped
+#define D3DXVec4Transform Vec4TransformWrapped
+#endif
 #include "dx8wrapper.h"
 #include "assetmgr.h"
 #include "Lib/BaseType.h"
@@ -63,17 +73,16 @@
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 #include "W3DDevice/GameClient/W3DSmudge.h"
-#include "GameClient/view.h"
+#include "GameClient/View.h"
 #include "GameClient/CommandXlat.h"
-#include "GameClient/display.h"
+#include "GameClient/Display.h"
 #include "GameClient/Water.h"
 #include "GameLogic/GameLogic.h"
-#include "common/GlobalData.h"
-#include "common/GameLOD.h"
+#include "Common/GlobalData.h"
+#include "Common/GameLOD.h"
 #include "d3dx8tex.h"
 #include "dx8caps.h"
-#include "common/gamelod.h"
-#include "Benchmark.h"
+//#include "Benchmark.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -83,6 +92,143 @@
 
 // Turn this on to turn off pixel shaders. jba[4/3/2003]
 #define do_not_DISABLE_PIXEL_SHADERS 1
+
+#ifdef SAGE_USE_GLM
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+static void ConvertGLMToD3DX (const glm::mat4x4 &glm, D3DXMATRIX &d3dx)
+{
+	d3dx._11 = glm[0][0];
+	d3dx._12 = glm[1][0];
+	d3dx._13 = glm[2][0];
+	d3dx._14 = glm[3][0];
+
+	d3dx._21 = glm[0][1];
+	d3dx._22 = glm[1][1];
+	d3dx._23 = glm[2][1];
+	d3dx._24 = glm[3][1];
+
+	d3dx._31 = glm[0][2];
+	d3dx._32 = glm[1][2];
+	d3dx._33 = glm[2][2];
+	d3dx._34 = glm[3][2];
+
+	d3dx._41 = glm[0][3];
+	d3dx._42 = glm[1][3];
+	d3dx._43 = glm[2][3];
+	d3dx._44 = glm[3][3];
+}
+
+static void ConvertD3DXToGLM (const D3DXMATRIX &d3dx, glm::mat4x4 &glm)
+{
+	glm[0][0] = d3dx._11;
+	glm[1][0] = d3dx._12;
+	glm[2][0] = d3dx._13;
+	glm[3][0] = d3dx._14;
+
+	glm[0][1] = d3dx._21;
+	glm[1][1] = d3dx._22;
+	glm[2][1] = d3dx._23;
+	glm[3][1] = d3dx._24;
+
+	glm[0][2] = d3dx._31;
+	glm[1][2] = d3dx._32;
+	glm[2][2] = d3dx._33;
+	glm[3][2] = d3dx._34;
+
+	glm[0][3] = d3dx._41;
+	glm[1][3] = d3dx._42;
+	glm[2][3] = d3dx._43;
+	glm[3][3] = d3dx._44;
+}
+
+D3DXMATRIX *WINAPI D3DXMatrixInverse(D3DXMATRIX *pOut, FLOAT *pDeterminant, CONST D3DXMATRIX *pM)
+{
+	glm::mat4x4 m;
+	ConvertD3DXToGLM(*pM, m);
+
+	if (pDeterminant)
+		*pDeterminant = glm::determinant(m);
+
+	glm::mat4x4 inv = glm::inverse(m);
+	ConvertGLMToD3DX(inv, *pOut);
+
+	return pOut;
+}
+
+D3DXMATRIX *WINAPI D3DXMatrixScaling(D3DXMATRIX *pOut, FLOAT sx, FLOAT sy, FLOAT sz)
+{
+	glm::mat4x4 m = glm::scale(glm::mat4x4(1.0f), glm::vec3(sx, sy, sz));
+	ConvertGLMToD3DX(m, *pOut);
+	return pOut;
+}
+
+D3DXMATRIX *WINAPI D3DXMatrixTranslation(D3DXMATRIX *pOut, FLOAT x, FLOAT y, FLOAT z)
+{
+	glm::mat4x4 m = glm::translate(glm::mat4x4(1.0f), glm::vec3(x, y, z));
+	ConvertGLMToD3DX(m, *pOut);
+	return pOut;
+}
+
+D3DXMATRIX *WINAPI D3DXMatrixMultiply(D3DXMATRIX *pOut, CONST D3DXMATRIX *pM1, CONST D3DXMATRIX *pM2)
+{
+	glm::mat4x4 m1, m2;
+	ConvertD3DXToGLM(*pM1, m1);
+	ConvertD3DXToGLM(*pM2, m2);
+
+	glm::mat4x4 m = m1 * m2;
+	ConvertGLMToD3DX(m, *pOut);
+	return pOut;
+}
+
+D3DXVECTOR4 *WINAPI D3DXVec3Transform(D3DXVECTOR4 *pOut, CONST D3DXVECTOR3 *pV, CONST D3DXMATRIX *pM)
+{
+	glm::vec4 v(pV->x, pV->y, pV->z, 1.0f);
+	glm::mat4x4 m;
+	ConvertD3DXToGLM(*pM, m);
+
+	glm::vec4 result = m * v;
+	pOut->x = result.x;
+	pOut->y = result.y;
+	pOut->z = result.z;
+	pOut->w = result.w;
+	return pOut;
+}
+
+D3DXMATRIX *WINAPI D3DXMatrixTranspose(D3DXMATRIX *pOut, CONST D3DXMATRIX *pM)
+{
+	glm::mat4x4 m;
+	ConvertD3DXToGLM(*pM, m);
+
+	glm::mat4x4 mTransposed;
+	mTransposed = glm::transpose(m);
+
+	ConvertGLMToD3DX(mTransposed, *pOut);
+	return pOut;
+}
+
+D3DXMATRIX *WINAPI D3DXMatrixRotationZ(D3DXMATRIX *pOut, FLOAT Angle)
+{
+	glm::mat4x4 m = glm::rotate(glm::mat4x4(1.0f), Angle, glm::vec3(0.0f, 0.0f, 1.0f));
+	ConvertGLMToD3DX(m, *pOut);
+	return pOut;
+}
+
+D3DXVECTOR4 *WINAPI D3DXVec4Transform(D3DXVECTOR4 *pOut, CONST D3DXVECTOR4 *pV, CONST D3DXMATRIX *pM)
+{
+	glm::vec4 v(pV->x, pV->y, pV->z, pV->w);
+	glm::mat4x4 m;
+	ConvertD3DXToGLM(*pM, m);
+
+	glm::vec4 result = m * v;
+	pOut->x = result.x;
+	pOut->y = result.y;
+	pOut->z = result.z;
+	pOut->w = result.w;
+	return pOut;
+}
+#endif
 
 /** Interface definition for custom shaders we define in our app.  These shaders can perform more complex
 	operations than those allowed in the WW3D2 shader system.
@@ -113,7 +259,7 @@ FilterTypes W3DShaderManager::m_currentFilter=FT_NULL_FILTER; ///< Last filter t
 Int W3DShaderManager::m_currentShaderPass;
 ChipsetType W3DShaderManager::m_currentChipset;
 GraphicsVenderID W3DShaderManager::m_currentVendor;
-__int64 W3DShaderManager::m_driverVersion;
+Int64 W3DShaderManager::m_driverVersion;
 
 Bool W3DShaderManager::m_renderingToTexture = false;
 IDirect3DSurface8 *W3DShaderManager::m_oldRenderSurface=NULL;	///<previous render target
@@ -2700,7 +2846,7 @@ void W3DShaderManager::shutdown(void)
 		}
 	}
 
-	for (i=0; i < FT_MAX; i++)
+	for (Int i=0; i < FT_MAX; i++)
 	{	
 		if (W3DFilters[i])
 		{
@@ -2904,7 +3050,7 @@ IDirect3DTexture8 *W3DShaderManager::getRenderTexture(void)
 	return m_renderTexture;
 }
 
-enum GraphicsVenderID
+enum GraphicsVenderID : int
 {
 	DC_NVIDIA_VENDOR_ID	= 0x10DE,
 	DC_3DFX_VENDOR_ID	= 0x121A,
@@ -3004,6 +3150,23 @@ ChipsetType W3DShaderManager::getChipset( void )
 	return chip;
 }
 
+#ifndef _WIN32
+static void OutputDebugString(const char *str)
+{
+	printf("%s",str);
+}
+
+static void QueryPerformanceCounter(LARGE_INTEGER *li)
+{
+	li->QuadPart = 0;
+}
+
+static void QueryPerformanceFrequency(LARGE_INTEGER *li)
+{
+	li->QuadPart = 0;
+}
+#endif
+
 //=============================================================================
 // WaterRenderObjClass::LoadAndCreateShader
 //=============================================================================
@@ -3030,7 +3193,11 @@ HRESULT W3DShaderManager::LoadAndCreateD3DShader(char* strFilePath, const DWORD*
 		TheFileSystem->getFileInfo(AsciiString(strFilePath), &fileInfo);
 		DWORD dwFileSize = fileInfo.sizeLow;
 
+#ifdef _WIN32
 		const DWORD* pShader = (DWORD*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwFileSize);
+#else
+		const DWORD* pShader = new DWORD[dwFileSize];
+#endif
 		if (!pShader)
 		{
 			OutputDebugString( "Failed to allocate memory to load shader\n " );
@@ -3051,7 +3218,11 @@ HRESULT W3DShaderManager::LoadAndCreateD3DShader(char* strFilePath, const DWORD*
 			hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader(pShader, pHandle);
 		}
 
+#ifdef _WIN32
 		HeapFree(GetProcessHeap(), 0, (void*)pShader);
+#else
+		delete[] pShader;
+#endif
 
 		if (FAILED(hr))
 		{
@@ -3076,12 +3247,12 @@ HRESULT W3DShaderManager::LoadAndCreateD3DShader(char* strFilePath, const DWORD*
 #define MIN_ACCEPTED_TEXTURE_MEMORY	(1024*1024*30)	//30 MB
 
 /**Hack to give gameengine access to this function*/
-Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, Int *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex)
+Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, UnsignedInt *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex)
 {
 	return W3DShaderManager::testMinimumRequirements(videoChipType,cpuType,cpuFreq,numRAM,intBenchIndex,floatBenchIndex,memBenchIndex);
 }
 
-Bool W3DShaderManager::testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, Int *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex)
+Bool W3DShaderManager::testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, UnsignedInt *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex)
 {
 	if (videoChipType)
 		*videoChipType = getChipset();
@@ -3113,7 +3284,7 @@ Bool W3DShaderManager::testMinimumRequirements(ChipsetType *videoChipType, CpuTy
 
 	if (intBenchIndex && floatBenchIndex && memBenchIndex)
 	{
-		RunBenchmark(0, NULL, floatBenchIndex, intBenchIndex, memBenchIndex);
+		//RunBenchmark(0, NULL, floatBenchIndex, intBenchIndex, memBenchIndex);
 	}
 
 	return TRUE;
@@ -3151,7 +3322,7 @@ Real W3DShaderManager::GetCPUBenchTime(void)
 	float ztot, yran, ymult, ymod, x, y, z, pi, prod;
     long int low, ixran, itot, j, iprod;
 
-  	__int64 endTime64,freq64,startTime64;
+  	Int64 endTime64,freq64,startTime64;
 	QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
 	QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
 

@@ -82,6 +82,7 @@ StealthUpdateModuleData::StealthUpdateModuleData()
     m_teamDisguised		= false;
     m_revealDistanceFromTarget = 0.0f;
     m_orderIdleEnemiesToAttackMeUponReveal = false;
+		m_useRiderStealth = false;
     m_innateStealth   = true;
     m_disguiseTransitionFrames = 0;
     m_disguiseRevealTransitionFrames = 0;

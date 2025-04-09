@@ -64,13 +64,16 @@ class STLSpecialAlloc;
 
 // FORWARD DECLARATIONS
 class Object;
-enum NameKeyType;
-enum ObjectID;
-enum DrawableID;
+enum NameKeyType : int;
+enum ObjectID : int;
+enum DrawableID : int;
+
+#undef min
+#undef max
 
 #include <algorithm>
 #include <bitset>
-#include <hash_map>
+#include <unordered_map>
 #include <list>
 #include <map>
 #include <queue>
@@ -112,7 +115,7 @@ typedef std::vector<Bool>::iterator												BoolVectorIterator;
 typedef std::map< NameKeyType, Real, std::less<NameKeyType> > ProductionChangeMap;
 typedef std::map< NameKeyType, VeterancyLevel, std::less<NameKeyType> > ProductionVeterancyMap;
 
-// Some useful, common hash and equal_to functors for use with hash_map
+// Some useful, common hash and equal_to functors for use with unordered_map
 namespace rts 
 {
 	
@@ -192,8 +195,8 @@ namespace rts
 	{
 		size_t operator()(AsciiString ast) const
 		{ 
-			std::hash<const char *> tmp;
-			return tmp((const char *) ast.str());
+			std::hash<std::string> tmp;
+			return tmp(ast.str());
 		}
 	};
 

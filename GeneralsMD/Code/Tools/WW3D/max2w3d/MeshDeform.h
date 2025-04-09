@@ -40,7 +40,7 @@
 #define __MESH_DEFORM_H
 
 #include <Max.h>
-#include "Vector.H"
+#include "vector.h"
 
 // Forward declarations
 class MeshDeformPanelClass;

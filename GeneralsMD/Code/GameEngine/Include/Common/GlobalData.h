@@ -44,12 +44,12 @@
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 struct FieldParse;
-typedef enum _TerrainLOD;
+#include "Common/TerrainVisualTypes.h"
 class GlobalData;
 class INI;
 class WeaponBonusSet;
-enum BodyDamageType;
-enum AIDebugOptions;
+#include "Common/BodyModuleTypes.h"
+#include "Common/AITypes.h"
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 

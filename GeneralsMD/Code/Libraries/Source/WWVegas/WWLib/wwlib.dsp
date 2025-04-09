@@ -729,7 +729,7 @@ SOURCE=.\PK.H
 # End Source File
 # Begin Source File
 
-SOURCE=.\Point.h
+SOURCE=.\point.h
 # End Source File
 # Begin Source File
 
@@ -845,7 +845,7 @@ SOURCE=.\strtok_r.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Surface.h
+SOURCE=.\surface.h
 # End Source File
 # Begin Source File
 

@@ -253,14 +253,14 @@ WindowMsgHandledType WOLMapSelectMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestEA( state, KEY_STATE_UP ) )
 					{
 						AsciiString buttonName( "WOLMapSelectMenu.wnd:ButtonBack" );
 						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																								(WindowMsgData)button, buttonID );
+																								(WindowMsgData)button, (WindowMsgData)buttonID );
 
 					}  // end if
 
@@ -332,7 +332,7 @@ WindowMsgHandledType WOLMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonOK );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																								(WindowMsgData)button, buttonOK );
+																								(WindowMsgData)button, (WindowMsgData)buttonOK );
 					}
 				}
 				break;

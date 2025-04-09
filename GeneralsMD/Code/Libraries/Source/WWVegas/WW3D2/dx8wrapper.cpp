@@ -65,13 +65,13 @@
 #include "render2d.h"
 #include "sortingrenderer.h"
 #include "shattersystem.h"
-#include "light.h"
+#include "Light.h"
 #include "assetmgr.h"
 #include "textureloader.h"
 #include "missingtexture.h"
 #include "thread.h"
 #include <stdio.h>
-#include <D3dx8core.h>
+#include <d3dx8core.h>
 #include "pot.h"
 #include "wwprofile.h"
 #include "ffactory.h"
@@ -294,7 +294,11 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 	Invalidate_Cached_Render_States();
 
 	if (!lite) {
+	#ifdef _WIN32
 		D3D8Lib = LoadLibrary("D3D8.DLL");
+	#else
+		D3D8Lib = LoadLibrary("libdxvk_d3d8.so");
+	#endif
 
 		if (D3D8Lib == NULL) return false;	// Return false at this point if init failed
 
@@ -810,7 +814,7 @@ bool DX8Wrapper::Set_Any_Render_Device(void)
 	}
 
 	// Try windowed first
-	for (dev_number = 0; dev_number < _RenderDeviceNameTable.Count(); dev_number++) {
+	for (int dev_number = 0; dev_number < _RenderDeviceNameTable.Count(); dev_number++) {
 		if (Set_Render_Device(dev_number,-1,-1,-1,1,false)) {
 			return true;
 		}
@@ -916,10 +920,9 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	DX8Wrapper_IsWindowed = IsWindowed;
 
 	WWDEBUG_SAY(("Attempting Set_Render_Device: name: %s (%s:%s), width: %d, height: %d, windowed: %d\n",
-		_RenderDeviceNameTable[CurRenderDevice],_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Name(),
+		_RenderDeviceNameTable[CurRenderDevice].Peek_Buffer(),_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Name(),
 		_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Version(),ResolutionWidth,ResolutionHeight,(IsWindowed ? 1 : 0)));
 
-#ifdef _WINDOWS
 	// PWG 4/13/2000 - changed so that if you say to resize the window it resizes
 	// regardless of whether its windowed or not as OpenGL resizes its self around
 	// the caption and edges of the window type you provide, so its important to 
@@ -957,7 +960,6 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 								 SWP_NOZORDER | SWP_NOMOVE);
 		}
 	}
-#endif
 	//must be either resetting existing device or creating a new one.
 	WWASSERT(reset_device || D3DDevice == NULL);
 	
@@ -1061,7 +1063,7 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	Get_Format_Name(DisplayFormat,&displayFormat);
 	Get_Format_Name(_PresentParameters.BackBufferFormat,&backbufferFormat);
 
-	WWDEBUG_SAY(("Using Display/BackBuffer Formats: %s/%s\n",displayFormat,backbufferFormat));
+	WWDEBUG_SAY(("Using Display/BackBuffer Formats: %s/%s\n",displayFormat.Peek_Buffer(),backbufferFormat.Peek_Buffer()));
 	
 	bool ret;
 
@@ -1457,8 +1459,9 @@ bool DX8Wrapper::Find_Color_And_Z_Mode(int resx,int resy,int bitdepth,D3DFORMAT 
 	*/
 	bool found = false;
 	unsigned int mode = 0;
-
-	for (int format_index=0; format_index < format_count; format_index++) {
+	
+	int format_index;
+	for (format_index=0; format_index < format_count; format_index++) {
 		found |= Find_Color_Mode(format_table[format_index],resx,resy,&mode);
 		if (found) break;
 	}
@@ -2058,7 +2061,7 @@ void DX8Wrapper::Draw(
 
 #ifdef MESH_RENDER_SNAPSHOT_ENABLED
 	if (WW3D::Is_Snapshot_Activated()) {
-		unsigned long passes=0;
+		DWORD passes=0;
 		SNAPSHOT_SAY(("ValidateDevice: "));
 		HRESULT res=D3DDevice->ValidateDevice(&passes);
 		switch (res) {
@@ -2248,7 +2251,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 	{
 		if (render_state_changed&mask) 
 		{
-			SNAPSHOT_SAY(("DX8 - apply texture %d (%s)\n",i,render_state.Textures[i] ? render_state.Textures[i]->Get_Full_Path() : "NULL"));
+			SNAPSHOT_SAY(("DX8 - apply texture %d (%s)\n",i,render_state.Textures[i] ? render_state.Textures[i]->Get_Full_Path().Peek_Buffer() : "NULL"));
 
 			if (render_state.Textures[i]) 
 			{
@@ -2316,7 +2319,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 	}
 	if (render_state_changed&VERTEX_BUFFER_CHANGED) {
 		SNAPSHOT_SAY(("DX8 - apply vb change\n"));
-		for (i=0;i<MAX_VERTEX_STREAMS;++i) {
+		for (int i=0;i<MAX_VERTEX_STREAMS;++i) {
 			if (render_state.vertex_buffers[i]) {
 				switch (render_state.vertex_buffer_types[i]) {//->Type()) {
 				case BUFFER_TYPE_DX8:
@@ -2489,7 +2492,7 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture
 		else {
 			StringClass format_name(0,true);
 			Get_WW3D_Format_Name(format, format_name);
-			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name,mip_level_count));
+			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name.Peek_Buffer(),mip_level_count));
 		}
 
 	}
@@ -2788,7 +2791,7 @@ IDirect3DCubeTexture8* DX8Wrapper::_Create_DX8_Cube_Texture
 		{
 			StringClass format_name(0,true);
 			Get_WW3D_Format_Name(format, format_name);
-			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name,mip_level_count));
+			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name.Peek_Buffer(),mip_level_count));
 		}
 
 	}
@@ -2867,7 +2870,7 @@ IDirect3DVolumeTexture8* DX8Wrapper::_Create_DX8_Volume_Texture
 		{
 			StringClass format_name(0,true);
 			Get_WW3D_Format_Name(format, format_name);
-			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name,mip_level_count));
+			WWDEBUG_SAY(("...Texture creation failed. (%d x %d, format: %s, mips: %d\n",width,height,format_name.Peek_Buffer(),mip_level_count));
 		}
 
 	}
@@ -3085,7 +3088,8 @@ void DX8Wrapper::Set_Light_Environment(LightEnvironmentClass* light_env)
 		}
 
 		D3DLIGHT8 light;		
-		for (int l=0;l<light_count;++l) {
+		int l;
+		for (l=0;l<light_count;++l) {
 			
 			::ZeroMemory(&light, sizeof(D3DLIGHT8));
 			

@@ -37,8 +37,14 @@
 #ifndef __WWAUDIO_THREADS_H
 #define __WWAUDIO_THREADS_H
 
-#include "Windows.H"
-#include "Vector.H"
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include "windows_compat.h"
+#include <thread>
+#include <semaphore.h>
+#endif
+#include "vector.h"
 #include "mutex.h"
 
 // Forward declarations
@@ -99,8 +105,13 @@ class WWAudioThreadsClass
 		//////////////////////////////////////////////////////////////////////
 		//	Private member data
 		//////////////////////////////////////////////////////////////////////
+#ifdef _WIN32
 		static HANDLE						m_hDelayedReleaseThread;
 		static HANDLE						m_hDelayedReleaseEvent;
+#else
+		static std::thread			*m_hDelayedReleaseThread;
+		static sem_t            *m_hDelayedReleaseEvent;
+#endif
 		//static RELEASE_LIST		m_ReleaseList;
 		static CriticalSectionClass	m_CriticalSection;
 		static DELAYED_RELEASE_INFO *	m_ReleaseListHead;

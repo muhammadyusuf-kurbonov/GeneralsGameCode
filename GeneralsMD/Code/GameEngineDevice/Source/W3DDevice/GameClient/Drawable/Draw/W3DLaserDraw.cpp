@@ -45,11 +45,11 @@
 #include "W3DDevice/GameClient/Module/W3DLaserDraw.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
-#include "WW3D2/RInfo.h"
-#include "WW3D2/Camera.h"
-#include "WW3D2/Segline.h"
-#include "WWMath/Vector3.h"
-#include "WW3D2/AssetMgr.h"
+#include "WW3D2/rinfo.h"
+#include "WW3D2/camera.h"
+#include "WW3D2/segline.h"
+#include "WWMath/vector3.h"
+#include "WW3D2/assetmgr.h"
 
 
 #ifdef _INTERNAL
@@ -148,9 +148,9 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 // isn't an acceptable solution. if you need to constrain the values, do so at parsing time, when
 // it's still legal to modify these values. (In point of fact, there's not even really any reason to limit
 // the numBeams or segments anymore.)
-	data->m_numBeams =		 __min( __max( 1, data->m_numBeams ), MAX_LASER_LINES );
-	data->m_segments =		 __min( __max( 1, data->m_segments ), MAX_SEGMENTS );
-	data->m_tilingScalar = __max( 0.01f, data->m_tilingScalar );
+	data->m_numBeams =		 min( max( 1, data->m_numBeams ), MAX_LASER_LINES );
+	data->m_segments =		 min( max( 1, data->m_segments ), MAX_SEGMENTS );
+	data->m_tilingScalar = max( 0.01f, data->m_tilingScalar );
 #endif
 
 	//Allocate an array of lines equal to the number of beams * segments
@@ -237,6 +237,7 @@ W3DLaserDraw::~W3DLaserDraw( void )
 	}  // end for i
 
 	delete [] m_line3D;
+	REF_PTR_RELEASE(m_texture);
 }
 
 //-------------------------------------------------------------------------------------------------

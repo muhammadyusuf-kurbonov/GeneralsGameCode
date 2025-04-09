@@ -30,7 +30,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "GameSpy/ghttp/ghttp.h"
+#include "gamespy/ghttp/ghttp.h"
 
 #include "Common/AudioAffect.h"
 #include "Common/AudioSettings.h"
@@ -1124,14 +1124,14 @@ static void saveOptions( void )
 	GadgetComboBoxGetSelectedPos(comboBoxLANIP, &index);
 	if (index>=0 && TheGlobalData)
 	{
-		ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxLANIP, index);
+		ip = (uintptr_t)GadgetComboBoxGetItemData(comboBoxLANIP, index);
 		TheWritableGlobalData->m_defaultIP = ip;
 		pref->setLANIPAddress(ip);
 	}
 	GadgetComboBoxGetSelectedPos(comboBoxOnlineIP, &index);
 	if (index>=0)
 	{
-		ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxOnlineIP, index);
+		ip = (uintptr_t)GadgetComboBoxGetItemData(comboBoxOnlineIP, index);
 		pref->setOnlineIPAddress(ip);
 	}
 
@@ -1606,14 +1606,15 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	if (!selectedResolution.isEmpty())
 	{	//try to parse 2 integers out of string
 		if (sscanf(selectedResolution.str(),"%d%d", &selectedXRes, &selectedYRes) != 2)
-		{	selectedXRes=800; selectedYRes=600;
+		{
+			selectedXRes=800; selectedYRes=600;
 		}
 	}
 
 	// populate resolution modes
 	GadgetComboBoxReset(comboBoxResolution);
 	Int numResolutions = TheDisplay->getDisplayModeCount();
-	for( i = 0; i < numResolutions; ++i )
+	for( Int i = 0; i < numResolutions; ++i )
 	{	Int xres,yres,bitDepth;
 		TheDisplay->getDisplayModeDescription(i,&xres,&yres,&bitDepth);
 		str.format(L"%d x %d",xres,yres);
@@ -1883,14 +1884,14 @@ WindowMsgHandledType OptionsMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestEA( state, KEY_STATE_UP ) )
 					{
 						AsciiString buttonName( "OptionsMenu.wnd:ButtonBack" );
 						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
 						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																								(WindowMsgData)button, buttonID );
+																								(WindowMsgData)button, (WindowMsgData)buttonID );
 
 					}  // end if
 

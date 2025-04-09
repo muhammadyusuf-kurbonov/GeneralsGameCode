@@ -39,9 +39,9 @@
 #ifndef __SOUND_SCENE_OBJ_H
 #define __SOUND_SCENE_OBJ_H
 
-#include "Refcount.H"
-#include "WWAudio.H"
-#include "BitType.H"
+#include "refcount.h"
+#include "WWAudio.h"
+#include "bittype.h"
 #include "persist.h"
 #include "multilist.h"
 #include "mutex.h"
@@ -128,7 +128,7 @@ class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, pub
 		//////////////////////////////////////////////////////////////////////
 		//	Event handling
 		//////////////////////////////////////////////////////////////////////		
-		virtual void			On_Event (AudioCallbackClass::EVENTS event, uint32 param1 = 0, uint32 param2 = 0);
+		virtual void			On_Event (AudioCallbackClass::EVENTS event, uintptr_t param1 = 0, uintptr_t param2 = 0);
 		virtual void			Register_Callback (AudioCallbackClass::EVENTS events, AudioCallbackClass *callback);
 
 		//////////////////////////////////////////////////////////////////////
@@ -230,8 +230,8 @@ __inline void
 SoundSceneObjClass::On_Event
 (
 	AudioCallbackClass::EVENTS	event,
-	uint32							param1,
-	uint32							param2
+	uintptr_t							param1,
+	uintptr_t							param2
 )
 {
 	if ((m_pCallback != NULL) && (m_RegisteredEvents & event)) {

@@ -50,7 +50,7 @@
 #define PROFILE_ERROR_LIMIT	0.94f	//fraction of profiled result needed to get a match.  Allows some room for error/fluctuation.
 
 //Hack to get access to a static method on the W3DDevice side. -MW
-extern Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, Int *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex);
+extern Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, UnsignedInt *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex);
 
 GameLODManager *TheGameLODManager=NULL;
 
@@ -141,13 +141,13 @@ DynamicGameLODInfo::DynamicGameLODInfo(void)
 };
 
 //Keep this in sync with enum in GameLOD.h
-static char *CPUNames[] = 
+static const char *CPUNames[] = 
 {
 	"XX","P3", "P4","K7", NULL
 };
 
 //Keep this in sync with enum in GameLOD.h
-static char *VideoNames[] = 
+static const char *VideoNames[] = 
 {
 	"XX","V2","V3","V4","V5","TNT","TNT2","GF2","R100","PS11","GF3","GF4","PS14","R200","PS20","R300", NULL
 };
@@ -287,6 +287,11 @@ void GameLODManager::init(void)
 
 	//always get this data in case we need it later.
 	testMinimumRequirements(NULL,&m_cpuType,&m_cpuFreq,&m_numRAM,NULL,NULL,NULL);
+#ifndef _WIN32
+	m_numRAM = 1024*1024*1024;	//assume 1GB of RAM for now.
+	m_cpuType = P4;	//assume P4 for now.
+	m_cpuFreq = 2000;	//assume 2GHz for now.
+#endif
 
 	if ((Real)(m_numRAM)/(Real)(256*1024*1024) >= PROFILE_ERROR_LIMIT)
 		m_memPassed=TRUE;	//check if they have at least 256 MB

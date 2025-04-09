@@ -58,8 +58,8 @@
 #include "WinMain.h"
 #include "HierarchyView.h"
 #include "Properties.h"
-#include "WW3D2/WW3D.h"
-#include "WW3D2/Render2D.h"
+#include "WW3D2/ww3d.h"
+#include "WW3D2/render2d.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////
 
@@ -554,7 +554,7 @@ void EditWindow::mouseEvent( UnsignedInt windowsMessage,
 {
 	Int x = LOWORD( lParam );
 	Int y = HIWORD( lParam );
-	Bool controlDown = BitTest( GetKeyState( VK_CONTROL ), 0x1000 );
+	Bool controlDown = BitTestEA( GetKeyState( VK_CONTROL ), 0x1000 );
 	ICoord2D mouse;
 
 	// setup mouse in nice struct
@@ -1121,7 +1121,7 @@ void EditWindow::drawSeeThruOutlines( GameWindow *windowList, Color c )
 		return;
 
 	// draw outline for this window
-	if( BitTest( windowList->winGetStatus(), WIN_STATUS_SEE_THRU ) )
+	if( BitTestEA( windowList->winGetStatus(), WIN_STATUS_SEE_THRU ) )
 	{
 		ICoord2D pos;
 		ICoord2D size;
@@ -1165,12 +1165,12 @@ void EditWindow::drawHiddenOutlines( GameWindow *windowList, Color c )
 	while( parent )
 	{
 
-		if( BitTest( parent->winGetStatus(), WIN_STATUS_HIDDEN ) )
+		if( BitTestEA( parent->winGetStatus(), WIN_STATUS_HIDDEN ) )
 			hidden = TRUE;
 		parent = parent->winGetParent();
 
 	}  // end while
-	if( BitTest( windowList->winGetStatus(), WIN_STATUS_HIDDEN ) )
+	if( BitTestEA( windowList->winGetStatus(), WIN_STATUS_HIDDEN ) )
 		hidden = TRUE;
 	if( hidden )
 	{
@@ -1663,10 +1663,10 @@ void EditWindow::drawImage( const Image *image,
 			//	Clip the polygons to the specified area
 			//
 			RectClass clipped_rect;
-			clipped_rect.Left		= __max (screen_rect.Left, m_clipRegion.lo.x);
-			clipped_rect.Right	= __min (screen_rect.Right, m_clipRegion.hi.x);
-			clipped_rect.Top		= __max (screen_rect.Top, m_clipRegion.lo.y);
-			clipped_rect.Bottom	= __min (screen_rect.Bottom, m_clipRegion.hi.y);
+			clipped_rect.Left		= max (screen_rect.Left, m_clipRegion.lo.x);
+			clipped_rect.Right	= min (screen_rect.Right, m_clipRegion.hi.x);
+			clipped_rect.Top		= max (screen_rect.Top, m_clipRegion.lo.y);
+			clipped_rect.Bottom	= min (screen_rect.Bottom, m_clipRegion.hi.y);
 
 			//
 			//	Clip the texture to the specified area
@@ -1693,7 +1693,7 @@ void EditWindow::drawImage( const Image *image,
 	}
 
 	// if rotated 90 degrees clockwise we have to adjust the uv coords
-	if( BitTest( image->getStatus(), IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
+	if( BitTestEA( image->getStatus(), IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
 	{
 
 		m_2DRender->Add_Tri( Vector2( screen_rect.Left, screen_rect.Top ), 

@@ -22,7 +22,7 @@
 // $Revision: #4 $
 // $DateTime: 2003/08/14 13:43:29 $
 //
-// ©2003 Electronic Arts
+// ï¿½2003 Electronic Arts
 //
 // Function level profiling (internal header)
 //////////////////////////////////////////////////////////////////////////////
@@ -90,13 +90,13 @@ public:
   struct Profile
   {
     /// call count
-    __int64 callCount;
+    int64_t callCount;
 
     /// pure time
-    __int64 tickPure;
+    int64_t tickPure;
 
     /// total time
-    __int64 tickTotal;
+    int64_t tickTotal;
 
     /// caller list
     UnsignedMap caller;

@@ -102,11 +102,14 @@
 #include "GameClient/GUICallbacks.h"
 
 #include "GameNetwork/NetworkInterface.h"
-#include "GameNetwork/WOLBrowser/WebBrowser.h"
 #include "GameNetwork/LANAPI.h"
 #include "GameNetwork/GameSpy/GameResultsThread.h"
 
 #include "Common/Version.h"
+
+#ifndef _WIN32
+#include <filesystem>
+#endif
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -285,8 +288,8 @@ void GameEngine::init( int argc, char *argv[] )
 
 
 	#ifdef DUMP_PERF_STATS////////////////////////////////////////////////////////////
-	__int64 startTime64;//////////////////////////////////////////////////////////////
-	__int64 endTime64,freq64;///////////////////////////////////////////////////////////
+	int64_t startTime64;//////////////////////////////////////////////////////////////
+	int64_t endTime64,freq64;///////////////////////////////////////////////////////////
 	GetPrecisionTimerTicksPerSec(&freq64);///////////////////////////////////////////////
 	GetPrecisionTimer(&startTime64);////////////////////////////////////////////////////
   char Buf[256];//////////////////////////////////////////////////////////////////////
@@ -308,7 +311,14 @@ void GameEngine::init( int argc, char *argv[] )
 		//I was unable to resolve the RTPatch method of deleting a shipped file. English, Chinese, and Korean
 		//SKU's shipped with two INIZH.big files. One properly in the Run directory and the other in Run\INI\Data.
 		//We need to toast the latter in order for the game to patch properly.
+#ifdef _WIN32
 		DeleteFile( "Data\\INI\\INIZH.big" );
+#else
+		std::filesystem::path p = "Data";
+		p /= "INI";
+		p /= "INIZH.big";
+		std::filesystem::remove( p );
+#endif
 
 		// not part of the subsystem list, because it should normally never be reset!
 		TheNameKeyGenerator = MSGNEW("GameEngineSubsystem") NameKeyGenerator;
@@ -432,8 +442,10 @@ void GameEngine::init( int argc, char *argv[] )
 	DEBUG_LOG(("%s", Buf));////////////////////////////////////////////////////////////////////////////
 	#endif/////////////////////////////////////////////////////////////////////////////////////////////
 		initSubsystem(TheAudio,"TheAudio", createAudioManager(), NULL);
+#if defined(_WIN32) && !defined(_WIN64)
 		if (!TheAudio->isMusicAlreadyLoaded())
 			setQuitting(TRUE);
+#endif
 
 	#ifdef DUMP_PERF_STATS///////////////////////////////////////////////////////////////////////////
 	GetPrecisionTimer(&endTime64);//////////////////////////////////////////////////////////////////
@@ -534,7 +546,6 @@ void GameEngine::init( int argc, char *argv[] )
 
 
 		initSubsystem(TheActionManager,"TheActionManager", MSGNEW("GameEngineSubsystem") ActionManager(), NULL);
-		//initSubsystem((CComObject<WebBrowser> *)TheWebBrowser,"(CComObject<WebBrowser> *)TheWebBrowser", (CComObject<WebBrowser> *)createWebBrowser(), NULL);
 		initSubsystem(TheGameStateMap,"TheGameStateMap", MSGNEW("GameEngineSubsystem") GameStateMap, NULL, NULL, NULL );
 		initSubsystem(TheGameState,"TheGameState", MSGNEW("GameEngineSubsystem") GameState, NULL, NULL, NULL );
 
@@ -582,7 +593,7 @@ void GameEngine::init( int argc, char *argv[] )
 		AsciiString dirName;
     dirName = TheArchiveFileSystem->getArchiveFilenameForFile("generalsbzh.sec");
 
-    if (dirName.compareNoCase("genseczh.big") != 0)
+    if (dirName.compareNoCase("genseczh.big") != 0 && dirName.compareNoCase("./genseczh.big") != 0)
 		{
 			DEBUG_LOG(("generalsbzh.sec was not found in genseczh.big - it was in '%s'\n", dirName.str()));
 			m_quitting = TRUE;
@@ -594,7 +605,7 @@ void GameEngine::init( int argc, char *argv[] )
 			dirName = noPath + 1;
 		}
 
-		if (dirName.compareNoCase("musiczh.big") != 0)
+		if (dirName.compareNoCase("musiczh.big") != 0 && dirName.compareNoCase("./musiczh.big") != 0)
 		{
 			DEBUG_LOG(("generalsazh.sec was not found in musiczh.big - it was in '%s'\n", dirName.str()));
 			m_quitting = TRUE;
@@ -1006,4 +1017,8 @@ void updateTGAtoDDS()
 // If we're using the Wide character version of MessageBox, then there's no additional
 // processing necessary. Please note that this is a sleazy way to get this information,
 // but pending a better one, this'll have to do.
-extern const Bool TheSystemIsUnicode = (((void*) (::MessageBox)) == ((void*) (::MessageBoxW)));
+#ifdef UNICODE
+extern const Bool TheSystemIsUnicode = TRUE;
+#else
+extern const Bool TheSystemIsUnicode = FALSE;
+#endif

@@ -55,7 +55,9 @@
 
 #define no_INTENSE_DEBUG
 
+#ifdef _WIN32
 #define DEBUG_QPF
+#endif
 
 #ifdef INTENSE_DEBUG
 #include "GameLogic/ScriptEngine.h"
@@ -1135,7 +1137,7 @@ void PathfindCellInfo::releaseCellInfos(void)
 		s_firstFree = s_firstFree->m_pathParent;
 	}
 	DEBUG_ASSERTCRASH(count==CELL_INFOS_TO_ALLOCATE, ("Error - Allocated cellinfos."));
-	delete s_infoArray;
+	delete[] s_infoArray;
 	s_infoArray = NULL;
 	s_firstFree = NULL;
 }
@@ -1201,7 +1203,7 @@ PathfindCell::~PathfindCell( void )
 { 	
 	if (m_info) PathfindCellInfo::releaseACellInfo(m_info);
 	m_info = NULL;
-	static warn = true;
+	static bool warn = true;
 	if (warn) {
 		warn = false;
 		DEBUG_LOG( ("PathfindCell::~PathfindCell m_info Allocated."));
@@ -3827,6 +3829,8 @@ void PathfindLayer::classifyWallMapCell( Int i, Int j , PathfindCell *cell, Obje
 
 Pathfinder::Pathfinder( void ) :m_map(NULL)
 {
+	m_blockOfMapCells = NULL;
+	m_map = NULL;
 	debugPath = NULL;
 	PathfindCellInfo::allocateCellInfos();
 	reset();
@@ -4031,6 +4035,8 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
 	IRegion2D cellBounds;
 	cellBounds.lo.x = REAL_TO_INT_FLOOR((pos->x + 0.5f)/PATHFIND_CELL_SIZE_F);
 	cellBounds.lo.y = REAL_TO_INT_FLOOR((pos->y + 0.5f)/PATHFIND_CELL_SIZE_F);
+	cellBounds.hi.x = 0;
+	cellBounds.hi.y = 0;
 	Bool didAnything = false;
 
  	for (Int iy = 0; iy < numStepsY; ++iy, tl_x += ydx, tl_y += ydy)
@@ -5942,8 +5948,8 @@ void Pathfinder::processPathfindQueue(void)
 			m_queuePRHead = 0;
 		}
 	}
-	if (pathsFound>0) {
 #ifdef DEBUG_QPF
+	if (pathsFound>0) {
 #if defined _DEBUG || defined _INTERNAL
 		QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
 		timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));
@@ -5954,8 +5960,8 @@ void Pathfinder::processPathfindQueue(void)
 			DEBUG_LOG(("\n"));
 		}
 #endif
-#endif
 	}
+#endif
 #if defined _DEBUG || defined _INTERNAL
 	doDebugIcons();
 #endif
@@ -6513,7 +6519,7 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 	worldToCell( to, &cell );
 
 	if (!checkDestination(obj, cell.x, cell.y, destinationLayer, radius, centerInCell)) {
-		return false;
+		return NULL;
 	}
 	// determine start cell
 	ICoord2D startCellNdx;
@@ -6820,7 +6826,7 @@ Path *Pathfinder::buildGroundPath(Bool isCrusher, const Coord3D *fromPos, Pathfi
 		}
 
 		// show optimized path
-		for( node = path->getFirstNode(); node; node = node->getNextOptimized() )
+		for(PathNode* node = path->getFirstNode(); node; node = node->getNextOptimized() )
 		{
 			pos = *node->getPosition();
 			addIcon(&pos, PATHFIND_CELL_SIZE_F*.8f, 200, color);
@@ -7182,7 +7188,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
 		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
 
-		UnsignedInt newCostSoFar;
+		UnsignedInt newCostSoFar = 0;
 
 		for( int i=0; i<numNeighbors; i++ )
 		{
@@ -9013,7 +9019,7 @@ Path *Pathfinder::buildActualPath( const Object *obj, LocomotorSurfaceTypeMask a
 		}
 
 		// show optimized path
-		for( node = path->getFirstNode(); node; node = node->getNextOptimized() )
+		for(PathNode* node = path->getFirstNode(); node; node = node->getNextOptimized() )
 		{
 			pos = *node->getPosition();
 			addIcon(&pos, PATHFIND_CELL_SIZE_F*.8f, 200, color);
@@ -10195,7 +10201,7 @@ if (g_UT_startTiming) return false;
 Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 											Path *pathToAvoid, Object *otherObj2, Path *pathToAvoid2)
 {
-	if (m_isMapReady == false) return false; // Should always be ok.
+	if (m_isMapReady == false) return NULL; // Should always be ok.
 #if defined _DEBUG || defined _INTERNAL
 	Int startTimeMS = ::GetTickCount();
 #endif
@@ -10227,9 +10233,9 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 	worldToCell(&startPos, &startCellNdx);
 	PathfindCell *parentCell = getClippedCell( obj->getLayer(), obj->getPosition() ); 
 	if (parentCell == NULL)
-		return false;
+		return NULL;
 	if (!obj->getAIUpdateInterface()) {
-		return false; // shouldn't happen, but can't move it without an ai.
+		return NULL; // shouldn't happen, but can't move it without an ai.
 	}
 	const LocomotorSet& locomotorSet = obj->getAIUpdateInterface()->getLocomotorSet();
 
@@ -10250,7 +10256,7 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 	}
 
 	if (!parentCell->allocateInfo(startCellNdx)) {
-		return false;
+		return NULL;
 	}
 	parentCell->startPathfind(NULL);
 
@@ -10401,15 +10407,15 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 	//worldToCell(obj->getPosition(), &startCellNdx);
 	PathfindCell *parentCell = getClippedCell( obj->getLayer(), &currentPosition); 
 	if (parentCell == NULL)
-		return false;
+		return NULL;
 	if (!obj->getAIUpdateInterface()) {
-		return false; // shouldn't happen, but can't move it without an ai.
+		return NULL; // shouldn't happen, but can't move it without an ai.
 	}
 
 	m_isTunneling = false;
 	
 	if (!parentCell->allocateInfo(startCellNdx)) {
-		return false;
+		return NULL;
 	}
 	parentCell->startPathfind( NULL);
 
@@ -10546,7 +10552,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 		candidateGoal->releaseInfo();
 	}
 	cleanOpenAndClosedLists();
-	return false;
+	return NULL;
 }
 
 
@@ -10583,7 +10589,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 			AS_INT(victimPos->x), AS_INT(victimPos->y), AS_INT(victimPos->z)));
 	}
 	*/
-	if (m_isMapReady == false) return false; // Should always be ok.
+	if (m_isMapReady == false) return NULL; // Should always be ok.
 #if defined _DEBUG || defined _INTERNAL
 //	Int startTimeMS = ::GetTickCount();
 #endif
@@ -10668,14 +10674,14 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	worldToCell(&objPos, &startCellNdx);
 	PathfindCell *parentCell = getClippedCell( obj->getLayer(), &objPos ); 
 	if (parentCell == NULL)
-		return false;
+		return NULL;
 	if (!obj->getAIUpdateInterface()) {
-		return false; // shouldn't happen, but can't move it without an ai.
+		return NULL; // shouldn't happen, but can't move it without an ai.
 	}
 	const PathfindCell *startCell = parentCell;
 
 	if (!parentCell->allocateInfo(startCellNdx)) {
-		return false;
+		return NULL;
 	}
 	parentCell->startPathfind(NULL);
 
@@ -10689,7 +10695,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 		return NULL;
 
  	if (!goalCell->allocateInfo(victimCellNdx)) {
-		return false;
+		return NULL;
 	}
 
 	// initialize "open" list to contain start cell
@@ -10902,7 +10908,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 		goalCell->releaseInfo();
 	}
 	cleanOpenAndClosedLists();
-	return false;
+	return NULL;
 }
 
 /** Find a short, valid path to a location that is safe from the repulsors.  */
@@ -10910,7 +10916,7 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 		const Coord3D *from, const Coord3D* repulsorPos1, const Coord3D* repulsorPos2, Real repulsorRadius) 
 {
 	//CRCDEBUG_LOG(("Pathfinder::findSafePath()\n"));
-	if (m_isMapReady == false) return false; // Should always be ok.
+	if (m_isMapReady == false) return NULL; // Should always be ok.
 #if defined _DEBUG || defined _INTERNAL
 //	Int startTimeMS = ::GetTickCount();
 #endif
@@ -10936,12 +10942,12 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 	worldToCell(obj->getPosition(), &startCellNdx);
 	PathfindCell *parentCell = getClippedCell( obj->getLayer(), obj->getPosition() ); 
 	if (parentCell == NULL)
-		return false;
+		return NULL;
 	if (!obj->getAIUpdateInterface()) {
-		return false; // shouldn't happen, but can't move it without an ai.
+		return NULL; // shouldn't happen, but can't move it without an ai.
 	}
 	if (!parentCell->allocateInfo(startCellNdx)) {
-		return false;
+		return NULL;
 	}
 	parentCell->startPathfind( NULL);
 
@@ -11060,7 +11066,7 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 #endif
 	m_isTunneling = false;
 	cleanOpenAndClosedLists();
-	return false;
+	return NULL;
 }
 
 //-----------------------------------------------------------------------------

@@ -274,7 +274,7 @@ m_bridgeInfo(theInfo)
 	// get the template of the bridge
 	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
 	if( bridgeTemplate == NULL ) {
-		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName ));
+		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName.str() ));
 		return;
 	}
 
@@ -385,7 +385,7 @@ Bridge::Bridge(Object *bridgeObj)
 	AsciiString bridgeTemplateName = bridgeObj->getTemplate()->getName();
 	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
 	if( bridgeTemplate == NULL ) {
-		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName ));
+		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName.str() ));
 		return;
 	}
 
@@ -1185,19 +1185,18 @@ void TerrainLogic::enableWaterGrid( Bool enable )
 			//
 			AsciiString strippedMapNameOnly;
 			AsciiString strippedCompareMapNameOnly;
-			char *c;
 
 			// create stripped map name
-			c = strrchr( TheGlobalData->m_mapName.str(), '\\' );
-			if( c )
-				strippedMapNameOnly.set( c );
+			const char* c1 = strrchr( TheGlobalData->m_mapName.str(), '\\' );
+			if( c1 )
+				strippedMapNameOnly.set( c1 );
 			else
 				strippedMapNameOnly = TheGlobalData->m_mapName;
 
 			// create stripped compare name
-			c = strrchr( TheGlobalData->m_vertexWaterAvailableMaps[ i ].str(), '\\' );
-			if( c )
-				strippedCompareMapNameOnly.set( c );
+			const char * c2 = strrchr( TheGlobalData->m_vertexWaterAvailableMaps[ i ].str(), '\\' );
+			if( c2 )
+				strippedCompareMapNameOnly.set( c2 );
 			else
 				strippedCompareMapNameOnly = TheGlobalData->m_vertexWaterAvailableMaps[ i ];
 

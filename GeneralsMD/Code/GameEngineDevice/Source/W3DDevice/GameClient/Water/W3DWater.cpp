@@ -33,7 +33,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "stdio.h"
 #include "W3DDevice/GameClient/W3DWater.h"
-#include "W3DDevice/GameClient/heightmap.h"
+#include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "W3DDevice/GameClient/W3DWaterTracks.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
@@ -43,8 +43,8 @@
 #include "camera.h"
 #include "scene.h"
 #include "dx8wrapper.h"
-#include "light.h"
-#include "D3dx8math.h"
+#include "Light.h"
+#include "d3dx8math.h"
 #include "simplevec.h"
 #include "mesh.h"
 #include "matinfo.h"
@@ -363,7 +363,10 @@ WaterRenderObjClass::WaterRenderObjClass(void)
 	
 	Int i=NUM_BUMP_FRAMES;
 	while (i--)
+	{
 		m_pBumpTexture[i]=NULL;
+		m_pBumpTexture2[i]=NULL;
+	}
 
 	m_riverVOrigin=0;
 	m_riverTexture=NULL;
@@ -911,6 +914,7 @@ void WaterRenderObjClass::ReAcquireResources(void)
 
 	if (W3DShaderManager::getChipset() >= DC_GENERIC_PIXEL_SHADER_1_1)
 	{
+#ifdef _WIN32
 		ID3DXBuffer *compiledShader;
 		char *shader = 
 			"ps.1.1\n \
@@ -956,6 +960,9 @@ void WaterRenderObjClass::ReAcquireResources(void)
 			hr = 	DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader((DWORD*)compiledShader->GetBufferPointer(), &m_trapezoidWaterPixelShader);
 			compiledShader->Release();
 		}
+#else
+		#pragma message("Water shaders disabled on non-Windows platforms")
+#endif
 	}
 
 	//W3D Invalidate textures after losing the device and since we peek at the textures directly, it won't
@@ -1265,7 +1272,7 @@ void WaterRenderObjClass::update( void )
 				{
 
 					// only pay attention to mesh points that are in motion
-					if( BitTest( pData->status, WaterRenderObjClass::IN_MOTION ) )
+					if( BitTestEA( pData->status, WaterRenderObjClass::IN_MOTION ) )
 					{
 
 						// DAMPENING to slow the changes down

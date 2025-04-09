@@ -50,10 +50,10 @@
  *   BufferIOFileClass::~BufferIOFileClass -- Destructor for the file object.                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"bfiofile.h"
-#include	<string.h>
-
+#include "always.h"
+#include "bfiofile.h"
+#include <string.h>
+#include <errno.h>
 
 /***********************************************************************************************
  * BufferIOFileClass::BufferIOFileClass -- Filename based constructor for a file object.       *

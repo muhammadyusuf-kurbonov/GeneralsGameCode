@@ -49,7 +49,7 @@
 #include "Common/GameSounds.h"
 #include "Common/Debug.h"
 #include "Common/GameMemory.h"
-#include "Common/SafeDisc/CdaPfn.h"
+//#include "Common/SafeDisc/CdaPfn.h"
 #include "Common/StackDump.h"
 #include "Common/MessageStream.h"
 #include "Common/Registry.h"
@@ -62,8 +62,8 @@
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/Common/Win32GameEngine.h"
 #include "Common/Version.h"
-#include "BuildVersion.h"
-#include "GeneratedVersion.h"
+//#include "BuildVersion.h"
+//#include "GeneratedVersion.h"
 #include "Resource.h"
 
 #include <rts/profile.h>
@@ -756,60 +756,25 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 
 }  // end initializeAppWindows
 
-void munkeeFunc(void);
-CDAPFN_DECLARE_GLOBAL(munkeeFunc, CDAPFN_OVERHEAD_L5, CDAPFN_CONSTRAINT_NONE);
+//void munkeeFunc(void);
+//CDAPFN_DECLARE_GLOBAL(munkeeFunc, CDAPFN_OVERHEAD_L5, CDAPFN_CONSTRAINT_NONE);
 void munkeeFunc(void)
 {
-	CDAPFN_ENDMARK(munkeeFunc);
+	//CDAPFN_ENDMARK(munkeeFunc);
 }
 
 void checkProtection(void)
 {
-#ifdef _INTERNAL
-	__try
-	{
-		munkeeFunc();
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
-		exit(0); // someone is messing with us.
-	}
-#endif
-}
-
-// strtrim ====================================================================
-/** Trim leading and trailing whitespace from a character string (in place). */
-//=============================================================================
-static char* strtrim(char* buffer)
-{
-	if (buffer != NULL) {
-		//	Strip leading white space from the string.
-		char * source = buffer;
-		while ((*source != 0) && ((unsigned char)*source <= 32))
-		{
-			source++;
-		}
-
-		if (source != buffer)
-		{
-			strcpy(buffer, source);
-		}
-
-		//	Clip trailing white space from the string.
-		for (int index = strlen(buffer)-1; index >= 0; index--)
-		{
-			if ((*source != 0) && ((unsigned char)buffer[index] <= 32))
-			{
-				buffer[index] = '\0';
-			}
-			else
-			{
-				break;
-			}
-		}
-	}
-
-	return buffer;
+//#ifdef _INTERNAL
+//	__try
+//	{
+//		munkeeFunc();
+//	}
+//	__except(EXCEPTION_EXECUTE_HANDLER)
+//	{
+//		exit(0); // someone is messing with us.
+//	}
+//#endif
 }
 
 char *nextParam(char *newSource, char *seps)
@@ -1005,9 +970,9 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
  
 		// Set up version info
 		TheVersion = NEW Version;
-		TheVersion->setVersion(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNUM, VERSION_LOCALBUILDNUM,
-			AsciiString(VERSION_BUILDUSER), AsciiString(VERSION_BUILDLOC),
-			AsciiString(__TIME__), AsciiString(__DATE__));
+		//TheVersion->setVersion(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNUM, VERSION_LOCALBUILDNUM,
+		//	AsciiString(VERSION_BUILDUSER), AsciiString(VERSION_BUILDLOC),
+		//	AsciiString(__TIME__), AsciiString(__DATE__));
 
 #ifdef DO_COPY_PROTECTION
 		if (!CopyProtect::isLauncherRunning())
@@ -1098,7 +1063,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	TheMemoryPoolCriticalSection = NULL;
 
 	return 0;
-
 }  // end WinMain
 
 // CreateGameEngine ===========================================================

@@ -41,6 +41,10 @@
 #include "GameClient/Image.h"
 #include "Common/NameKeyGenerator.h"
 
+#ifndef _WIN32
+#include <filesystem>
+#endif
+
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 const FieldParse Image::m_imageFieldParseTable[] = 
 {
@@ -120,7 +124,7 @@ void Image::parseImageStatus( INI* ini, void *instance, void *store, const void*
 	// (see ImagePacker tool for more details)
 	//
 	UnsignedInt *theStatusBits = (UnsignedInt *)store;
-	if( BitTest( *theStatusBits, IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
+	if( BitTestEA( *theStatusBits, IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
 	{
 		Image *theImage = (Image *)instance;
 		ICoord2D imageSize;
@@ -231,6 +235,7 @@ const Image *ImageCollection::findImageByName( const AsciiString& name )
 //-------------------------------------------------------------------------------------------------
 void ImageCollection::load( Int textureSize )
 {
+#ifdef _WIN32
 	char buffer[ _MAX_PATH ];
 	INI ini;
 	// first load in the user created mapped image files if we have them.
@@ -254,6 +259,33 @@ void ImageCollection::load( Int textureSize )
 	ini.loadDirectory( AsciiString( buffer ), TRUE, INI_LOAD_OVERWRITE, NULL );
 
 	ini.loadDirectory("Data\\INI\\MappedImages\\HandCreated", TRUE, INI_LOAD_OVERWRITE, NULL );
+#else
+	std::filesystem::path userDataPath(TheGlobalData->getPath_UserData().str());
+	userDataPath = userDataPath / "INI" / "MappedImages";
+	std::filesystem::path textureSizePath;
+	textureSizePath = textureSizePath / "Data" / "INI" / "MappedImages" / ("TextureSize_" + std::to_string(textureSize));
+	std::filesystem::path handCreatedPath;
+	handCreatedPath = handCreatedPath / "Data" / "INI" / "MappedImages" / "HandCreated";
+
+	INI ini;
+	if (std::filesystem::exists(userDataPath))
+	{
+		// Find first ini file in the directory
+		std::filesystem::directory_iterator end;
+		std::filesystem::directory_iterator it(userDataPath);
+		// If there is an ini file in the directory, load the directory
+		if (it != end)
+		{
+			if (std::filesystem::is_regular_file(it->path()) && it->path().extension() == ".ini")
+			{
+				ini.loadDirectory(userDataPath.c_str(), TRUE, INI_LOAD_OVERWRITE, NULL);
+			}
+		}
+	}
+
+	ini.loadDirectory(textureSizePath.c_str(), TRUE, INI_LOAD_OVERWRITE, NULL);
+	ini.loadDirectory(handCreatedPath.c_str(), TRUE, INI_LOAD_OVERWRITE, NULL);
+#endif
 
 
 }  // end load

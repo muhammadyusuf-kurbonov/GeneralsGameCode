@@ -80,7 +80,7 @@ class ProcessAnimateWindow;
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 
-enum AnimTypes
+enum AnimTypes : int
 {
 	WIN_ANIMATION_NONE = 0,
 	WIN_ANIMATION_SLIDE_RIGHT,
@@ -150,7 +150,7 @@ private:
 
 
 //-----------------------------------------------------------------------------
-typedef	std::list<AnimateWindow *>	AnimateWindowList;
+typedef	std::list<class AnimateWindow *>	AnimateWindowList;
 
 //-----------------------------------------------------------------------------
 class AnimateWindowManager : public SubsystemInterface

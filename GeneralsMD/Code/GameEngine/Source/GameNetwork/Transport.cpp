@@ -93,6 +93,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 	// ----- Initialize Winsock -----
 	if (!m_winsockInit)
 	{
+#ifdef _WIN32
 		WORD verReq = MAKEWORD(2, 2);
 		WSADATA wsadata;
 
@@ -105,6 +106,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 			WSACleanup();
 			return false;
 		}
+#endif
 		m_winsockInit = true;
 	}
 
@@ -139,7 +141,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 		m_delayedInBuffer[i].message.length = 0;
 #endif
 	}
-	for (i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
+	for (int i=0; i<MAX_TRANSPORT_STATISTICS_SECONDS; ++i)
 	{
 		m_incomingBytes[i] = 0;
 		m_outgoingBytes[i] = 0;
@@ -174,7 +176,9 @@ void Transport::reset( void )
 
 	if (m_winsockInit)
 	{
+#ifdef _WIN32
 		WSACleanup();
+#endif
 		m_winsockInit = false;
 	}
 }
@@ -186,12 +190,16 @@ Bool Transport::update( void )
 	{
 		retval = FALSE;
 	}
+	#ifdef _WIN32
 	DEBUG_ASSERTLOG(retval, ("WSA error is %s\n", GetWSAErrorString(WSAGetLastError()).str()));
+	#endif
 	if (doSend() == FALSE && m_udpsock && m_udpsock->GetStatus() == UDP::ADDRNOTAVAIL)
 	{
 		retval = FALSE;
 	}
+	#ifdef _WIN32
 	DEBUG_ASSERTLOG(retval, ("WSA error is %s\n", GetWSAErrorString(WSAGetLastError()).str()));
+	#endif
 	return retval;
 }
 
@@ -331,7 +339,7 @@ Bool Transport::doRecv()
 
 		for (int i=0; i<MAX_MESSAGES; ++i)
 		{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if (defined(_DEBUG) || defined(_INTERNAL)) && defined(_WIN32)
 			// Latency simulation
 			if (m_useLatency)
 			{
@@ -356,12 +364,12 @@ Bool Transport::doRecv()
 				{
 					// Empty slot; use it
 					m_inBuffer[i].length = incomingMessage.length;
-					m_inBuffer[i].addr = ntohl(from.sin_addr.S_un.S_addr);
+					m_inBuffer[i].addr = ntohl(from.sin_addr.s_addr);
 					m_inBuffer[i].port = ntohs(from.sin_port);
 					memcpy(&m_inBuffer[i], buf, len);
 					break;
 				}
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if (defined(_DEBUG) || defined(_INTERNAL)) && defined(_WIN32)
 			}
 #endif
 		}

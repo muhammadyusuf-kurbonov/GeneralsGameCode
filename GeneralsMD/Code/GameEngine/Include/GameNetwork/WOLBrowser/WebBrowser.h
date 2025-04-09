@@ -42,6 +42,8 @@
 
 #pragma once
 
+#ifdef _WIN32
+
 #ifndef __WEBBROWSER_H__
 #define __WEBBROWSER_H__
 
@@ -112,9 +114,9 @@ class WebBrowser :
 	// IUnknown methods
 	//---------------------------------------------------------------------------
 	protected:
-		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-		ULONG STDMETHODCALLTYPE AddRef(void);
-		ULONG STDMETHODCALLTYPE Release(void);
+		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject) noexcept;
+		ULONG STDMETHODCALLTYPE AddRef(void) noexcept;
+		ULONG STDMETHODCALLTYPE Release(void) noexcept;
 
 	//---------------------------------------------------------------------------
 	// IBrowserDispatch methods
@@ -125,3 +127,43 @@ class WebBrowser :
 
 extern CComObject<WebBrowser> *TheWebBrowser;
 #endif // __WEBBROWSER_H__
+
+#else
+#pragma message("WebBrowser is stubbed on this platform!")
+
+#include "Common/AsciiString.h"
+class GameWindow;
+struct FieldParse;
+
+class WebBrowserURL
+{
+	public:
+		WebBrowserURL() {}
+		~WebBrowserURL() {}
+
+		AsciiString m_tag;
+		AsciiString m_url;
+
+		WebBrowserURL *m_next;
+
+		const FieldParse *getFieldParse( void ) const { return NULL; }
+};
+
+class WebBrowser
+{
+	public:
+		void init( void ) {}
+		void reset( void ) {}
+		void update( void ) {}
+
+		// Create an instance of the embedded browser
+		virtual Bool createBrowserWindow(char *tag, GameWindow *win) { return FALSE; }
+		virtual void closeBrowserWindow(GameWindow *win) {}
+
+		WebBrowserURL *makeNewURL(AsciiString tag) { return NULL; }
+		WebBrowserURL *findURL(AsciiString tag) { return NULL; }
+};
+
+extern WebBrowser *TheWebBrowser;
+
+#endif

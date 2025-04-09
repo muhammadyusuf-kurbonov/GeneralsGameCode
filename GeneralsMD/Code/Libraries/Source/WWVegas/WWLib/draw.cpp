@@ -42,7 +42,9 @@
 #include	"blitter.h"
 #include	"bsurface.h"
 #include	"draw.h"
+#ifdef _WIN32
 #include	"dsurface.h"
+#endif
 #include	"hsv.h"
 #include	"rlerle.h"
 #include	"shapeset.h"

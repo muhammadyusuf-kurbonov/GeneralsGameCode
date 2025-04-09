@@ -54,22 +54,22 @@
 #pragma warning(push, 3)
 #endif
 
+#if (_MSC_VER >= 1200)
+#pragma warning(pop)
+#endif
+
+#ifdef _WINDOWS
 // this define should also be in the DSP just in case someone includes windows stuff directly
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
 
 #include	<windows.h>
-//#include <mmsystem.h>
+#include <mmsystem.h>
 //#include	<windowsx.h>
 //#include	<winnt.h>
 //#include	<winuser.h>
 
-#if (_MSC_VER >= 1200)
-#pragma warning(pop)
-#endif
-
-#ifdef _WINDOWS
 extern HINSTANCE	ProgramInstance;
 extern HWND			MainWindow;
 extern bool GameInFocus;
@@ -85,7 +85,7 @@ void __cdecl Print_Win32Error(unsigned long win32Error);
 #endif // _DEBUG
 
 #else // _WINDOWS
-//#include <unistd.h>	// file does not exist
+#include "windows_compat.h"
 #endif // _WINDOWS
 
 #endif // WIN_H

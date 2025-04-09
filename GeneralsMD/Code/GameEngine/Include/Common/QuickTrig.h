@@ -85,11 +85,16 @@ inline Real QMag(Real x, Real y, Real z)
 // table based trig functions
 //-----------------------------------------------------------------------------
 
+// define for C++17
+#if defined(__cplusplus) && __cplusplus >= 201703L
+#define register
+#endif
+
 //-----------------------------------------------------------------------------
 inline Real QSin(Real a)
 {  
-   register Real angle = a;
-   register long sgn = 1;
+   Real angle = a;
+   long sgn = 1;
 
    if (angle < 0)       // DO POSITIVE MATH AND PRESERVE SIGN
    {

@@ -38,9 +38,13 @@
 #include "Common/GameEngine.h"
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/NetworkInterface.h"
-#include "MilesAudioDevice/MilesAudioManager.h"
+#ifdef SAGE_USE_STDFS
+#include "StdDevice/Common/StdBIGFileSystem.h"
+#include "StdDevice/Common/StdLocalFileSystem.h"
+#else
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"
+#endif
 #include "W3DDevice/Common/W3DModuleFactory.h"
 #include "W3DDevice/GameLogic/W3DGameLogic.h"
 #include "W3DDevice/GameClient/W3DGameClient.h"
@@ -49,8 +53,11 @@
 #include "W3DDevice/Common/W3DRadar.h"
 #include "W3DDevice/Common/W3DFunctionLexicon.h"
 #include "W3DDevice/Common/W3DThingFactory.h"
-
-
+#if defined(SAGE_USE_OPENAL)
+#include "OpenALAudioDevice/OpenALAudioManager.h"
+#elif defined(SAGE_USE_MILES)
+#include "MilesAudioDevice/MilesAudioManager.h"
+#endif
 
 
 //-------------------------------------------------------------------------------------------------
@@ -80,7 +87,6 @@ protected:
 	virtual ArchiveFileSystem *createArchiveFileSystem( void );	///< factory for archive file system
 	virtual NetworkInterface *createNetwork( void );				///< Factory for the network
 	virtual Radar *createRadar( void );											///< Factory for radar
-	virtual WebBrowser *createWebBrowser( void );						///< Factory for embedded browser
 	virtual AudioManager *createAudioManager( void );				///< Factory for audio device
 	virtual ParticleSystemManager* createParticleSystemManager( void );
 
@@ -95,13 +101,23 @@ inline GameClient *Win32GameEngine::createGameClient( void ) { return NEW W3DGam
 inline ModuleFactory *Win32GameEngine::createModuleFactory( void ) { return NEW W3DModuleFactory; }
 inline ThingFactory *Win32GameEngine::createThingFactory( void ) { return NEW W3DThingFactory; }
 inline FunctionLexicon *Win32GameEngine::createFunctionLexicon( void ) { return NEW W3DFunctionLexicon; }
+#ifdef SAGE_USE_STDFS
+inline LocalFileSystem *Win32GameEngine::createLocalFileSystem( void ) { return NEW StdLocalFileSystem; }
+inline ArchiveFileSystem *Win32GameEngine::createArchiveFileSystem( void ) { return NEW StdBIGFileSystem; }
+#else
 inline LocalFileSystem *Win32GameEngine::createLocalFileSystem( void ) { return NEW Win32LocalFileSystem; }
 inline ArchiveFileSystem *Win32GameEngine::createArchiveFileSystem( void ) { return NEW Win32BIGFileSystem; }
+#endif
 inline ParticleSystemManager* Win32GameEngine::createParticleSystemManager( void ) { return NEW W3DParticleSystemManager; }
 
 inline NetworkInterface *Win32GameEngine::createNetwork( void ) { return NetworkInterface::createNetwork(); }
 inline Radar *Win32GameEngine::createRadar( void ) { return NEW W3DRadar; }
-inline WebBrowser *Win32GameEngine::createWebBrowser( void ) { return NEW CComObject<W3DWebBrowser>; }
-inline AudioManager *Win32GameEngine::createAudioManager( void ) { return NEW MilesAudioManager; }
+#if defined(SAGE_USE_OPENAL)
+inline AudioManager *Win32GameEngine::createAudioManager( void ) { return NEW OpenALAudioManager; }
+#elif defined(SAGE_USE_MILES)
+inline AudioManager* Win32GameEngine::createAudioManager(void) { return NEW MilesAudioManager; }
+#else
+#error "No audio device defined"
+#endif
  
 #endif  // end __WIN32GAMEENGINE_H_

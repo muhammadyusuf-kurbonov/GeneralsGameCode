@@ -39,7 +39,7 @@
 #include "Common/Version.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
-#include "GameClient/GadgetListbox.h"
+#include "GameClient/GadgetListBox.h"
 #include "GameClient/Shell.h"
 #include "GameClient/KeyDefs.h"
 #include "GameClient/GameWindowManager.h"
@@ -47,6 +47,10 @@
 #include "GameClient/MapUtil.h"
 #include "GameClient/GameText.h"
 #include "GameClient/GameWindowTransitions.h"
+
+#ifndef _WIN32
+#include <filesystem>
+#endif
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -143,7 +147,11 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 	for (it = replayFilenames.begin(); it != replayFilenames.end(); ++it)
 	{
 		// just want the filename
+#ifdef _WIN32
 		asciistr.set((*it).reverseFind('\\') + 1);
+#else
+		asciistr.set((*it).reverseFind('/') + 1);
+#endif
 
 		// lets get some info about the replay
 		RecorderClass::ReplayHeader header;
@@ -394,11 +402,11 @@ WindowMsgHandledType ReplayMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestEA( state, KEY_STATE_UP ) )
 					{
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																								(WindowMsgData)buttonBack, buttonBackID );
+																								(WindowMsgData)buttonBack, (WindowMsgData)buttonBackID );
 
 					}  // end if
 
@@ -628,6 +636,7 @@ void deleteReplay( void )
 	filename = TheRecorder->getReplayDir();
 	translate.translate(GetReplayFilenameFromListbox(listboxReplayFiles, selected));
 	filename.concat(translate);
+#ifdef _WIN32
 	if(DeleteFile(filename.str()) == 0)
 	{
 		char buffer[1024];
@@ -637,6 +646,19 @@ void deleteReplay( void )
 		errorStr.translate(translate);
 		MessageBoxOk(TheGameText->fetch("GUI:Error"),errorStr, NULL);
 	}
+#else
+	std::filesystem::path replayPath(filename.str());
+	try
+	{
+		std::filesystem::remove(replayPath);
+	}
+	catch (std::filesystem::filesystem_error &e)
+	{
+		UnicodeString errorStr;
+		errorStr.translate(e.what());
+		MessageBoxOk(TheGameText->fetch("GUI:Error"), errorStr, NULL);
+	}
+#endif
 	//Load the listbox shiznit
 	GadgetListBoxReset(listboxReplayFiles);
 	PopulateReplayFileListbox(listboxReplayFiles);
@@ -659,6 +681,7 @@ void copyReplay( void )
 	filename.concat(translate);
 	
 	char path[1024];
+#ifdef _WIN32
 	LPITEMIDLIST pidl;
 	SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOPDIRECTORY, &pidl);
 	SHGetPathFromIDList(pidl,path);
@@ -675,6 +698,30 @@ void copyReplay( void )
 		errorStr.trim();
 		MessageBoxOk(TheGameText->fetch("GUI:Error"),errorStr, NULL);
 	}
+#else
+	// More or less defacto standard for implementors of the XDG standard
+	std::filesystem::path newFilename;
+	const char *xdgDesktopDir = getenv("XDG_DESKTOP_DIR");
+	if (xdgDesktopDir)
+	{
+		newFilename = std::filesystem::path(xdgDesktopDir);
+	}
+	else
+	{
+		newFilename = std::filesystem::path(getenv("HOME")) / "Desktop";
+	}
+	newFilename /= translate.str();
+	try
+	{
+		std::filesystem::copy_file(filename.str(), newFilename.string());
+	}
+	catch (std::filesystem::filesystem_error &e)
+	{
+		UnicodeString errorStr;
+		errorStr.translate(e.what());
+		MessageBoxOk(TheGameText->fetch("GUI:Error"), errorStr, NULL);
+	}
+#endif
 
 }
 

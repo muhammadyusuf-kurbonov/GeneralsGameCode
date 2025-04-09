@@ -1,4 +1,4 @@
-add_library(z_browserdispatch INTERFACE)
+add_library(BrowserDispatch INTERFACE)
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     add_custom_command(
@@ -8,9 +8,8 @@ if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
         DEPENDS "${CMAKE_CURRENT_LIST_DIR}/BrowserDispatch.idl"
         VERBATIM
     )
-    add_library(z_browserdispatchwin STATIC BrowserDispatch_i.c)
-    set_target_properties(z_browserdispatchwin PROPERTIES OUTPUT_NAME browserdispatchwin)
-    target_link_libraries(z_browserdispatch INTERFACE z_browserdispatchwin)
+    add_library(BrowserDispatchWin STATIC BrowserDispatch_i.c)
+    target_link_libraries(BrowserDispatch INTERFACE BrowserDispatchWin)
 endif()
 
-target_include_directories(z_browserdispatch INTERFACE ${CMAKE_CURRENT_BINARY_DIR}/..)
+target_include_directories(BrowserDispatch INTERFACE ${CMAKE_CURRENT_BINARY_DIR}/..)

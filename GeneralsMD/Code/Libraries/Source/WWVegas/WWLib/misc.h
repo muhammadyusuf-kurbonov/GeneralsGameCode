@@ -38,7 +38,9 @@
 #define MISC_H
 
 #include	"win.h"
+#ifdef _WIN32
 #include	"ddraw.h"
+#endif
 
 extern unsigned char CurrentPalette[768];
 extern bool Debug_Windowed;
@@ -60,7 +62,7 @@ unsigned 	Get_Video_Hardware_Capabilities(void);
 
 extern "C" void Wait_Vert_Blank(void);
 
-#include	"palette.h"
+#include	"PALETTE.H"
 
 void Set_Palette(PaletteClass const & pal, int time = 0, void (*callback)() = NULL);
 void Set_Palette(void const * palette);

@@ -79,30 +79,25 @@
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DView.h"
-#include "D3dx8math.h"
+#include "d3dx8math.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
-#include "WW3D2/DX8Renderer.h"
+#include "WW3D2/dx8renderer.h"
 #include "WW3D2/Light.h"
-#include "WW3D2/Camera.h"
-#include "WW3D2/Coltype.h"
-#include "WW3D2/PredLod.h"
-#include "WW3D2/WW3D.h"
+#include "WW3D2/camera.h"
+#include "WW3D2/ColType.h"
+#include "WW3D2/predlod.h"
+#include "WW3D2/ww3d.h"
 
 #include "W3DDevice/GameClient/camerashakesystem.h"
 
-#include "WinMain.h"  /** @todo Remove this, it's only here because we
-													are using timeGetTime, but we can remove that
-													when we have our own timer */
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
-
-
 
 // 30 fps
 Int TheW3DFrameLengthInMsec = 1000/LOGICFRAMES_PER_SECOND; // default is 33msec/frame == 30fps. but we may change it depending on sys config.
@@ -172,6 +167,11 @@ W3DView::W3DView()
 	m_shakeOffset.x = 0.0f;
 	m_shakeOffset.y = 0.0f;
 	m_shakeIntensity = 0.0f;
+
+	m_doingRotateCamera = false;
+	m_doingPitchCamera = false;
+	m_doingScriptedCameraLock = false;
+
 	m_FXPitch = 1.0f;
 	m_freezeTimeForCameraMovement = false;
 	m_cameraHasMovedSinceRequest = true;
@@ -186,6 +186,7 @@ W3DView::W3DView()
 	m_shakerAngles.Y =0.0f;
 	m_shakerAngles.Z =0.0f;
 
+	m_cameraConstraintValid = false;
 }  // end W3DView
 
 //-------------------------------------------------------------------------------------------------
@@ -759,7 +760,7 @@ void drawDebugCircle( const Coord3D & center, Real radius, Real width, Color col
   }
 }
 
-void drawDrawableExtents( Drawable *draw, void *userData );  // FORWARD DECLARATION
+static void drawDrawableExtents( Drawable *draw, void *userData );  // FORWARD DECLARATION
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 static void drawContainedDrawable( Object *obj, void *userData )
@@ -869,7 +870,7 @@ static void drawDrawableExtents( Drawable *draw, void *userData )
 }  // end drawDrawableExtents
 
 
-void drawAudioLocations( Drawable *draw, void *userData );
+static void drawAudioLocations( Drawable *draw, void *userData );
 // ------------------------------------------------------------------------------------------------
 // Helper for drawAudioLocations
 // ------------------------------------------------------------------------------------------------
@@ -962,7 +963,7 @@ static void drawAudioRadii( const Drawable * drawable )
     if ( ambientInfo == NULL )
     {
       // I don't think that's right...
-      OutputDebugString( ("Playing sound has NULL AudioEventInfo?\n" ) );
+      DEBUG_LOG( ("Playing sound has NULL AudioEventInfo?\n" ) );
       
       if ( TheAudio != NULL )
       {
@@ -2222,7 +2223,7 @@ Drawable *W3DView::pickDrawable( const ICoord2D *screen, Bool forceAttack, PickT
 	while (window)
 	{
 		// check to see if it or any of its parents are opaque.  If so, we can't select anything.
-		if (!BitTest( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
+		if (!BitTestEA( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
 			return NULL;
 
 		window = window->winGetParent();

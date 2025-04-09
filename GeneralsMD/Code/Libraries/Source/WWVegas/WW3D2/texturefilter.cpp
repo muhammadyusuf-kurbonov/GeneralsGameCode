@@ -47,7 +47,7 @@ unsigned _MipMapFilters[MAX_TEXTURE_STAGES][TextureFilterClass::FILTER_TYPE_COUN
 /*************************************************************************
 **                             TextureFilterClass
 *************************************************************************/
-TextureFilterClass::TextureFilterClass(MipCountType mip_level_count=MIP_LEVELS_1)
+TextureFilterClass::TextureFilterClass(MipCountType mip_level_count)
 :	TextureMinFilter(FILTER_TYPE_DEFAULT),
 	TextureMagFilter(FILTER_TYPE_DEFAULT),
 	UAddressMode(TEXTURE_ADDRESS_REPEAT),
@@ -187,7 +187,7 @@ void TextureFilterClass::_Init_Filters(TextureFilterMode filter_type)
 	}
 
 	// Set default to best. The level of best filter mode is controlled by the input parameter.
-	for (i=0;i<MAX_TEXTURE_STAGES;++i) {
+	for (int i=0;i<MAX_TEXTURE_STAGES;++i) {
 		_MinTextureFilters[i][FILTER_TYPE_DEFAULT]=_MinTextureFilters[i][FILTER_TYPE_BEST];
 		_MagTextureFilters[i][FILTER_TYPE_DEFAULT]=_MagTextureFilters[i][FILTER_TYPE_BEST];
 		_MipMapFilters[i][FILTER_TYPE_DEFAULT]=_MipMapFilters[i][FILTER_TYPE_BEST];

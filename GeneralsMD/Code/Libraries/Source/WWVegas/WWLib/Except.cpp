@@ -53,9 +53,9 @@
 #include <windows.h>
 #include	"assert.h"
 #include "cpudetect.h"
-#include	"except.h"
+#include	"Except.h"
 //#include "debug.h"
-#include "mpu.h"
+#include "MPU.H"
 //#include "commando\nat.h"
 #include "thread.h"
 #include "wwdebug.h"
@@ -124,8 +124,14 @@ typedef BOOL  (WINAPI *SymLoadModuleType) (HANDLE hProcess, HANDLE hFile, LPSTR 
 typedef DWORD (WINAPI *SymSetOptionsType) (DWORD SymOptions);
 typedef BOOL  (WINAPI *SymUnloadModuleType) (HANDLE hProcess, DWORD BaseOfDll);
 typedef BOOL  (WINAPI *StackWalkType) (DWORD MachineType, HANDLE hProcess, HANDLE hThread, LPSTACKFRAME StackFrame, LPVOID ContextRecord, PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine, PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine, PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine, PTRANSLATE_ADDRESS_ROUTINE TranslateAddress);
+#ifdef _WIN64
+typedef PVOID (WINAPI *SymFunctionTableAccessType) (HANDLE hProcess, DWORD64 AddrBase);
+typedef DWORD64 (WINAPI *SymGetModuleBaseType) (HANDLE hProcess, DWORD64 dwAddr);
+#pragma message ("Dumping exception info is not complete for 64-bit builds.")
+#else
 typedef LPVOID (WINAPI *SymFunctionTableAccessType) (HANDLE hProcess, DWORD AddrBase);
 typedef DWORD (WINAPI *SymGetModuleBaseType) (HANDLE hProcess, DWORD dwAddr);
+#endif
 
 
 static SymCleanupType							_SymCleanup = NULL;
@@ -177,7 +183,7 @@ int __cdecl _purecall(void)
 	** Use int3 to cause an exception.
 	*/
 	WWDEBUG_SAY(("Pure Virtual Function call. Oh No!\n"));
-	_asm int 0x03;
+	__debugbreak();
 #endif	//_DEBUG_ASSERT
 
 	return(return_code);
@@ -362,7 +368,7 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 		do {
 			function_name = ImagehelpFunctionNames[count];
 			if (function_name) {
-				*fptr = (unsigned long) GetProcAddress(imagehelp, function_name);
+                *fptr = (uintptr_t)GetProcAddress(imagehelp, function_name);
 				fptr++;
 				count++;
 			}
@@ -434,7 +440,8 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	/*
 	** Match the exception type with the error string and print it out
 	*/
-	for (int i=0 ; _codes[i] != 0xffffffff ; i++) {
+	int i;
+	for (i=0 ; _codes[i] != 0xffffffff ; i++) {
 		if (_codes[i] == e_info->ExceptionRecord->ExceptionCode) {
 			DebugString("Exception Handler: Found exception description\n");
 			break;
@@ -465,6 +472,9 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	symptr->SizeOfStruct = sizeof (IMAGEHLP_SYMBOL);
 	symptr->MaxNameLength = 256-sizeof (IMAGEHLP_SYMBOL);
 	symptr->Size = 0;
+#ifdef _M_X64
+#define Eip Rip
+#endif
 	symptr->Address = context->Eip;
 
 	if (!IsBadCodePtr((FARPROC)context->Eip)) {
@@ -578,6 +588,7 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 
 	DebugString("Register dump...\n");
 
+#if defined(_M_IX86)
 	/*
 	** Dump the registers.
 	*/
@@ -611,8 +622,8 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	Add_Txt(scrap);
 	sprintf(scrap, "    Data Selector: %08x\r\n", context->FloatSave.DataSelector);
 	Add_Txt(scrap);
-	sprintf(scrap, "      Cr0NpxState: %08x\r\n", context->FloatSave.Cr0NpxState);
-	Add_Txt(scrap);
+	// sprintf(scrap, "      Cr0NpxState: %08x\r\n", context->FloatSave.Cr0NpxState);
+	// Add_Txt(scrap);
 
 	for (int fp=0 ; fp<SIZE_OF_80387_REGISTERS / 10 ; fp++) {
 		sprintf(scrap, "ST%d : ", fp);
@@ -638,6 +649,7 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 		sprintf(scrap, "   %+#.17e\r\n", fp_value);
 		Add_Txt(scrap);
 	}
+#endif
 
 	/*
 	** Dump the bytes at EIP. This will make it easier to match the crash address with later versions of the game.
@@ -666,7 +678,11 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 	*/
 	DebugString("Stack dump...\n");
 	Add_Txt("Stack dump (* indicates possible code address) :\r\n");
-	unsigned long *stackptr = (unsigned long*) context->Esp;
+#ifdef _M_X64
+#define Esp Rsp
+#endif
+
+	uintptr_t* stackptr = (uintptr_t*)context->Esp;
 
 	for (int j=0 ; j<2048 ; j++) {
 		if (IsBadReadPtr(stackptr, 4)) {
@@ -1230,6 +1246,8 @@ int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *cont
 
 	unsigned long reg_eip, reg_ebp, reg_esp;
 
+
+#ifndef _WIN32
 	__asm {
 here:
 		lea	eax,here
@@ -1237,6 +1255,7 @@ here:
 		mov	reg_ebp,ebp
 		mov	reg_esp,esp
 	}
+#endif
 
 	stack_frame.AddrPC.Mode = AddrModeFlat;
 	stack_frame.AddrPC.Offset = reg_eip;
@@ -1244,6 +1263,10 @@ here:
 	stack_frame.AddrStack.Offset = reg_esp;
 	stack_frame.AddrFrame.Mode = AddrModeFlat;
 	stack_frame.AddrFrame.Offset = reg_ebp;
+
+#ifdef _M_X64
+#define Ebp Rbp
+#endif
 
 	/*
 	** Use the context struct if it was provided.

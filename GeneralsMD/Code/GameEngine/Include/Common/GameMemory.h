@@ -62,7 +62,7 @@
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
-#include <new.h>
+//#include <new.h>
 #include <stdio.h>
 #ifdef MEMORYPOOL_OVERRIDE_MALLOC
 	#include <malloc.h>
@@ -70,6 +70,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 
+#include "always.h"
 #include "Lib/BaseType.h"
 #include "Common/Debug.h"
 #include "Common/Errors.h"
@@ -608,12 +609,12 @@ private: \
 	
 // ----------------------------------------------------------------------------
 #define MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS) \
-protected: \
+public: \
 	virtual ~ARGCLASS(); \
 public: \
 	enum ARGCLASS##MagicEnum { ARGCLASS##_GLUE_NOT_IMPLEMENTED = 0 }; \
 public: \
-	inline void *operator new(size_t s, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2) \
+	inline void *operator new(size_t s, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2) noexcept \
 	{ \
 		DEBUG_ASSERTCRASH(s == sizeof(ARGCLASS), ("The wrong operator new is being called; ensure all objects in the hierarchy have MemoryPoolGlue set up correctly")); \
 		return ARGCLASS::getClassMemoryPool()->allocateBlockImplementation(PASS_LITERALSTRING_ARG1); \
@@ -647,7 +648,7 @@ protected: \
 		DEBUG_CRASH(("This operator new should normally never be called... please use new(char*) instead.")); \
 		DEBUG_ASSERTCRASH(s == sizeof(ARGCLASS), ("The wrong operator new is being called; ensure all objects in the hierarchy have MemoryPoolGlue set up correctly")); \
 		throw ERROR_BUG; \
-		return 0; \
+		/*return 0;*/ \
 	} \
 	inline void operator delete(void *p) \
 	{ \
@@ -689,7 +690,7 @@ protected: \
 		DEBUG_CRASH(("this should be impossible to call (abstract base class)")); \
 		DEBUG_ASSERTCRASH(s == sizeof(ARGCLASS), ("The wrong operator new is being called; ensure all objects in the hierarchy have MemoryPoolGlue set up correctly")); \
 		throw ERROR_BUG; \
-		return 0; \
+		/*return 0;*/ \
 	} \
 protected: \
 	inline void operator delete(void *p, ARGCLASS##MagicEnum e DECLARE_LITERALSTRING_ARG2) \
@@ -702,7 +703,7 @@ protected: \
 		DEBUG_CRASH(("this should be impossible to call (abstract base class)")); \
 		DEBUG_ASSERTCRASH(s == sizeof(ARGCLASS), ("The wrong operator new is being called; ensure all objects in the hierarchy have MemoryPoolGlue set up correctly")); \
 		throw ERROR_BUG; \
-		return 0; \
+		/*return 0;*/ \
 	} \
 	inline void operator delete(void *p) \
 	{ \
@@ -744,8 +745,8 @@ protected:
 	virtual ~MemoryPoolObject() { }
 
 protected: 
-	inline void *operator new(size_t s) { DEBUG_CRASH(("This should be impossible")); return 0; }
-	inline void operator delete(void *p) { DEBUG_CRASH(("This should be impossible")); }
+	inline void *operator new(size_t s) noexcept { DEBUG_CRASH(("This should be impossible")); return 0; }
+	inline void operator delete(void *p) noexcept { DEBUG_CRASH(("This should be impossible")); }
 
 protected: 
 
@@ -753,15 +754,34 @@ protected:
 	
 public: 
 
+#ifdef __GNUC__
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
+#elif defined(_MSC_VER)
+	#pragma optimize("", off)
+#elif defined(__clang__)
+	#pragma clang optimize off
+#endif
 	void deleteInstance() 
-	{	
+	{
 		if (this)
 		{
 			MemoryPool *pool = this->getObjectMemoryPool(); // save this, since the dtor will nuke our vtbl
 			this->~MemoryPoolObject();	// it's virtual, so the right one will be called.
 			pool->freeBlock((void *)this); 
 		}
-	} 
+		else
+		{
+			DEBUG_LOG(("MemoryPoolObject::deleteInstance() called on NULL pointer\n"));
+		}
+	}
+#ifdef __GNUC__
+#pragma GCC pop_options
+#elif defined(_MSC_VER)
+	#pragma optimize("", on)
+#elif defined(__clang__)
+	#pragma clang optimize on
+#endif
 };
 
 // ----------------------------------------------------------------------------
@@ -777,7 +797,11 @@ public:
 	MemoryPoolObjectHolder(MemoryPoolObject *mpo = NULL) : m_mpo(mpo) { }
 	void hold(MemoryPoolObject *mpo) { DEBUG_ASSERTCRASH(!m_mpo, ("already holding")); m_mpo = mpo; }
 	void release() { m_mpo = NULL; }
-	~MemoryPoolObjectHolder() { m_mpo->deleteInstance(); }
+	~MemoryPoolObjectHolder()
+	{
+		if (m_mpo)
+			m_mpo->deleteInstance();
+	}
 };
 
 
@@ -863,23 +887,25 @@ extern void userMemoryAdjustPoolSize(const char *poolName, Int& initialAllocatio
 	#define _OPERATOR_NEW_DEFINED_
 
 	extern void * __cdecl operator new		(size_t size);
-	extern void __cdecl operator delete		(void *p);
+	extern void __cdecl operator delete		(void *p) noexcept;
 
 	extern void * __cdecl operator new[]	(size_t size);
-	extern void __cdecl operator delete[]	(void *p);
+	extern void __cdecl operator delete[]	(void *p) noexcept;
+
+	extern void __cdecl operator delete(void* p, size_t sz) noexcept;
 
 	// additional overloads to account for VC/MFC funky versions
 	extern void* __cdecl operator new(size_t nSize, const char *, int);
-	extern void __cdecl operator delete(void *, const char *, int);
+	extern void __cdecl operator delete(void *, const char *, int) noexcept;
 
 	extern void* __cdecl operator new[](size_t nSize, const char *, int);
-	extern void __cdecl operator delete[](void *, const char *, int);
+	extern void __cdecl operator delete[](void *, const char *, int) noexcept;
 
 	// additional overloads for 'placement new'
 	//inline void* __cdecl operator new							(size_t s, void *p) { return p; }
 	//inline void __cdecl operator delete						(void *, void *p)		{ }
-	inline void* __cdecl operator new[]						(size_t s, void *p) { return p; }
-	inline void __cdecl operator delete[]					(void *, void *p)		{ }
+	// inline void* __cdecl operator new[]						(size_t s, void *p) noexcept { return p; }
+	// inline void __cdecl operator delete[]					(void *, void *p) noexcept		{ }
 
 #endif
 

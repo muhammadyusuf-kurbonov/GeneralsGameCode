@@ -31,7 +31,6 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "GameSpy/peer/peer.h"
 
 #include "Common/QuotedPrintable.h"
 #include "Common/UserPreferences.h"
@@ -435,10 +434,10 @@ WindowMsgHandledType NetworkDirectConnectInput( GameWindow *window, UnsignedInt 
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestEA( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																							(WindowMsgData)buttonBack, buttonBackID );
+																							(WindowMsgData)buttonBack, (WindowMsgData)buttonBackID );
 
 					}  // end if
 

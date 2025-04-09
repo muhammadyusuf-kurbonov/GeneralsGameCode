@@ -49,7 +49,7 @@
 #include "always.h"
 #include "refcount.h"
 #include "sphere.h"
-#include "coltype.h"
+#include "ColType.h"
 #include "aabox.h"
 #include "persist.h"
 #include "multilist.h"
@@ -238,7 +238,7 @@ public:
 
 	RenderObjClass(void);
 	RenderObjClass(const RenderObjClass & src);
-	RenderObjClass & RenderObjClass::operator = (const RenderObjClass &);
+	RenderObjClass & operator = (const RenderObjClass &);
 	virtual ~RenderObjClass(void)																					{ if (RenderHook) delete RenderHook; }
 
 

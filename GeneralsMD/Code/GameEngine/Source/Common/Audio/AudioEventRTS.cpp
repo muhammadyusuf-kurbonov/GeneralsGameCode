@@ -81,6 +81,7 @@ AudioEventRTS::AudioEventRTS()
 										m_playingAudioIndex(-1),
 										m_allCount(0),
 										m_playerIndex(-1),
+										m_portionToPlayNext(PP_Attack),
 										m_delay(0.0f),
 										m_uninterruptable(FALSE)
 {
@@ -108,6 +109,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName )
 										m_playingAudioIndex(-1),
 										m_allCount(0),
 										m_playerIndex(-1),
+										m_portionToPlayNext(PP_Attack),
 										m_delay(0.0f),
 										m_uninterruptable(FALSE)
 {
@@ -136,6 +138,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, ObjectID ownerID )
 										m_playingAudioIndex(-1),
 										m_allCount(0),
 										m_playerIndex(-1),
+										m_portionToPlayNext(PP_Attack),
 										m_delay(0.0f),
 										m_uninterruptable(FALSE)
 {						
@@ -172,6 +175,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, DrawableID drawableI
 										m_playingAudioIndex(-1),
 										m_allCount(0),
 										m_playerIndex(-1),
+										m_portionToPlayNext(PP_Attack),
 										m_delay(0.0f),
 										m_uninterruptable(FALSE)
 {
@@ -207,6 +211,7 @@ AudioEventRTS::AudioEventRTS( const AsciiString& eventName, const Coord3D *posit
 										m_playingAudioIndex(-1),
 										m_allCount(0),
 										m_playerIndex(-1),
+										m_portionToPlayNext(PP_Attack),
 										m_delay(0.0f),
 										m_uninterruptable(FALSE)
 {
@@ -340,7 +345,7 @@ void AudioEventRTS::generateFilename( void )
 
 
 		
-		if (BitTest(m_eventInfo->m_control, AC_RANDOM)) 
+		if (BitTestEA(m_eventInfo->m_control, AC_RANDOM)) 
 		{ 
 			if (m_isLogicalAudio) 
 			{
@@ -474,7 +479,7 @@ void AudioEventRTS::advanceNextPlayPortion( void )
 			m_portionToPlayNext = PP_Sound;
 			break;
 		case PP_Sound:
-			if (m_eventInfo && BitTest(m_eventInfo->m_control, AC_ALL)) 
+			if (m_eventInfo && BitTestEA(m_eventInfo->m_control, AC_ALL)) 
 			{
 				if (m_allCount == m_eventInfo->m_sounds.size()) {
 					m_portionToPlayNext = PP_Decay;
@@ -671,7 +676,7 @@ Bool AudioEventRTS::isPositionalAudio( void ) const
 {
 	if( m_eventInfo ) 
 	{
-		if( !BitTest( m_eventInfo->m_type, ST_WORLD ) ) 
+		if( !BitTestEA( m_eventInfo->m_type, ST_WORLD ) ) 
 		{
 			return FALSE;
 		}

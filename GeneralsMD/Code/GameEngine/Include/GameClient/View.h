@@ -63,6 +63,9 @@ enum PickType
 	PICK_TYPE_ALL_DRAWABLES			= (PICK_TYPE_SELECTABLE | PICK_TYPE_SHRUBBERY | PICK_TYPE_MINES | PICK_TYPE_FORCEATTACKABLE)
 };
 
+enum FilterModes : int;
+enum FilterTypes : int;
+
 // ------------------------------------------------------------------------------------------------
 /** The implementation of common view functionality. */
 // ------------------------------------------------------------------------------------------------

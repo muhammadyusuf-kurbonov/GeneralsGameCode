@@ -51,12 +51,19 @@
 
 #include "always.h"
 #include "wwprofile.h"
-#include "fastallocator.h"
+#include "FastAllocator.h"
 #include "wwdebug.h"
+#ifdef _WIN32
 #include <windows.h>
-//#include "systimer.h"
 #include "systimer.h"
-#include "rawfile.h"
+	#ifdef _WIN64
+	#include <time.h>
+	#endif
+#else
+#include <time.h>
+#include "osdep.h"
+#endif
+#include "RAWFILE.H"
 #include "ffactory.h"
 #include "simplevec.h"
 #include "cpudetect.h"
@@ -72,7 +79,11 @@ static unsigned ProfileStringCount;
 
 unsigned WWProfile_Get_System_Time()
 {
+#ifdef _WIN32
 	return TIMEGETTIME();
+#else
+	return 0;
+#endif
 }
 
 WWINLINE double WWProfile_Get_Inv_Processor_Ticks_Per_Second(void) 
@@ -98,8 +109,8 @@ WWINLINE double WWProfile_Get_Inv_Processor_Ticks_Per_Second(void)
  *=============================================================================================*/
 inline void WWProfile_Get_Ticks(_int64 * ticks)
 {
-#ifdef _UNIX
-       *ticks = TIMEGETTIME();
+#if defined(_UNIX) || defined(_WIN64)
+       *ticks = clock();
 #else
 	__asm
 	{
@@ -389,9 +400,11 @@ static unsigned int				ThreadID = static_cast<unsigned int>(-1);
  *=============================================================================================*/
 void	WWProfileManager::Start_Profile( const char * name )
 {
+#ifdef _WIN32
 	if (::GetCurrentThreadId() != ThreadID) {
 		return;
 	}
+#endif
 
 //	int current_thread = ::GetCurrentThreadId();
 	if (name != CurrentNode->Get_Name()) {
@@ -403,9 +416,11 @@ void	WWProfileManager::Start_Profile( const char * name )
 
 void	WWProfileManager::Start_Root_Profile( const char * name )
 {
+#ifdef _WIN32
 	if (::GetCurrentThreadId() != ThreadID) {
 		return;
 	}
+#endif
 
 	if (name != CurrentRootNode->Get_Name()) {
 		CurrentRootNode = CurrentRootNode->Get_Sub_Node( name );
@@ -429,9 +444,11 @@ void	WWProfileManager::Start_Root_Profile( const char * name )
  *=============================================================================================*/
 void	WWProfileManager::Stop_Profile( void )
 {
+#ifdef _WIN32
 	if (::GetCurrentThreadId() != ThreadID) {
 		return;
 	}
+#endif
 
 	// Return will indicate whether we should back up to our parent (we may
 	// be profiling a recursive function)
@@ -442,9 +459,11 @@ void	WWProfileManager::Stop_Profile( void )
 
 void	WWProfileManager::Stop_Root_Profile( void )
 {
+#ifdef _WIN32
 	if (::GetCurrentThreadId() != ThreadID) {
 		return;
 	}
+#endif
 
 	// Return will indicate whether we should back up to our parent (we may
 	// be profiling a recursive function)
@@ -471,7 +490,9 @@ void	WWProfileManager::Stop_Root_Profile( void )
  *=============================================================================================*/
 void	WWProfileManager::Reset( void )
 {
+#ifdef _WIN32
 	ThreadID = ::GetCurrentThreadId();
+#endif
 
 	Root.Reset();
 	FrameCounter = 0;
@@ -603,7 +624,7 @@ void	WWProfileManager::End_Collecting(const char* filename)
 					if (name[i]==',') name[i]='.';
 					if (name[i]==';') name[i]=':';
 				}
-				str.Format("ID: %d %s\r\n",ite.Peek_Value(),name);
+				str.Format("ID: %d %s\r\n",ite.Peek_Value(),name.Peek_Buffer());
 				file->Write(str.Peek_Buffer(),str.Get_Length());
 			}
 
@@ -1052,7 +1073,7 @@ WWMemoryAndTimeLog::WWMemoryAndTimeLog(const char* name)
 	IntermediateAllocSizeStart=AllocSizeStart;
 	StringClass tmp(0,true);
 	for (unsigned i=0;i<TabCount;++i) tmp+="\t";
-	WWRELEASE_SAY(("%s%s {\n",tmp,name));
+	WWRELEASE_SAY(("%s%s {\n",tmp.Peek_Buffer(),name));
 	TabCount++;
 }
 
@@ -1061,13 +1082,13 @@ WWMemoryAndTimeLog::~WWMemoryAndTimeLog()
 	if (TabCount>0) TabCount--;
 	StringClass tmp(0,true);
 	for (unsigned i=0;i<TabCount;++i) tmp+="\t";
-	WWRELEASE_SAY(("%s} ",tmp));
+	WWRELEASE_SAY(("%s} ",tmp.Peek_Buffer()));
 
 	unsigned current_time=WWProfile_Get_System_Time();
 	int current_alloc_count=FastAllocatorGeneral::Get_Allocator()->Get_Total_Allocation_Count();
 	int current_alloc_size=FastAllocatorGeneral::Get_Allocator()->Get_Total_Allocated_Size();
 	WWRELEASE_SAY(("IN TOTAL %s took %d.%3.3d s, did %d memory allocations of %d bytes\n",
-		Name,
+		Name.Peek_Buffer(),
 		(current_time - TimeStart)/1000, (current_time - TimeStart)%1000,
 		current_alloc_count - AllocCountStart,
 		current_alloc_size - AllocSizeStart));
@@ -1084,7 +1105,7 @@ void WWMemoryAndTimeLog::Log_Intermediate(const char* text)
 	StringClass tmp(0,true);
 	for (unsigned i=0;i<TabCount;++i) tmp+="\t";
 	WWRELEASE_SAY(("%s%s took %d.%3.3d s, did %d memory allocations of %d bytes\n",
-		tmp,
+		tmp.Peek_Buffer(),
 		text,
 		(current_time - IntermediateTimeStart)/1000, (current_time - IntermediateTimeStart)%1000,
 		current_alloc_count - IntermediateAllocCountStart,

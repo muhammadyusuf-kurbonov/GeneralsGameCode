@@ -49,7 +49,9 @@
 
 #include <stdio.h>
 #include <fcntl.h>
+#ifdef _WIN32
 #include <io.h>
+#endif
 #include <string.h>
 #include <sys/stat.h>
 
@@ -171,7 +173,7 @@ Bool RAMFile::open( File *file )
 	//USE_PERF_TIMER(RAMFile)
 	if ( file == NULL )
 	{
-		return NULL;
+		return FALSE;
 	}
 
 	Int access = file->getAccess();

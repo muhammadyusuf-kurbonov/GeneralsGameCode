@@ -33,13 +33,13 @@
  *---------------------------------------------------------------------------------------------* 
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"ffactory.h"
-#include	"rawfile.h"
+#include "ffactory.h"
+#include "RAWFILE.H"
 #include "bufffile.h"
 #include "realcrc.h"
-#include	<stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include	<assert.h>
+#include <assert.h>
 #include <string.h>
 
 /*
@@ -293,7 +293,7 @@ FileClass * SimpleFileFactoryClass::Get_File( char const *filename )
 					}
 				}
 			} else {
-				new_name.Format("%s%s",SubDirectory,stripped_name);
+				new_name.Format("%s%s",SubDirectory.Peek_Buffer(),stripped_name.Peek_Buffer());
 			}
 		}
 

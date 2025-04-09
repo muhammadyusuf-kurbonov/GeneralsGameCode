@@ -34,8 +34,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "slnode.h"
-
-
+#include "SLNODE.H"
 
 DEFINE_AUTO_POOL (GenericSLNode, 256);

@@ -96,7 +96,7 @@ class ThingTemplate;
 class GhostObject;
 class CommandButton;
 
-enum CommandSourceType;
+enum CommandSourceType : int;
 
 // ----------------------------------------------------------------------------------------------
 enum ValueOrThreat
@@ -517,7 +517,8 @@ public:
 
 	inline Int wasSeenByAnyPlayers() const	///<check if a player in the game has seen the object but is now looking at fogged version.
 	{	
-		for (Int i=0; i<MAX_PLAYER_COUNT; i++)
+		Int i=0;
+		for (; i<MAX_PLAYER_COUNT; i++)
 			if (m_everSeenByPlayer[i] && m_shroudedness[i] == OBJECTSHROUD_FOGGED)
 				return i;
 		return i;
@@ -1222,6 +1223,17 @@ protected:
 #endif
 };
 
+// Required to be able to use in friend declaration
+static void hLineAddLooker(Int x1, Int x2, Int y, void *playerIndex);
+static void hLineRemoveLooker(Int x1, Int x2, Int y, void *playerIndex);
+static void hLineAddShrouder(Int x1, Int x2, Int y, void *playerIndex);
+static void hLineRemoveShrouder(Int x1, Int x2, Int y, void *playerIndex);
+
+static void hLineAddThreat(Int x1, Int x2, Int y, void *threatValueParms);
+static void hLineRemoveThreat(Int x1, Int x2, Int y, void *threatValueParms);
+static void hLineAddValue(Int x1, Int x2, Int y, void *threatValueParms);
+static void hLineRemoveValue(Int x1, Int x2, Int y, void *threatValueParms);
+
 //=====================================
 /** 
 	PartitionManager is the singleton class that manages the entire partition/collision
@@ -1263,7 +1275,7 @@ protected:
 		This is an internal function that is used to implement the public 
 		getClosestObject and iterateObjects calls. 
 	*/
-	Object *PartitionManager::getClosestObjects(
+	Object *getClosestObjects(
 		const Object *obj, 
 		const Coord3D *pos, 
 		Real maxDist, 

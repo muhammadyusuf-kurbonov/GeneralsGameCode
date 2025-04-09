@@ -68,7 +68,7 @@ typedef struct _RightClickStruct
 // INLINING ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 extern Int GadgetListBoxGetEntryBasedOnXY( GameWindow *listbox, Int x, Int y, Int &row, Int &column);
-extern void GadgetListboxCreateScrollbar( GameWindow *listbox );
+extern void GadgetListBoxCreateScrollbar( GameWindow *listbox );
 extern void GadgetListBoxAddMultiSelect( GameWindow *listbox );
 extern void GadgetListBoxRemoveMultiSelect( GameWindow *listbox );
 extern void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength );

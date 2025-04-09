@@ -76,7 +76,7 @@ public:
 
 	struct W3DRenderTask
 	{
-		W3DRenderTask	*m_nextTask;	///<next rendering task
+		W3DRenderTask	*m_nextTask=NULL;	///<next rendering task
 	};
 
 	struct W3DVertexBuffer;	//forward reference
@@ -101,7 +101,7 @@ public:
 		Int m_size;							///<number of vertices allowed in VB.
 		W3DVertexBuffer *m_nextVB;			///<next vertex buffer of same type.
 		DX8VertexBufferClass *m_DX8VertexBuffer;	///<actual DX8 vertex buffer interface
-		W3DRenderTask	*m_renderTaskList;	///<used to help app sort its D3D access by VB.
+		W3DRenderTask	*m_renderTaskList = NULL;	///<used to help app sort its D3D access by VB.
 	};
 
 	struct W3DIndexBufferSlot
@@ -135,8 +135,8 @@ public:
 	void releaseSlot(W3DIndexBufferSlot *vbSlot);	///<return slot to pool
 	void freeAllSlots(void);	///<release all slots to pool.
 	void freeAllBuffers(void);	///<release all vertex buffers to pool.
-	void W3DBufferManager::ReleaseResources(void);	///<release D3D/W3D resources.
-	Bool W3DBufferManager::ReAcquireResources(void);	///<reaquire D3D/W3D resources.
+	void ReleaseResources(void);	///<release D3D/W3D resources.
+	Bool ReAcquireResources(void);	///<reaquire D3D/W3D resources.
 	///allows iterating over vertex buffers used by manager.  Input of NULL to get first.
 	W3DVertexBuffer *getNextVertexBuffer(W3DVertexBuffer *pVb, VBM_FVF_TYPES type)
 	{	if (pVb == NULL)

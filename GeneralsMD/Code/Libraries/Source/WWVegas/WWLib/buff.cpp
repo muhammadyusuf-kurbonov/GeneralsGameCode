@@ -41,7 +41,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"buff.h"
+#include	"BUFF.H"
 //#include	<stddef.h>
 
 
@@ -173,7 +173,7 @@ Buffer & Buffer::operator = (Buffer const & buffer)
 {
 	if (&buffer != this) {
 		if (IsAllocated) {
-			delete [] BufferPtr;
+			delete [] (char*)BufferPtr;
 		}
 		IsAllocated = false;
 		BufferPtr = buffer.BufferPtr;
@@ -223,7 +223,7 @@ Buffer::~Buffer(void)
 void Buffer::Reset(void)
 {
 	if (IsAllocated) {
-		delete [] BufferPtr;
+		delete [] (char*)BufferPtr;
 	}
 	BufferPtr = NULL;
 	Size = 0;

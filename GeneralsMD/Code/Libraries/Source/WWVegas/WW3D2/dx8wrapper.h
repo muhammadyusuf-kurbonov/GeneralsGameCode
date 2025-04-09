@@ -81,8 +81,10 @@ const unsigned MAX_SHADOW_MAPS=1;
 
 #define prevVer
 #define nextVer
+#ifdef __volatile
+#undef __volatile
+#endif
 #define __volatile unsigned
-
 
 enum {
 	BUFFER_TYPE_DX8,
@@ -882,7 +884,7 @@ WWINLINE void DX8Wrapper::Set_DX8_Render_State(D3DRENDERSTATETYPE state, unsigne
 		Get_DX8_Render_State_Value_Name(value_name,state,value);
 		SNAPSHOT_SAY(("DX8 - SetRenderState(state: %s, value: %s)\n",
 			Get_DX8_Render_State_Name(state),
-			value_name));
+			value_name.Peek_Buffer()));
 	}
 #endif
 
@@ -912,7 +914,7 @@ WWINLINE void DX8Wrapper::Set_DX8_Texture_Stage_State(unsigned stage, D3DTEXTURE
 		SNAPSHOT_SAY(("DX8 - SetTextureStageState(stage: %d, state: %s, value: %s)\n",
 			stage,
 			Get_DX8_Texture_Stage_State_Name(state),
-			value_name));
+			value_name.Peek_Buffer()));
 	}
 #endif
 
@@ -1001,74 +1003,21 @@ WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector4& color)
 // Note: Color vector needs to be clamped to [0...1] range!
 //
 // ----------------------------------------------------------------------------
-
 WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color,float alpha)
 {
 	const float scale = 255.0;
 	unsigned int col;
-
 	// Multiply r, g, b and a components (0.0,...,1.0) by 255 and convert to integer. Or the integer values togerher
 	// such that 32 bit ingeger has AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB.
-	__asm
-	{
-		sub	esp,20					// space for a, r, g and b float plus fpu rounding mode
 
-		// Store the fpu rounding mode
-
-		fwait
-		fstcw		[esp+16]				// store control word to stack
-		mov		eax,[esp+16]		// load it to eax
-		mov		edi,eax				// take copy
-		and		eax,~(1024|2048)	// mask out certain bits
-		or			eax,(1024|2048)	// or with precision control value "truncate"
-		sub		edi,eax				// did it change?
-		jz			skip					// .. if not, skip
-		mov		[esp],eax			// .. change control word
-		fldcw		[esp]
-skip:
-
-		// Convert the color
-
-		mov	esi,dword ptr color
-		fld	dword ptr[scale]
-
-		fld	dword ptr[esi]			// r
-		fld	dword ptr[esi+4]		// g
-		fld	dword ptr[esi+8]		// b
-		fld	dword ptr[alpha]		// a
-		fld	st(4)
-		fmul	st(4),st
-		fmul	st(3),st
-		fmul	st(2),st
-		fmulp	st(1),st
-		fistp	dword ptr[esp+0]		// a
-		fistp	dword ptr[esp+4]		// b
-		fistp	dword ptr[esp+8]		// g
-		fistp	dword ptr[esp+12]		// r
-		mov	ecx,[esp]				// a
-		mov	eax,[esp+4]				// b
-		mov	edx,[esp+8]				// g
-		mov	ebx,[esp+12]			// r
-		shl	ecx,24					// a << 24
-		shl	ebx,16					// r << 16
-		shl	edx,8						//	g << 8
-		or		eax,ecx					// (a << 24) | b
-		or		eax,ebx					// (a << 24) | (r << 16) | b
-		or		eax,edx					// (a << 24) | (r << 16) | (g << 8) | b
-
-		fstp	st(0)
-
-		// Restore fpu rounding mode
-
-		cmp	edi,0					// did we change the value?
-		je		not_changed			// nope... skip now...
-		fwait
-		fldcw	[esp+16];
-not_changed:
-		add	esp,20
-
-		mov	col,eax
-	}
+	// a
+	col = (unsigned int)(alpha * scale) << 24;
+	// r
+	col |= (unsigned int)(color.X * scale) << 16;
+	// g
+	col |= (unsigned int)(color.Y * scale) << 8;
+	// b
+	col |= (unsigned int)(color.Z * scale);
 	return col;
 }
 
@@ -1080,56 +1029,11 @@ not_changed:
 
 WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 {
-	if (!CPUDetectClass::Has_CMOV_Instruction()) {
-		for (int i=0;i<4;++i) {
-			float f=(color[i]<0.0f) ? 0.0f : color[i];
-			color[i]=(f>1.0f) ? 1.0f : f;
-		}
-		return;
+	for (int i=0;i<4;++i) {
+		float f=(color[i]<0.0f) ? 0.0f : color[i];
+		color[i]=(f>1.0f) ? 1.0f : f;
 	}
-
-	__asm
-	{
-		mov	esi,dword ptr color
-
-		mov edx,0x3f800000
-
-		mov edi,dword ptr[esi]
-		mov ebx,edi
-		sar edi,31
-		not edi			// mask is now zero if negative value
-		and edi,ebx
-		cmp edi,edx		// if no less than 1.0 set to 1.0
-		cmovnb edi,edx
-		mov dword ptr[esi],edi
-
-		mov edi,dword ptr[esi+4]
-		mov ebx,edi
-		sar edi,31
-		not edi			// mask is now zero if negative value
-		and edi,ebx
-		cmp edi,edx		// if no less than 1.0 set to 1.0
-		cmovnb edi,edx
-		mov dword ptr[esi+4],edi
-
-		mov edi,dword ptr[esi+8]
-		mov ebx,edi
-		sar edi,31
-		not edi			// mask is now zero if negative value
-		and edi,ebx
-		cmp edi,edx		// if no less than 1.0 set to 1.0
-		cmovnb edi,edx
-		mov dword ptr[esi+8],edi
-
-		mov edi,dword ptr[esi+12]
-		mov ebx,edi
-		sar edi,31
-		not edi			// mask is now zero if negative value
-		and edi,ebx
-		cmp edi,edx		// if no less than 1.0 set to 1.0
-		cmovnb edi,edx
-		mov dword ptr[esi+12],edi
-	}
+	return;
 }
 
 // ----------------------------------------------------------------------------
@@ -1204,7 +1108,7 @@ WWINLINE void DX8Wrapper::Set_Shader(const ShaderClass& shader)
 #ifdef MESH_RENDER_SNAPSHOT_ENABLED
 	StringClass str;
 #endif
-	SNAPSHOT_SAY(("DX8Wrapper::Set_Shader(%s)\n",shader.Get_Description(str)));
+	SNAPSHOT_SAY(("DX8Wrapper::Set_Shader(%s)\n",shader.Get_Description(str).Peek_Buffer()));
 }
 
 WWINLINE void DX8Wrapper::Set_Projection_Transform_With_Z_Bias(const Matrix4x4& matrix, float znear, float zfar)

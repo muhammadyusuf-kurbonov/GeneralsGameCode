@@ -197,6 +197,7 @@ static Waypoint * findNamedWaypoint(AsciiString name)
 // ------------------------------------------------------------------------------------------------
 void setFPMode( void )
 {
+#ifdef _WIN32
   // Set floating point round mode to CHOP, which only comes
   // into play when precision is exceeded.  This is necessary
   // for the fast float to int routines used elsewhere in the
@@ -215,6 +216,9 @@ void setFPMode( void )
 	newVal = (newVal & ~_MCW_PC) | (_PC_24   & _MCW_PC);
 
 	_controlfp(newVal, _MCW_PC | _MCW_RC);
+#else
+#pragma message ("setFPMode not implemented for this platform")
+#endif
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1106,8 +1110,8 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 {
 
 	#ifdef DUMP_PERF_STATS
-	__int64 startTime64;
-	__int64 endTime64,freq64;
+	int64_t startTime64;
+	int64_t endTime64,freq64;
 	GetPrecisionTimerTicksPerSec(&freq64);
 	GetPrecisionTimer(&startTime64);
 	#endif
@@ -2835,8 +2839,8 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 
 	// our children are i*2 and i*2+1
   Int child = ((i+1)<<1)-1;
-	UpdateModulePtr* pChild = &m_sleepyUpdates[child];
-	UpdateModulePtr* pSZ = &m_sleepyUpdates[m_sleepyUpdates.size()];	// yes, this is off the end.
+	UpdateModulePtr* pChild = m_sleepyUpdates.data() + child;
+  UpdateModulePtr *pSZ = m_sleepyUpdates.data() + m_sleepyUpdates.size(); // yes, this is off the end.
 
   while (pChild < pSZ) 
 	{
@@ -2867,7 +2871,7 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 		pI = pChild;
 
 		child = ((i+1)<<1)-1;
-		pChild = &m_sleepyUpdates[child];
+		pChild = m_sleepyUpdates.data() + child;
   }
 #else
 	// our children are i*2 and i*2+1
@@ -3132,8 +3136,8 @@ static void unitTimings(void)
 
 	static Int side = 0;
 
-	static __int64 startTime64;
-	static __int64 endTime64,freq64;
+	static int64_t startTime64;
+	static int64_t endTime64,freq64;
 	static int drawCallTotal;
 	static enum { LOGIC, NO_PARTICLES, NO_SPAWN, ALL} mode;
 	static double timeAll, timeAllNoAnim, timeNoPart, timeNoSpawn, timeLogic, timeLogicNoAnim;
@@ -3560,10 +3564,10 @@ DECLARE_PERF_TIMER(GameLogic_update_normal)
 DECLARE_PERF_TIMER(GameLogic_update_sleepy)
 
 #ifdef DUMP_PERF_STATS
-extern __int64 Total_Get_Texture_Time;
-extern __int64 Total_Get_HAnim_Time;
-extern __int64 Total_Create_Render_Obj_Time;
-extern __int64 Total_Load_3D_Assets;
+extern int64_t Total_Get_Texture_Time;
+extern int64_t Total_Get_HAnim_Time;
+extern int64_t Total_Create_Render_Obj_Time;
+extern int64_t Total_Load_3D_Assets;
 #endif
 
 // ------------------------------------------------------------------------------------------------
@@ -3601,7 +3605,7 @@ void GameLogic::update( void )
 
 	#ifdef DUMP_PERF_STATS
 		char Buf[1024];
-		__int64 freq64;
+		int64_t freq64;
 		GetPrecisionTimerTicksPerSec(&freq64);
 
 		sprintf(Buf,"Texture=%f, Anim=%f, CreateRobj=%f, Load3DAssets=%f\n",
@@ -3651,12 +3655,12 @@ void GameLogic::update( void )
 	Bool isMPGameOrReplay = (TheRecorder && TheRecorder->isMultiplayer() && getGameMode() != GAME_SHELL && getGameMode() != GAME_NONE);
 	Bool isSoloGameOrReplay = (TheRecorder && !TheRecorder->isMultiplayer() && getGameMode() != GAME_SHELL && getGameMode() != GAME_NONE);
 	Bool generateForMP = (isMPGameOrReplay && (m_frame % TheGameInfo->getCRCInterval()) == 0);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(DEBUG_CRC)
 	Bool generateForSolo = isSoloGameOrReplay && ((m_frame && (m_frame%100 == 0)) ||
 		(getFrame() > TheCRCFirstFrameToLog && getFrame() < TheCRCLastFrameToLog && ((m_frame % REPLAY_CRC_INTERVAL) == 0)));
 #else
 	Bool generateForSolo = isSoloGameOrReplay && ((m_frame % REPLAY_CRC_INTERVAL) == 0);
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(DEBUG_CRC)
 
 	if (generateForSolo || generateForMP)
 	{

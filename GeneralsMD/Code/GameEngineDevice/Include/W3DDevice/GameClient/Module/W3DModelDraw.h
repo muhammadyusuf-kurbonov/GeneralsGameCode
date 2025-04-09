@@ -50,7 +50,7 @@ public:
 };
 
 #else
-#include "WW3D2/RendObj.h"
+#include "WW3D2/rendobj.h"
 #endif
 #include "Common/SparseMatchFinder.h"
 #include "GameClient/ParticleSys.h"
@@ -62,7 +62,7 @@ class RenderObjClass;
 class Shadow;
 class TerrainTracksRenderObjClass;
 class HAnimClass;
-enum GameLODLevel;
+enum GameLODLevel : int;
 //-------------------------------------------------------------------------------------------------
 /** The default client update module */
 //-------------------------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ struct PristineBoneInfo
 	Matrix3D mtx;
 	Int boneIndex;
 };
-//typedef std::hash_map< NameKeyType, PristineBoneInfo, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > PristineBoneInfoMap;
+//typedef std::unordered_map< NameKeyType, PristineBoneInfo, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > PristineBoneInfoMap;
 typedef std::map< NameKeyType, PristineBoneInfo, std::less<NameKeyType> > PristineBoneInfoMap;
 
 //-------------------------------------------------------------------------------------------------
@@ -268,7 +268,7 @@ private:
 typedef std::vector<ModelConditionInfo> ModelConditionVector;
 
 //-------------------------------------------------------------------------------------------------
-//typedef std::hash_map< TransitionSig, ModelConditionInfo, std::hash<TransitionSig>, std::equal_to<TransitionSig> > TransitionMap;
+//typedef std::unordered_map< TransitionSig, ModelConditionInfo, std::hash<TransitionSig>, std::equal_to<TransitionSig> > TransitionMap;
 typedef std::map< TransitionSig, ModelConditionInfo, std::less<TransitionSig> > TransitionMap;
 
 //-------------------------------------------------------------------------------------------------

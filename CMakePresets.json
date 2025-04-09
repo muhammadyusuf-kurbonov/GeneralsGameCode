@@ -1,99 +1,191 @@
 {
-    "version": 6,
-    "cmakeMinimumRequired": {
-        "major": 3,
-        "minor": 25,
-        "patch": 0
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 22,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "Default Config",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "SAGE_USE_GLM": "ON"
+      }
     },
-    "configurePresets": [
-        {
-            "name": "vc6",
-            "displayName": "Build Zero Hour Binaries with NMake",
-            "generator": "NMake Makefiles",
-            "hidden": false,
-            "binaryDir": "${sourceDir}/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL",    
-                "CMAKE_BUILD_TYPE": "Release",
-                "GENZH_FLAGS": "/W3"
-            }
-        },
-        {
-            "name": "default",
-            "displayName": "Default Config",
-            "generator": "Ninja Multi-Config",
-            "hidden": true,
-            "binaryDir": "${sourceDir}/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "$<$<CONFIG:Release,Debug,RelWithDebInfo>:Embedded>",
-                "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
-            }
-        },
-        {
-            "name": "win32",
-            "architecture": "Win32",
-            "inherits": "default",
-            "hidden": false,
-            "displayName": "Win32 build",
-            "cacheVariables": {
-                "GENZH_FLAGS": "/W3"
-            }
-        },
-        {
-            "name": "unix",
-            "inherits": "default",
-            "hidden": false,
-            "displayName": "Non-Windows build",
-            "cacheVariables": {
-                "CMAKE_CXX_FLAGS_RELEASE": "-O2 -g -DNDEBUG",
-                "CMAKE_C_FLAGS_RELEASE": "-O2 -g -DNDEBUG"
-            }
-        }
-    ],
-    "buildPresets": [
-        {
-            "name": "win32",
-            "configurePreset": "win32",
-            "displayName": "Build Windows build",
-            "description": "Build Windows build",
-            "configuration": "Release"
-        },
-        {
-            "name": "unix",
-            "configurePreset": "unix",
-            "displayName": "Build non-Windows build",
-            "description": "Build non-Windows build",
-            "configuration": "Release"
-        }
-    ],
-    "workflowPresets": [
-        {
-            "name": "win32",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "win32"
-                },
-                {
-                    "type": "build",
-                    "name": "win32"
-                }
-            ]
-        },
-        {
-            "name": "unix",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "unix"
-                },
-                {
-                    "type": "build",
-                    "name": "unix"
-                }
-            ]
-        }
-    ]
+    {
+      "name": "deploy",
+      "inherits": "default",
+      "displayName": "Deploy Config",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_CONFIGURATION_TYPES": "RelWithDebInfo",
+        "SAGE_USE_GLM": "ON",
+        "SAGE_USE_FFMPEG": "ON",
+        "SAGE_USE_OPENAL": "ON"
+      }
+    },
+    {
+      "name": "win32-deploy",
+      "inherits": "deploy",
+      "displayName": "Win32 Release Config",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "Win32",
+      "cacheVariables": {
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreadedDLL"
+      }
+    },
+    {
+      "name": "linux64-deploy",
+      "inherits": "deploy",
+      "displayName": "Linux Release Config",
+      "cacheVariables": {
+        "VCPKG_INSTALL_OPTIONS": "--allow-unsupported",
+        "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic",
+        "SAGE_USE_SDL3": "ON"
+      }
+    },
+    {
+      "name": "testing",
+      "inherits": "default",
+      "displayName": "Test Config",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CONFIGURATION_TYPES": "Debug",
+        "SAGE_BUILD_TESTS": "ON",
+        "SAGE_USE_GLM": "ON"
+      }
+    },
+    {
+      "name": "win32-testing",
+      "inherits": "testing",
+      "displayName": "Win32 Test Config",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "Win32",
+      "cacheVariables": {
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreadedDLL"
+      }
+    },
+    {
+      "name": "win64-testing",
+      "displayName": "Win32 Test Config",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "cacheVariables": {
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreadedDLL"
+      }
+    },
+    {
+      "name": "linux64-testing",
+      "inherits": "testing",
+      "displayName": "Linux Test Config",
+      "cacheVariables": {
+        "VCPKG_INSTALL_OPTIONS": "--debug;--allow-unsupported",
+        "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic",
+        "SAGE_USE_SDL3": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default",
+      "description": "Build the default configuration"
+    },
+    {
+      "name": "deploy",
+      "configurePreset": "deploy",
+      "description": "Build the deploy configuration",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "win32-deploy",
+      "configurePreset": "win32-deploy",
+      "description": "Build the win32 deploy configuration",
+      "inherits": "deploy"
+    },
+    {
+      "name": "linux64-deploy",
+      "configurePreset": "linux64-deploy",
+      "description": "Build the linux deploy configuration",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "testing",
+      "configurePreset": "testing",
+      "description": "Build the testing configuration",
+      "configuration": "Debug"
+    },
+    {
+      "name": "win32-testing",
+      "configurePreset": "win32-testing",
+      "description": "Build the win32 testing configuration",
+      "configuration": "Debug"
+    },
+    {
+      "name": "win64-testing",
+      "configurePreset": "win64-testing",
+      "description": "Build the win64 testing configuration",
+      "configuration": "Debug"
+    },
+    {
+      "name": "linux64-testing",
+      "configurePreset": "linux64-testing",
+      "description": "Build the linux testing configuration",
+      "configuration": "Debug"
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "deploy",
+      "displayName": "Deploy Package",
+      "configurePreset": "deploy",
+      "generators": [
+        "ZIP"
+      ],
+      "description": "Package the default configuration"
+    },
+    {
+      "name": "win32-deploy",
+      "displayName": "Win32 Release Package",
+      "configurePreset": "win32-deploy",
+      "inherits": "deploy",
+      "description": "Package the win32 deploy configuration"
+    },
+    {
+      "name": "linux64-deploy",
+      "displayName": "Linux Release Package",
+      "configurePreset": "linux64-deploy",
+      "inherits": "deploy",
+      "generators": [
+        "TGZ"
+      ],
+      "description": "Package the linux deploy configuration"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "default",
+      "configurePreset": "testing",
+      "description": "Run the default configuration tests"
+    },
+    {
+      "name": "win32-testing",
+      "configurePreset": "win32-testing",
+      "description": "Run the win32 configuration tests"
+    },
+    {
+      "name": "win64-testing",
+      "configurePreset": "win64-testing",
+      "description": "Run the win64 configuration tests"
+    },
+    {
+      "name": "linux64-testing",
+      "configurePreset": "linux64-testing",
+      "description": "Run the linux configuration tests"
+    }
+  ]
 }

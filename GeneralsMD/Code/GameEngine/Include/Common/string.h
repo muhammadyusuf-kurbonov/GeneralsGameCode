@@ -95,7 +95,7 @@ class WSYS_String
 	void								makeLowerCase( void );
 	Int									length(void) const;
 	Bool								isEmpty(void) const;
-	Int _cdecl					format(const Char *format, ...);
+	Int __cdecl					format(const Char *format, ...);
 	void								set( const Char *string );
 	Char*								get( void ) const;
 };

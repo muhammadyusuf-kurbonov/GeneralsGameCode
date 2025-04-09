@@ -34,7 +34,9 @@
 #include "Threads.h"
 #include "refcount.h"
 #include "Utils.h"
+#ifdef _WIN32
 #include <Process.h>
+#endif
 #include "wwdebug.h"
 
 
@@ -43,8 +45,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////
 WWAudioThreadsClass::DELAYED_RELEASE_INFO *	WWAudioThreadsClass::m_ReleaseListHead	= NULL;
 CriticalSectionClass		WWAudioThreadsClass::m_ListMutex;
+#ifdef _WIN32
 HANDLE						WWAudioThreadsClass::m_hDelayedReleaseThread	= (HANDLE)-1;
 HANDLE						WWAudioThreadsClass::m_hDelayedReleaseEvent	= (HANDLE)-1;
+#else
+std::thread 		 *WWAudioThreadsClass::m_hDelayedReleaseThread	= (std::thread*)-1;
+sem_t 					 *WWAudioThreadsClass::m_hDelayedReleaseEvent	= (sem_t*)-1;
+#endif
 CriticalSectionClass		WWAudioThreadsClass::m_CriticalSection;
 bool							WWAudioThreadsClass::m_IsShuttingDown			= false;
 
@@ -81,8 +88,14 @@ WWAudioThreadsClass::Create_Delayed_Release_Thread (LPVOID param)
 	//	If the thread isn't already running, then
 	//
 	if (m_hDelayedReleaseThread == (HANDLE)-1) {		
+#ifdef _WIN32
 		m_hDelayedReleaseEvent	= ::CreateEvent (NULL, FALSE, FALSE, NULL);
 		m_hDelayedReleaseThread = (HANDLE)::_beginthread (Delayed_Release_Thread_Proc, 0, param);
+#else
+		m_hDelayedReleaseEvent	= new sem_t;
+		sem_init(m_hDelayedReleaseEvent, 0, 0);
+		m_hDelayedReleaseThread = new std::thread(Delayed_Release_Thread_Proc, param);
+#endif
 	}
 
 	return m_hDelayedReleaseThread;
@@ -103,11 +116,30 @@ WWAudioThreadsClass::End_Delayed_Release_Thread (DWORD timeout)
 	//	If the thread is running, then wait for it to finish
 	//
 	if (m_hDelayedReleaseThread != (HANDLE)-1) {
+#ifdef _WIN32
 		::SetEvent (m_hDelayedReleaseEvent);
 		::WaitForSingleObject (m_hDelayedReleaseThread, timeout);
 
 		m_hDelayedReleaseEvent	= (HANDLE)-1;
 		m_hDelayedReleaseThread	= (HANDLE)-1;
+#else
+		sem_post(m_hDelayedReleaseEvent);
+
+		timespec ts;
+		clock_gettime(CLOCK_REALTIME, &ts);
+		ts.tv_sec += timeout / 1000;
+		ts.tv_nsec += (timeout % 1000) * 1000000;
+
+		sem_timedwait(m_hDelayedReleaseEvent, &ts);
+		
+		// m_hDelayedReleaseThread->join();
+		
+		sem_destroy(m_hDelayedReleaseEvent);
+		delete m_hDelayedReleaseEvent;
+		delete m_hDelayedReleaseThread;
+		m_hDelayedReleaseEvent	= (sem_t *)-1;
+		m_hDelayedReleaseThread	= (std::thread *)-1;
+#endif
 	}
 
 	return ;
@@ -207,7 +239,16 @@ WWAudioThreadsClass::Delayed_Release_Thread_Proc (LPVOID /*param*/)
 	//
 	//	Keep looping forever until we are singalled to quit (or an error occurs)
 	//
+#ifdef _WIN32
 	while (::WaitForSingleObject (m_hDelayedReleaseEvent, timeout) == WAIT_TIMEOUT) {
+#else
+	timespec ts;
+	clock_gettime(CLOCK_REALTIME, &ts);
+	ts.tv_sec += base_timeout / 1000;
+	ts.tv_nsec += (base_timeout % 1000) * 1000000;
+
+	while (sem_timedwait(m_hDelayedReleaseEvent, &ts) == -1) {
+#endif
 
 		{
 			CriticalSectionClass::LockClass lock(m_ListMutex);

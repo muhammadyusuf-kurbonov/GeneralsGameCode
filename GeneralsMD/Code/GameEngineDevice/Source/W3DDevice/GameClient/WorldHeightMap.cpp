@@ -52,7 +52,7 @@
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
 
-#include "Common/file.h"
+#include "Common/File.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -380,39 +380,39 @@ TileData *WorldHeightMap::m_alphaTiles[NUM_ALPHA_TILES]={0,0,0,0,0,0,0,0,0,0,0,0
 WorldHeightMap::~WorldHeightMap(void)
 {
 	if (m_data) {
-		delete(m_data);
+		delete[] (m_data);
 		m_data = NULL;
 	}
 	if (m_tileNdxes) {
-		delete(m_tileNdxes);
+		delete[] (m_tileNdxes);
 		m_tileNdxes = NULL;
 	}
 	if (m_blendTileNdxes) {
-		delete(m_blendTileNdxes);
+		delete[] (m_blendTileNdxes);
 		m_blendTileNdxes = NULL;
 	}
 	if (m_extraBlendTileNdxes) {
-		delete(m_extraBlendTileNdxes);
+		delete[] (m_extraBlendTileNdxes);
 		m_extraBlendTileNdxes = NULL;
 	}
 	if (m_cliffInfoNdxes) {
-		delete(m_cliffInfoNdxes);
+		delete[] (m_cliffInfoNdxes);
 		m_cliffInfoNdxes = NULL;
 	}
 	if (m_cellFlipState)
-	{	delete (m_cellFlipState);
+	{	delete[] (m_cellFlipState);
 		m_cellFlipState = NULL;
 	}
 	if (m_seismicUpdateFlag)
-	{	delete (m_seismicUpdateFlag);
+	{	delete[] (m_seismicUpdateFlag);
 		m_seismicUpdateFlag = NULL;
 	}
 	if (m_seismicZVelocities)
-	{	delete (m_seismicZVelocities);
+	{	delete[] (m_seismicZVelocities);
 		m_seismicZVelocities = NULL;
 	}
 	if (m_cellCliffState)
-	{	delete (m_cellCliffState);
+	{	delete[] (m_cellCliffState);
 		m_cellCliffState = NULL;
 	}
 	int i;
@@ -455,7 +455,7 @@ WorldHeightMap::WorldHeightMap():
 	m_tileMode(TILE_4x4),
 #endif
 	m_numCliffInfo(1),
-	m_terrainTex(NULL), m_alphaTerrainTex(NULL), m_numBitmapTiles(0), m_numBlendedTiles(1)
+	m_terrainTex(NULL), m_alphaTerrainTex(NULL), m_alphaEdgeTex(NULL), m_numBitmapTiles(0), m_numBlendedTiles(1)
 {
 	Int i;
 	for (i=0; i<NUM_SOURCE_TILES; i++) {
@@ -508,6 +508,7 @@ WorldHeightMap::WorldHeightMap(ChunkInputStream *pStrm, Bool logicalDataOnly):
 	}
 
 	DataChunkInput file( pStrm );
+	file.m_userData = this;
 
 	if (logicalDataOnly) {
 		file.registerParser( AsciiString("HeightMapData"), AsciiString::TheEmptyString, ParseSizeOnlyInChunk );

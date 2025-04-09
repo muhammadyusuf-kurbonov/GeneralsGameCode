@@ -1281,7 +1281,7 @@ bool UString::Resize(UInt size)
 	// Copy existing string into new storage buffer
 	if (mData != NULL)
 		{
-		UInt minSize = __min(Capacity(), size);
+		UInt minSize = min(Capacity(), size);
 		wcsncpy(data, mData, minSize);
 		data[minSize] = 0;
 		delete mData;

@@ -195,7 +195,7 @@ void PopulateColorComboBox(Int comboBox, GameWindow *comboArray[], GameInfo *myG
 	for (Int i = 0; i < numColors; i++)
 		availableColors.push_back(true);
 
-	for (i = 0; i < MAX_SLOTS; i++)
+	for (Int i = 0; i < MAX_SLOTS; i++)
 	{
 		GameSlot *slot = myGame->getSlot(i);	
 		if( slot && (i != comboBox) && (slot->getColor() >= 0 )&& (slot->getColor() < numColors))
@@ -338,7 +338,8 @@ void PopulateStartingCashComboBox(GameWindow *comboBox, GameInfo *myGame)
   const MultiplayerStartingMoneyList & startingCashMap = TheMultiplayerSettings->getStartingMoneyList(); 
   Int currentSelectionIndex = -1;
   
-  for ( MultiplayerStartingMoneyList::const_iterator it = startingCashMap.begin(); it != startingCashMap.end(); it++ )
+  MultiplayerStartingMoneyList::const_iterator it;
+  for ( it = startingCashMap.begin(); it != startingCashMap.end(); it++ )
   {
     Int newIndex = GadgetComboBoxAddEntry(comboBox, formatMoneyForStartingCashComboBox( *it ), 
                                           comboBox->winGetEnabled() ? comboBox->winGetEnabledTextColor() : comboBox->winGetDisabledTextColor());
@@ -437,14 +438,14 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 				//Color In the little accepted boxes
 					if(slot->isAccepted())
 					{
-						if(BitTest(buttonAccept[i]->winGetStatus(), WIN_STATUS_IMAGE	))
+						if(BitTestEA(buttonAccept[i]->winGetStatus(), WIN_STATUS_IMAGE	))
 							buttonAccept[i]->winEnable(TRUE);
 						else
 							GadgetButtonSetEnabledColor(buttonAccept[i], acceptTrueColor );
 					}
 					else
 					{
-						if(BitTest(buttonAccept[i]->winGetStatus(), WIN_STATUS_IMAGE	))
+						if(BitTestEA(buttonAccept[i]->winGetStatus(), WIN_STATUS_IMAGE	))
 							buttonAccept[i]->winEnable(FALSE);
 						else
 							GadgetButtonSetEnabledColor(buttonAccept[i], acceptFalseColor );
@@ -469,14 +470,14 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 					comboPlayer[i]->winEnable( FALSE );
 			}
 			//if( i == myGame->getLocalSlotNum())
-      if((comboColor[i] != NULL) && BitTest(comboColor[i]->winGetStatus(), WIN_STATUS_ENABLED))
+      if((comboColor[i] != NULL) && BitTestEA(comboColor[i]->winGetStatus(), WIN_STATUS_ENABLED))
 				PopulateColorComboBox(i, comboColor, myGame, myGame->getConstSlot(i)->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER);
 			Int max, idx;
 			if (comboColor[i] != NULL) {
 				max = GadgetComboBoxGetLength(comboColor[i]);
 				for (idx=0; idx<max; ++idx)
 				{
-					Int color = (Int)GadgetComboBoxGetItemData(comboColor[i], idx);
+					Int color = (uintptr_t)GadgetComboBoxGetItemData(comboColor[i], idx);
 					if (color == slot->getColor())
 					{
 						GadgetComboBoxSetSelectedPos(comboColor[i], idx, TRUE);
@@ -489,7 +490,7 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 				max = GadgetComboBoxGetLength(comboTeam[i]);
 				for (idx=0; idx<max; ++idx)
 				{
-					Int team = (Int)GadgetComboBoxGetItemData(comboTeam[i], idx);
+					Int team = (uintptr_t)GadgetComboBoxGetItemData(comboTeam[i], idx);
 					if (team == slot->getTeamNumber())
 					{
 						GadgetComboBoxSetSelectedPos(comboTeam[i], idx, TRUE);
@@ -502,7 +503,7 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 				max = GadgetComboBoxGetLength(comboPlayerTemplate[i]);
 				for (idx=0; idx<max; ++idx)
 				{
-					Int playerTemplate = (Int)GadgetComboBoxGetItemData(comboPlayerTemplate[i], idx);
+					Int playerTemplate = (uintptr_t)GadgetComboBoxGetItemData(comboPlayerTemplate[i], idx);
 					if (playerTemplate == slot->getPlayerTemplate())
 					{
 						GadgetComboBoxSetSelectedPos(comboPlayerTemplate[i], idx, TRUE);

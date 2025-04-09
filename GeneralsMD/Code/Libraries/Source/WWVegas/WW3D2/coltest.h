@@ -52,7 +52,7 @@
 #include "obbox.h"
 #include "tri.h"
 #include "colmath.h"
-#include "coltype.h"
+#include "ColType.h"
 
 class RenderObjClass;
 

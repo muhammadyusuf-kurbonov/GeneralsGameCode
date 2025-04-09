@@ -48,6 +48,15 @@
 
 #include "Common/MiniLog.h"
 
+#ifndef _WIN32
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#define SOCKET_ERROR -1
+#endif
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -513,7 +522,7 @@ Int PeerThreadClass::findServer( SBServer server )
 	return addServerToMap(server);
 }
 
-static enum CallbackType
+enum CallbackType
 {
 	CALLBACK_CONNECT,
 	CALLBACK_ERROR,
@@ -535,7 +544,7 @@ void connectCallbackWrapper( PEER peer, PEERBool success, int failureReason, voi
 	}
 }
 
-void nickErrorCallbackWrapper( PEER peer, Int type, const char *nick, int numSuggestedNicks, const gsi_char** suggestedNicks, void *param )
+void nickErrorCallbackWrapper( PEER peer, Int type, const char *nick, int numSuggestedNicks, const gsi_char** suggestedNicks,  void *param )
 {
 	if (param != NULL)
 	{
@@ -1140,7 +1149,7 @@ void checkQR2Queries( PEER peer, SOCKET sock )
 {
 	static char indata[INBUF_LEN];
 	struct sockaddr_in saddr;
-	int saddrlen = sizeof(struct sockaddr_in);
+	socklen_t saddrlen = sizeof(struct sockaddr_in);
 	fd_set set;
 	struct timeval timeout = {0,0};
 	int error;
@@ -1168,7 +1177,9 @@ static UnsignedInt localIP = 0;
 void PeerThreadClass::Thread_Function()
 {
 	try {
+#ifdef _WIN32
 	_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
+#endif
 
 	PEER peer;
 
@@ -1842,7 +1853,7 @@ void PeerThreadClass::handleQMMatch(PEER peer, Int mapIndex, Int seed,
 		PeerResponse resp;
 		resp.peerResponseType = PeerResponse::PEERRESPONSE_QUICKMATCHSTATUS;
 		resp.qmStatus.status = QM_MATCHED;
-		for (i=0; i<MAX_SLOTS; ++i)
+		for (Int i=0; i<MAX_SLOTS; ++i)
 		{
 			if (playerName[i])
 			{

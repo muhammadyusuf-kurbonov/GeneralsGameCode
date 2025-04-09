@@ -35,12 +35,12 @@
 #include "robjlist.h"
 #include "WbView.h"
 #include "common/gameType.h"
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "common/ModelState.h"
 #include "dx8wrapper.h"
 
 //#include "GameLogic/Module/BodyModule.h" -- Yikes... not necessary to include this! (KM)
-enum BodyDamageType; //Ahhhh much better!
+#include "Common/BodyModuleTypes.h" //Ahhhh much better!
 
 class WorldHeightMap;
 class LayerClass;

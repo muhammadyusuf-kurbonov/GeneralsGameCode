@@ -29,7 +29,7 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the Game
 #include "GameClient/Snow.h"
-#include "GameClient/view.h"
+#include "GameClient/View.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -99,6 +99,8 @@ SnowManager::~SnowManager()
 {
 	delete [] m_startingHeights;
 	m_startingHeights=NULL;
+	((WeatherSetting *)TheWeatherSetting.getNonOverloadedPointer())->deleteInstance();
+	TheWeatherSetting = NULL;
 }
 
 OVERRIDE<WeatherSetting> TheWeatherSetting = NULL;

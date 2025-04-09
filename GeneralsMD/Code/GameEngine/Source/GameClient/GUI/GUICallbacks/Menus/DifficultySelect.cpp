@@ -182,14 +182,14 @@ WindowMsgHandledType DifficultySelectInput( GameWindow *window, UnsignedInt msg,
 //					// send a simulated selected event to the parent window of the
 //					// back/exit button
 //					//
-//					if( BitTest( state, KEY_STATE_UP ) )
+//					if( BitTestEA( state, KEY_STATE_UP ) )
 //					{
 //						AsciiString buttonName( "SkirmishMapSelectMenu.wnd:ButtonBack" );
 //						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
 //						GameWindow *button = TheWindowManager->winGetWindowFromId( window, buttonID );
 //
 //						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-//																								(WindowMsgData)button, buttonID );
+//																								(WindowMsgData)button, (WindowMsgData)buttonID );
 //
 //					}  // end if
 //

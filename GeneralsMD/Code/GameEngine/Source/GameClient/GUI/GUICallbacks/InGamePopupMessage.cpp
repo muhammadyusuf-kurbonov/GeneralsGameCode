@@ -78,7 +78,7 @@ static GameWindow *staticTextMessage = NULL;
 static GameWindow *buttonOk = NULL;
 
 
-static Bool pause = FALSE;
+static Bool bPause = FALSE;
 //-----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
@@ -124,7 +124,7 @@ void InGamePopupMessageInit( WindowLayout *layout, void *userData )
 	staticTextMessage->winSetSize( pMData->width - 4, height + 7);
 	buttonOk->winSetPosition(pMData->width - widthOk - 2, height + 7 + 2 + 2);
 	staticTextMessage->winSetEnabledTextColors(pMData->textColor, 0);
-	pause = pMData->pause;
+	bPause = pMData->pause;
 	if(pMData->pause)
 		TheWindowManager->winSetModal( parent );
 	
@@ -146,8 +146,8 @@ WindowMsgHandledType InGamePopupMessageInput( GameWindow *window, UnsignedInt ms
 			// --------------------------------------------------------------------------------------------
 			case GWM_CHAR:
 			{
-				UnsignedByte key = mData1;
-				UnsignedByte state = mData2;
+				UnsignedByte key = (UnsignedByte)(uintptr_t)mData1;
+				UnsignedByte state = (UnsignedByte)(uintptr_t)mData2;
 	//			if (buttonPushed)
 	//				break;
 	
@@ -163,10 +163,10 @@ WindowMsgHandledType InGamePopupMessageInput( GameWindow *window, UnsignedInt ms
 						// send a simulated selected event to the parent window of the
 						// back/exit button
 						//
-						if( BitTest( state, KEY_STATE_UP ) )
+						if( BitTestEA( state, KEY_STATE_UP ) )
 						{
 							TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																								(WindowMsgData)buttonOk, buttonOkID );
+																								(WindowMsgData)buttonOk, (WindowMsgData)buttonOkID );
 	
 						}  // end if
 	
@@ -214,7 +214,7 @@ WindowMsgHandledType InGamePopupMessageSystem( GameWindow *window, UnsignedInt m
 		{
 
 			// if we're givin the opportunity to take the keyboard focus we must say we want it
-			if( mData1 == TRUE )
+			if( (Bool)(uintptr_t)mData1 == TRUE )
 				*(Bool *)mData2 = TRUE;
 
 			break;
@@ -228,7 +228,7 @@ WindowMsgHandledType InGamePopupMessageSystem( GameWindow *window, UnsignedInt m
      
       if( controlID == buttonOkID )
 			{
-				if(!pause)
+				if(!bPause)
 					TheMessageStream->appendMessage( GameMessage::MSG_CLEAR_INGAME_POPUP_MESSAGE );
 				else
 					TheInGameUI->clearPopupMessageData();

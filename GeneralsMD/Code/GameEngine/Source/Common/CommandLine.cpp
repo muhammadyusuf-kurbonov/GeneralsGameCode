@@ -33,6 +33,8 @@
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 
+#include "GameNetwork/NetworkDefs.h"
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -333,7 +335,9 @@ Int parseNoDraw(char *args[], int argc)
 //=============================================================================
 Int parseLogToConsole(char *args[], int)
 {
+#ifdef DEBUG_LOGGING	
 	DebugSetFlags(DebugGetFlags() | DEBUG_FLAG_LOG_TO_CONSOLE);
+#endif
 	return 1;
 }
 
@@ -1106,14 +1110,14 @@ Int parseMod(char *args[], Int num)
 		}
 
 		// now check for dir-ness
-		struct _stat statBuf;
-		if (_stat(modPath.str(), &statBuf) != 0)
+		struct stat statBuf;
+		if (stat(modPath.str(), &statBuf) != 0)
 		{
 			DEBUG_LOG(("Could not _stat() mod.\n"));
 			return 2; // could not stat the file/dir.
 		}
 
-		if (statBuf.st_mode & _S_IFDIR)
+		if (statBuf.st_mode & S_IFDIR)
 		{
 			if (!modPath.endsWith("\\") && !modPath.endsWith("/"))
 				modPath.concat('\\');

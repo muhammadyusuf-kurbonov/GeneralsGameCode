@@ -40,6 +40,8 @@
 #include	"win.h"
 #include	"xmouse.h"
 
+#include <atomic>
+
 class BSurface;
 
 /*
@@ -127,7 +129,7 @@ class WWMouseClass : public Mouse {
 		**	and the mouse class maintain a strict master/slave relationship, a
 		**	simple critial section flag is all that is needed.
 		*/
-		long Blocked;
+		std::atomic<long> Blocked;
 
 		/*
 		**	Mouse hide/show state. If zero or greater, the mouse is visible. Otherwise
@@ -232,8 +234,8 @@ class WWMouseClass : public Mouse {
 		void Low_Show_Mouse(void);
 		void Low_Hide_Mouse(void);
 
-		void Block_Mouse(void) {InterlockedIncrement(&Blocked);/*Blocked++;*/}
-		void Unblock_Mouse(void) {InterlockedDecrement(&Blocked);/*Blocked--;*/}
+		void Block_Mouse(void) {Blocked++;}
+		void Unblock_Mouse(void) {Blocked--;}
 		bool Is_Blocked(void) const {return(Blocked != 0);}
 
 		bool Is_Hidden(void) const {return(MouseState < 0);}

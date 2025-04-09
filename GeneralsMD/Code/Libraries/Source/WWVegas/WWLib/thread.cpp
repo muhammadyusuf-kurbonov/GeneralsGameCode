@@ -19,10 +19,12 @@
 #define _WIN32_WINNT 0x0400
 
 #include "thread.h"
-#include "except.h"
+#include "Except.h"
 #include "wwdebug.h"
+#ifdef _WIN32
 #include <process.h>
 #include <windows.h>
+#endif
 #pragma warning ( push )
 #pragma warning ( disable : 4201 )
 #include "systimer.h"

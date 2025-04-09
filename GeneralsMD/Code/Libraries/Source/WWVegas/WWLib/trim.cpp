@@ -42,6 +42,8 @@
 #include	<wctype.h>
 #endif // _UNIX
 
+#include	<string>
+
 /*********************************************************************************************** 
  * strtrim -- Trim leading and trailing white space off of string.                             * 
  *                                                                                             * 
@@ -68,7 +70,9 @@ char* strtrim(char* buffer)
 		}
 
 		if (source != buffer) {
-			strcpy(buffer, source);
+			// Create a copy to avoid overwriting the original string.
+			std::string str = source;
+			strcpy(buffer, str.c_str());
 		}
 
 		/* Clip trailing white space from the string. */

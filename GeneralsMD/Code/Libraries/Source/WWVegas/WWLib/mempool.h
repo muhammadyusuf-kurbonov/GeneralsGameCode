@@ -53,11 +53,11 @@
 #include "bittype.h"
 #include "wwdebug.h"
 #include "mutex.h"
-#include <new.h>
 #include <stdlib.h>
 #include <stddef.h>
-
-
+#ifdef _WIN32
+#include <new.h>
+#endif
 
 /**********************************************************************************************
 ** ObjectPoolClass
@@ -91,7 +91,7 @@ public:
 protected:
 
 	T	*		FreeListHead;			
-	uint32 *	BlockListHead;			
+	uintptr_t *	BlockListHead;			
 	int		FreeObjectCount;
 	int		TotalObjectCount;
 	FastCriticalSectionClass ObjectPoolCS;
@@ -158,7 +158,8 @@ private:
 ** the class.
 */
 #define DEFINE_AUTO_POOL(T,BLOCKSIZE) \
-ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator;
+template<>\
+ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator = {};
 
 
 /***********************************************************************************************
@@ -205,7 +206,7 @@ ObjectPoolClass<T,BLOCK_SIZE>::~ObjectPoolClass(void)
 	// delete all of the blocks we allocated
 	int block_count = 0;
 	while (BlockListHead != NULL) {
-		uint32 * next_block = *(uint32 **)BlockListHead;
+		uintptr_t * next_block = *(uintptr_t **)BlockListHead;
 		::operator delete(BlockListHead);
 		BlockListHead = next_block;
 		block_count++;
@@ -281,8 +282,8 @@ T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object_Memory(void)
 	if ( FreeListHead == 0 ) {  
 
 		// No free objects, allocate another block
-		uint32 * tmp_block_head = BlockListHead;
-		BlockListHead = (uint32*)::operator new( sizeof(T) * BLOCK_SIZE + sizeof(uint32 *));
+		uintptr_t * tmp_block_head = BlockListHead;
+		BlockListHead = (uintptr_t*)::operator new( sizeof(T) * BLOCK_SIZE + sizeof(uintptr_t *));
 		// Link this block into the block list
 		*(void **)BlockListHead = tmp_block_head;
 

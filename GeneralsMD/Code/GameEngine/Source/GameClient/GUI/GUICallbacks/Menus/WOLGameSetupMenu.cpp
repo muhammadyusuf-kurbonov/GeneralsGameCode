@@ -119,7 +119,7 @@ void SendStatsToOtherPlayers(const GameInfo *game)
 	subStats.locale = fullStats.locale;
 	subStats.gamesAsRandom = fullStats.gamesAsRandom;
 	GetAdditionalDisconnectsFromUserFile(&subStats);
-	fullStr.format("%d %s", TheGameSpyInfo->getLocalProfileID(), TheGameSpyPSMessageQueue->formatPlayerKVPairs( subStats ));
+	fullStr.format("%d %s", TheGameSpyInfo->getLocalProfileID(), TheGameSpyPSMessageQueue->formatPlayerKVPairs( subStats ).c_str());
 	req.options = fullStr.str();
 
 	Int localIndex = game->getLocalSlotNum();
@@ -140,7 +140,7 @@ void SendStatsToOtherPlayers(const GameInfo *game)
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static Bool isShuttingDown = false;
 static Bool buttonPushed = false;
-static char *nextScreen = NULL;
+static const char *nextScreen = NULL;
 static Bool raiseMessageBoxes = false;
 static Bool launchGameNext = FALSE;
 
@@ -539,7 +539,7 @@ static void handleColorSelection(int index)
 	GameWindow *combo = comboBoxColor[index];
 	Int color, selIndex;
 	GadgetComboBoxGetSelectedPos(combo, &selIndex);
-	color = (Int)GadgetComboBoxGetItemData(combo, selIndex);
+	color = (Int)(uintptr_t)GadgetComboBoxGetItemData(combo, selIndex);
 
 	GameInfo *myGame = TheGameSpyInfo->getCurrentStagingRoom();
 
@@ -602,7 +602,7 @@ static void handlePlayerTemplateSelection(int index)
 	GameWindow *combo = comboBoxPlayerTemplate[index];
 	Int playerTemplate, selIndex;
 	GadgetComboBoxGetSelectedPos(combo, &selIndex);
-	playerTemplate = (Int)GadgetComboBoxGetItemData(combo, selIndex);
+	playerTemplate = (Int)(uintptr_t)GadgetComboBoxGetItemData(combo, selIndex);
 	GameInfo *myGame = TheGameSpyInfo->getCurrentStagingRoom();
 
 	if (myGame)
@@ -727,7 +727,7 @@ static void handleTeamSelection(int index)
 	GameWindow *combo = comboBoxTeam[index];
 	Int team, selIndex;
 	GadgetComboBoxGetSelectedPos(combo, &selIndex);
-	team = (Int)GadgetComboBoxGetItemData(combo, selIndex);
+	team = (Int)(uintptr_t)GadgetComboBoxGetItemData(combo, selIndex);
 	GameInfo *myGame = TheGameSpyInfo->getCurrentStagingRoom();
 
 	if (myGame)
@@ -773,7 +773,7 @@ static void handleStartingCashSelection()
     GadgetComboBoxGetSelectedPos(comboBoxStartingCash, &selIndex);
     
     Money startingCash;
-    startingCash.deposit( (UnsignedInt)GadgetComboBoxGetItemData( comboBoxStartingCash, selIndex ), FALSE );
+    startingCash.deposit( (UnsignedInt)(uintptr_t)GadgetComboBoxGetItemData( comboBoxStartingCash, selIndex ), FALSE );
     myGame->setStartingCash( startingCash );
     myGame->resetAccepted();
     
@@ -898,7 +898,7 @@ static void StartPressed(void)
 	// Check for too few teams
 	int numRandom = 0;
 	std::set<Int> teams; 
-	for (i=0; i<MAX_SLOTS; ++i)
+	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
 		GameSlot *slot = myGame->getSlot(i);
 		if (slot && slot->isOccupied() && slot->getPlayerTemplate() != PLAYERTEMPLATE_OBSERVER)
@@ -1023,9 +1023,10 @@ void WOLDisplayGameOptions( void )
     GadgetCheckBoxSetChecked( checkBoxLimitSuperweapons, limitSuperweapons );
   
   Int itemCount = GadgetComboBoxGetLength(comboBoxStartingCash);
-  for ( Int index = 0; index < itemCount; index++ )
+  Int index;
+  for ( index = 0; index < itemCount; index++ )
   {
-    Int value  = (Int)GadgetComboBoxGetItemData(comboBoxStartingCash, index);
+    Int value  = (Int)(uintptr_t)GadgetComboBoxGetItemData(comboBoxStartingCash, index);
     if ( value == theGame->getStartingCash().countMoney() )
     {
       // Note: must check if combobox is already correct to avoid infinite recursion
@@ -2473,10 +2474,10 @@ WindowMsgHandledType WOLGameSetupMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestEA( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																							(WindowMsgData)buttonBack, buttonBackID );
+																							(WindowMsgData)buttonBack, (WindowMsgData)buttonBackID );
 					}  // end if
 					// don't let key fall through anywhere else
 					return MSG_HANDLED;
@@ -2582,7 +2583,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
-	static buttonCommunicatorID = NAMEKEY_INVALID;
+	static NameKeyType buttonCommunicatorID = NAMEKEY_INVALID;
 	switch( msg )
 	{
 		//-------------------------------------------------------------------------------------------------	
@@ -2690,7 +2691,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
-				static buttonCommunicatorID = NAMEKEY("GameSpyGameOptionsMenu.wnd:ButtonCommunicator");
+				static NameKeyType buttonCommunicatorID = NAMEKEY("GameSpyGameOptionsMenu.wnd:ButtonCommunicator");
 				if ( controlID == buttonBackID )
 				{
 					savePlayerInfo();

@@ -201,7 +201,7 @@ void StripOptimizerClass::Optimize_Strip_Order (int* strips, int strip_count)
 
 //	WWASSERT((out+outSize)==o);							// HUH?
 
-	for (i = 0; i < outSize; i++)						// copy output
+	for (int i = 0; i < outSize; i++)						// copy output
 		strips[i] = out[i];
 
 	delete[] out;
@@ -288,7 +288,7 @@ void StripOptimizerClass::Optimize_Triangle_Order (int *tris, int triangle_count
 
 	WWASSERT(o == (out+triangle_count));
 
-	for (i = 0; i < triangle_count; i++)
+	for (int i = 0; i < triangle_count; i++)
 	{
 		Tri* d = (Tri*)(tris)+i;
 		*d = out[i];
@@ -608,7 +608,7 @@ inline void TriangleQueue::removeTriangle	(Triangle* t)
 	Triangle* update[3];
 	int			i;
 
-	for (i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		update[i]  = 0;
 		if (t->m_neighbors[i])
@@ -627,13 +627,13 @@ inline void TriangleQueue::removeTriangle	(Triangle* t)
 
 	// update connectivity count of t's vertices
 
-	for (i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		m_nodeConnectivity[t->m_vertices[i]]--;
 		WWASSERT(m_nodeConnectivity[t->m_vertices[i]] >= 0);		// WASS?
 	}
 
-	for (i = 0; i < 3; i++)							// perform reinsertions now...
+	for (int i = 0; i < 3; i++)							// perform reinsertions now...
 	if (update[i])
 		reinsert(update[i]);
 
@@ -653,12 +653,12 @@ inline void TriangleQueue::removeTriangle	(Triangle* t)
 inline TriangleQueue::TriangleQueue	(Triangle* tris, int N)
 {
 	int i;
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 		m_bin[i] = 0;							// initialize to zero
 
 	int largestIndex = 0;
 
-	for (i = 0; i < N; i++)
+	for (int i = 0; i < N; i++)
 	for (int j = 0; j < 3; j++)
 	{
 		WWASSERT(tris[i].m_vertices[j]>=0);
@@ -668,11 +668,11 @@ inline TriangleQueue::TriangleQueue	(Triangle* tris, int N)
 
 	m_vertexCount	   = largestIndex+1;
 	m_nodeConnectivity = W3DNEWARRAY int[m_vertexCount];			// 
-	for (i = 0; i < m_vertexCount; i++)
+	for (int i = 0; i < m_vertexCount; i++)
 		m_nodeConnectivity[i]  = 0;
 
 
-	for (i = 0; i < N; i++)
+	for (int i = 0; i < N; i++)
 	{
 		Triangle* t = tris+i;
 		int w = t->getConnectivity();			
@@ -716,7 +716,7 @@ inline Vector3i Stripify::getTriangleNodeConnectivityWeights (const TriangleQueu
 
 	Vector3i v(-1,-1,-1);
 
-	for (i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		if (weight[0] == highestVal) v[i] = +1;
 	}
 		
@@ -749,7 +749,7 @@ Triangle* Stripify::generateTriangleList (const Vector3i* inTris, int N)
 	// Copy triangle vertex data 
 	//--------------------------------------------------------------------
 
-	for (i = 0; i < N; i++)				
+	for (int i = 0; i < N; i++)				
 	{
 		//--------------------------------------------------------------------
 		// We could perform random rotation here (this way we don't need random
@@ -768,7 +768,7 @@ Triangle* Stripify::generateTriangleList (const Vector3i* inTris, int N)
 	HashTemplateClass<Edge,Triangle*> hash;
 	Triangle*			 t = tris;
 
-	for (i = 0; i < N; i++, t++)
+	for (int i = 0; i < N; i++, t++)
 	{
 		for (int j = 0; j < 3; j++)
 		if (!t->m_neighbors[j])											// if neighbor not defined yet

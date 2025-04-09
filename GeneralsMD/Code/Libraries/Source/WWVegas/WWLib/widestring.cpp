@@ -243,8 +243,8 @@ WideStringClass::Free_String (void)
 //	Format
 //
 ///////////////////////////////////////////////////////////////////
-int _cdecl
-WideStringClass::Format_Args (const WCHAR *format, const va_list & arg_list )
+int __cdecl
+WideStringClass::Format_Args (const WCHAR *format, va_list arg_list )
 {
 	if (format == NULL) {
 		return 0;
@@ -257,7 +257,6 @@ WideStringClass::Format_Args (const WCHAR *format, const va_list & arg_list )
 
 	//
 	//	Format the string
-	//
 	int retval = _vsnwprintf (temp_buffer, 512, format, arg_list);
 	
 	//
@@ -274,7 +273,7 @@ WideStringClass::Format_Args (const WCHAR *format, const va_list & arg_list )
 //	Format
 //
 ///////////////////////////////////////////////////////////////////
-int _cdecl
+int __cdecl
 WideStringClass::Format (const WCHAR *format, ...)
 {
 	if (format == NULL) {
@@ -324,14 +323,23 @@ bool WideStringClass::Convert_From (const char *text)
 		
 		int length;
 
+#ifdef _WIN32
 		length = MultiByteToWideChar (CP_ACP, 0, text, -1, NULL, 0);
+#else
+		length = mbstowcs (NULL, text, 0);
+#endif
+
 		if (length > 0) {
 
 			Uninitialised_Grow (length);
 			Store_Length (length - 1);
 
 			// Convert.
+#ifdef _WIN32			
 			MultiByteToWideChar (CP_ACP, 0, text, -1, m_Buffer, length);
+#else
+			mbstowcs (m_Buffer, text, length);
+#endif
 
 			// Success.
 			return (true);

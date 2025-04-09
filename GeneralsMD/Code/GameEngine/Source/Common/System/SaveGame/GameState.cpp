@@ -59,6 +59,10 @@
 #include "GameLogic/SidesList.h"
 #include "GameLogic/TerrainLogic.h"
 
+#ifndef _WIN32
+#include <filesystem>
+#endif
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -212,6 +216,7 @@ GameState::SnapshotBlock *GameState::findBlockInfoByToken( AsciiString token, Sn
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal) 
 {
+#ifdef _WIN32
 	// setup date buffer for local region date format
 	#define DATE_BUFFER_SIZE 256
 	OSVERSIONINFO	osvi;
@@ -240,10 +245,34 @@ UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 	displayDateBuffer.set(dateBuffer);
 	return displayDateBuffer;
 	//displayDateBuffer.format( L"%ls", dateBuffer );
+#else
+	// POSIX implementation
+	struct tm converted_time;
+	converted_time.tm_year = timeVal.wYear - 1900;
+	converted_time.tm_mon = timeVal.wMonth - 1;
+	converted_time.tm_mday = timeVal.wDay;
+	converted_time.tm_hour = timeVal.wHour;
+	converted_time.tm_min = timeVal.wMinute;
+	converted_time.tm_sec = timeVal.wSecond;
+	converted_time.tm_isdst = -1;
+	converted_time.tm_wday = timeVal.wDayOfWeek;
+	converted_time.tm_yday = 0;
+	converted_time.tm_gmtoff = 0;
+	converted_time.tm_zone = NULL;
+
+	UnicodeString displayTimeBuffer;
+	const size_t DATE_BUFFER_SIZE = 256;
+	char timeBuffer[ DATE_BUFFER_SIZE ];
+	strftime( timeBuffer, DATE_BUFFER_SIZE, "%c", &converted_time );
+	displayTimeBuffer.translate(timeBuffer);
+
+	return displayTimeBuffer;
+#endif
 }															
 
 UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal) 
 {
+#ifdef _WIN32
 	// setup time buffer for local region time format
 	UnicodeString displayTimeBuffer;
 	OSVERSIONINFO	osvi;
@@ -273,6 +302,29 @@ UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal)
 								 sizeof(timeBuffer) );
 	displayTimeBuffer.set(timeBuffer);
 	return displayTimeBuffer;
+#else
+	// POSIX implementation
+	struct tm converted_time;
+	converted_time.tm_year = timeVal.wYear - 1900;
+	converted_time.tm_mon = timeVal.wMonth - 1;
+	converted_time.tm_mday = timeVal.wDay;
+	converted_time.tm_hour = timeVal.wHour;
+	converted_time.tm_min = timeVal.wMinute;
+	converted_time.tm_sec = timeVal.wSecond;
+	converted_time.tm_isdst = -1;
+	converted_time.tm_wday = timeVal.wDayOfWeek;
+	converted_time.tm_yday = 0;
+	converted_time.tm_gmtoff = 0;
+	converted_time.tm_zone = NULL;
+
+	UnicodeString displayTimeBuffer;
+	const size_t TIME_BUFFER_SIZE = 256;
+	char timeBuffer[ TIME_BUFFER_SIZE ];
+	strftime( timeBuffer, TIME_BUFFER_SIZE, "%H:%M", &converted_time );
+	displayTimeBuffer.translate(timeBuffer);
+
+	return displayTimeBuffer;
+#endif
 }
 
 
@@ -508,8 +560,13 @@ AsciiString GameState::findNextSaveFilename( UnicodeString desc )
 			fullPath = getFilePathInSaveDirectory(filename);
 
 			// if file does not exist we're all good
+#ifdef _WIN32
 			if( _access( fullPath.str(), 0 ) == -1 )
 				return filename;
+#else
+			if( std::filesystem::exists(fullPath.str()) == FALSE )
+				return filename;
+#endif
 
 			// test the text filename
 			i++;
@@ -555,7 +612,11 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	}  // end if
 
 	// make absolutely sure the save directory exists
-	CreateDirectory( getSaveDirectory().str(), NULL );
+#ifdef _WIN32
+	CreateDirectory(getSaveDirectory().str(), NULL);
+#else
+	std::filesystem::create_directory(getSaveDirectory().str());
+#endif
 
 	// construct path to file
 	AsciiString filepath = getFilePathInSaveDirectory(filename);
@@ -768,7 +829,7 @@ SaveCode GameState::loadGame( AvailableGameInfo gameInfo )
 AsciiString GameState::getSaveDirectory() const
 {
 	AsciiString tmp = TheGlobalData->getPath_UserData();
-	tmp.concat("Save\\");
+	tmp.concat("Save/");
 	return tmp;
 }
 
@@ -789,7 +850,7 @@ Bool GameState::isInSaveDirectory(const AsciiString& path) const
 // ------------------------------------------------------------------------------------------------
 AsciiString GameState::getMapLeafName(const AsciiString& in) const
 {
-	char* p = strrchr(in.str(), '\\');
+	const char* p = strrchr(in.str(), '\\');
 	if (p)
 	{
 		//
@@ -804,6 +865,16 @@ AsciiString GameState::getMapLeafName(const AsciiString& in) const
 	}
 	else
 	{
+		const char* linuxSepP = strrchr(in.str(), '/');
+		if (linuxSepP)
+		{
+			// This is similar to the above p, but checking for the linux case as well
+			// This is not done via a ifdef mainly because some of the paths can have combinations
+			// This seems to be due to the mix in here and then elsewhere in the code having //
+			++linuxSepP;
+			DEBUG_ASSERTCRASH( linuxSepP != NULL && *linuxSepP != 0, ("GameState::xfer - Illegal map name encountered\n") );
+			return linuxSepP;
+		}
 		return in;
 	}
 }
@@ -813,7 +884,9 @@ static const char* findLastBackslashInRangeInclusive(const char* start, const ch
 {
 	while (end >= start)
 	{
-		if (*end == '\\')
+		// On Linux, we can see either one, since alot of the paths are combinations
+		// This will allow us to find the map internal names it's looking for, like in MapUtil'
+		if (*end == '\\' || *end == '/')
 			return end;
 		--end;
 	}
@@ -864,9 +937,9 @@ static AsciiString removeExtension(const AsciiString& in)
 }
 
 // ------------------------------------------------------------------------------------------------
-const char* PORTABLE_SAVE				= "Save\\";
-const char* PORTABLE_MAPS				= "Maps\\";
-const char* PORTABLE_USER_MAPS	= "UserData\\Maps\\";
+const char* PORTABLE_SAVE				= "Save/";
+const char* PORTABLE_MAPS				= "Maps/";
+const char* PORTABLE_USER_MAPS	= "UserData/Maps/";
 
 // ------------------------------------------------------------------------------------------------
 AsciiString GameState::realMapPathToPortableMapPath(const AsciiString& in) const
@@ -907,6 +980,7 @@ AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 		// the save dir ends with "\\"
 		prefix = getSaveDirectory();
 		prefix.concat(getMapLeafName(in));
+		// Adding these to the individual ones, because the save case will not work on Linux with a toLower
 	}
 	else if (in.startsWithNoCase(PORTABLE_MAPS))
 	{
@@ -914,6 +988,7 @@ AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 		prefix = TheMapCache->getMapDir();
 		prefix.concat("\\");
 		prefix.concat(getMapLeafAndDirName(in));
+		prefix.toLower();
 	}
 	else if (in.startsWithNoCase(PORTABLE_USER_MAPS))
 	{
@@ -921,6 +996,7 @@ AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 		prefix = TheMapCache->getUserMapDir();
 		prefix.concat("\\");
 		prefix.concat(getMapLeafAndDirName(in));
+		prefix.toLower();
 	}
 	else
 	{
@@ -929,7 +1005,10 @@ AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 		// uncaught exceptions crash us. better to just use a bad path.
 		prefix = in;
 	}
+#ifdef _WIN32
+	// Putting this behind a windows flag, as on Linux, the real disk paths are case sensitive for saves
 	prefix.toLower();
+#endif
 	return prefix;
 }
 
@@ -1253,6 +1332,7 @@ void GameState::iterateSaveFiles( IterateSaveFileCallback callback, void *userDa
 	if( callback == NULL )
 		return;
 
+#ifdef _WIN32
 	// save the current directory
 	char currentDirectory[ _MAX_PATH ];
 	GetCurrentDirectory( _MAX_PATH, currentDirectory );
@@ -1313,7 +1393,39 @@ void GameState::iterateSaveFiles( IterateSaveFileCallback callback, void *userDa
 
 	// restore the current directory
 	SetCurrentDirectory( currentDirectory );
+#else
+	// save the current directory
+	std::filesystem::path currentDirectory = std::filesystem::current_path();
 
+	// Change to the save directory; This is done because code like GameStateMap requires the saves to be a relative path
+	std::filesystem::path saveDir = getSaveDirectory().str();
+	if (!std::filesystem::exists(saveDir))
+	{
+		return;
+	}
+
+	std::filesystem::current_path(saveDir);
+
+	// iterate all items in the directory
+	std::filesystem::directory_iterator end_itr;
+	std::error_code ec;
+	for (std::filesystem::directory_iterator itr(".", ec); itr != end_itr; ++itr)
+	{
+		if (std::filesystem::is_regular_file(itr->status()))
+		{
+			// see if this is a file, and therefore a possible save file
+			AsciiString filename = itr->path().filename().c_str();
+			if (filename.endsWithNoCase(SAVE_GAME_EXTENSION))
+			{
+				// call the callback
+				callback( filename, userData );
+			}
+		}
+	}
+
+	// Change back to the original directory
+	std::filesystem::current_path(currentDirectory);
+#endif
 }  // end iterateSaveFiles
 
 // ------------------------------------------------------------------------------------------------
@@ -1391,7 +1503,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				{
 
 					DEBUG_CRASH(( "Error saving block '%s' in file '%s'\n",
-												blockName.str(), xfer->getIdentifier() ));
+												blockName.str(), xfer->getIdentifier().str() ));
 					throw;
 
 				}  // end catch
@@ -1437,7 +1549,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				{
 
 					// log the block not found
-					DEBUG_LOG(( "GameState::xferSaveData - Skipping unknown block '%s'\n", token ));
+					DEBUG_LOG(( "GameState::xferSaveData - Skipping unknown block '%s'\n", token.str() ));
 
 					//
 					// block was not found, this could have been a block from an older file
@@ -1468,7 +1580,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				{
 
 					DEBUG_CRASH(( "Error loading block '%s' in file '%s'\n",
-												blockInfo->blockName.str(), xfer->getIdentifier() ));
+												blockInfo->blockName.str(), xfer->getIdentifier().str() ));
 					throw;
 
 				}  // end catch

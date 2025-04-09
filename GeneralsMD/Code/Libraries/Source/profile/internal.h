@@ -22,7 +22,7 @@
 // $Revision: #3 $
 // $DateTime: 2003/07/09 10:57:23 $
 //
-// ©2003 Electronic Arts
+// ï¿½2003 Electronic Arts
 //
 // Internal header
 //////////////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ void *ProfileAllocMemory(unsigned numBytes);
 void *ProfileReAllocMemory(void *oldPtr, unsigned newSize);
 void ProfileFreeMemory(void *ptr);
 
-__forceinline void ProfileGetTime(__int64 &t)
+__forceinline void ProfileGetTime(int64_t &t)
 {
   _asm
   {

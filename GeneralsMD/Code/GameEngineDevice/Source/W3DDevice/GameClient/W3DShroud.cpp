@@ -31,15 +31,15 @@
 #include "camera.h"
 #include "simplevec.h"
 #include "dx8wrapper.h"
-#include "common/MapObject.h"
-#include "common/PerfTimer.h"
+#include "Common/MapObject.h"
+#include "Common/PerfTimer.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DPoly.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "assetmgr.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "WW3D2/textureloader.h"
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "GameLogic/PartitionManager.h"
 
 #ifdef _INTERNAL
@@ -584,8 +584,8 @@ void W3DShroud::render(CameraClass *cam)
 		pSurface->Get_Description(desc);
 
 		//Check if source data is larger than our current shroud
-		desc.Width = __min(desc.Width,m_numCellsX);
-		desc.Height = __min(desc.Height,m_numCellsY);
+		desc.Width = min(desc.Width,m_numCellsX);
+		desc.Height = min(desc.Height,m_numCellsY);
 
 		for (Int y=0; y<desc.Height; y++)
 		{

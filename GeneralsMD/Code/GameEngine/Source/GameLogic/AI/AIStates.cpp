@@ -42,7 +42,7 @@
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
 #include "Common/Xfer.h"
-#include "Common/XFerCRC.h"
+#include "Common/XferCRC.h"
 
 #include "GameClient/ControlBar.h"
 #include "GameClient/FXList.h"
@@ -676,8 +676,8 @@ void AIRappelState::onExit( StateExitType status )
 */
 AIStateMachine::AIStateMachine( Object *obj, AsciiString name ) : StateMachine( obj, name )
 {
-	DEBUG_ASSERTCRASH(getOwner(), ("An AI State Machine '%s' was constructed without an owner, please tell JKMCD", name));
-	DEBUG_ASSERTCRASH(getOwner()->getAI(), ("An AI State Machine '%s' was constructed without an AIUpdateInterface, please tell JKMCD", name));
+	DEBUG_ASSERTCRASH(getOwner(), ("An AI State Machine '%s' was constructed without an owner, please tell JKMCD", name.str()));
+	DEBUG_ASSERTCRASH(getOwner()->getAI(), ("An AI State Machine '%s' was constructed without an AIUpdateInterface, please tell JKMCD", name.str()));
 
 	m_goalPath.clear();
 	m_goalWaypoint = NULL;
@@ -1242,7 +1242,7 @@ Bool outOfWeaponRangePosition( State *thisState, void* userData )
  */
 static Bool cannotPossiblyAttackObject( State *thisState, void* userData )
 {
-	AbleToAttackType attackType = (AbleToAttackType)(UnsignedInt)userData;
+	AbleToAttackType attackType = (AbleToAttackType)(uintptr_t)userData;
 	Object *obj = thisState->getMachineOwner();
 	Object *victim = thisState->getMachineGoalObject();
 

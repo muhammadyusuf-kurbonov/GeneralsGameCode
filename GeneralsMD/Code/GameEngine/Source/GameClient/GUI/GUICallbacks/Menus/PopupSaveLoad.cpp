@@ -327,7 +327,7 @@ WindowMsgHandledType SaveLoadMenuInput( GameWindow *window, UnsignedInt msg, Win
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestEA( state, KEY_STATE_UP ) )
 					{
 						GameWindow *button = TheWindowManager->winGetWindowFromId( parent, buttonBackKey );
 						
@@ -341,7 +341,7 @@ WindowMsgHandledType SaveLoadMenuInput( GameWindow *window, UnsignedInt msg, Win
 						buttonFrame->winEnable( TRUE );
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
-																								(WindowMsgData)button, buttonBackKey );
+																								(WindowMsgData)button, (WindowMsgData)buttonBackKey );
 
 					}  // end if
 
@@ -460,6 +460,11 @@ static void setEditDescription( GameWindow *editControl )
 	else
 	{
 		const char *mapName = TheGlobalData->m_mapName.reverseFind( '\\' );
+		// For other platforms than Windows, the native path could be using '/' as a separator.
+		if( !mapName )
+		{
+			mapName = TheGlobalData->m_mapName.reverseFind( '/' );
+		}
 
 		if( mapName )
 			defaultDesc.format( L"%S", mapName + 1 );
@@ -718,7 +723,11 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					AsciiString filepath = TheGameState->getFilePathInSaveDirectory(selectedGameInfo->filename);
 
 					// delete the file
+#ifdef _WIN32
 					DeleteFile( filepath.str() );
+#else
+					unlink( filepath.str() );
+#endif
 					
 					// repopulate the listbox
 					TheGameState->populateSaveGameListbox( listboxGames, currentLayoutType );

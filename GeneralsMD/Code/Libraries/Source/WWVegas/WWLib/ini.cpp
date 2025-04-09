@@ -88,26 +88,26 @@
 #include	"b64pipe.h"
 #include	"b64straw.h"
 #include	"cstraw.h"
-#include	"ini.h"
+#include	"INI.H"
 #include	"readline.h"
 #include	"trim.h"
 #include	"win.h"
-#include	"xpipe.h"
-#include	"xstraw.h"
+#include	"XPIPE.H"
+#include	"XSTRAW.H"
 #include	<stdio.h>
 #include <malloc.h>
 #ifdef _UNIX
 #include <ctype.h>
 #endif
-#include "rawfile.h"
+#include "RAWFILE.H"
 #include "ffactory.h"
 
 // recently transferred from ini.h
 #include "inisup.h"
 #include	"trect.h"
-#include	"wwfile.h"
-#include	"pk.h"
-#include	"pipe.h"
+#include	"WWFILE.H"
+#include	"PK.H"
+#include	"PIPE.H"
 #include	"wwstring.h"
 #include "widestring.h"
 #include "nstrdup.h"
@@ -2357,9 +2357,10 @@ void INIClass::DuplicateCRCError(const char *message, const char *section, const
 	_snprintf(buffer, sizeof(buffer), "%s - Duplicate Entry \"%s\" in section \"%s\" (%s)\n", message,
 		entry, section, Filename);
 
+#ifdef _WIN32
 	OutputDebugString(buffer);
+#endif
 	assert(0);
-
 #ifdef NDEBUG
 #ifdef _WINDOWS
 	MessageBox(0, buffer, "Duplicate CRC in INI file.", MB_ICONSTOP | MB_OK);

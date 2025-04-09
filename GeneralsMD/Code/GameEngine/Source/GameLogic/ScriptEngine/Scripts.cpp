@@ -60,7 +60,7 @@
 
 #include "GameClient/ShellHooks.h"
 
-#include "GameLogic/Ai.h"
+#include "GameLogic/AI.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/SidesList.h"
@@ -81,7 +81,7 @@ static ScriptGroup *s_mtGroup = NULL;
 // These strings must be in the same order as they are in their definitions 
 // (See SHELL_SCRIPT_HOOK_* )
 //
-char *TheShellHookNames[]=
+const char *TheShellHookNames[]=
 {
 	"ShellMainMenuCampaignPushed", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_SELECTED,
 	"ShellMainMenuCampaignHighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_HIGHLIGHTED,
@@ -202,7 +202,10 @@ void ScriptList::reset(void)
 	{
 		ScriptList* pList = TheSidesList->getSideInfo(i)->getScriptList();
 		TheSidesList->getSideInfo(i)->setScriptList(NULL);
-		pList->deleteInstance();
+		if (pList)
+		{
+			pList->deleteInstance();
+		}
 	}
 }
 

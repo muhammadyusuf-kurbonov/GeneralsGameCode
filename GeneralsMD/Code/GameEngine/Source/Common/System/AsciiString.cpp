@@ -127,9 +127,15 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 	{
 		// no buffer manhandling is needed (it's already large enough, and unique to us)
 		if (strToCopy)
-			strcpy(m_data->peek(), strToCopy);
+		{
+			std::string strToCopyStr = strToCopy;
+			strcpy(m_data->peek(), strToCopyStr.c_str());
+		}
 		if (strToCat)
-			strcat(m_data->peek(), strToCat);
+		{
+			std::string strToCatStr = strToCat;
+			strcat(m_data->peek(), strToCatStr.c_str());
+		}
 		return;
 	}
 
@@ -285,7 +291,7 @@ void AsciiString::format_va(const AsciiString& format, va_list args)
 {
 	validate();
 	char buf[MAX_FORMAT_BUF_LEN];
-  if (_vsnprintf(buf, sizeof(buf)/sizeof(char)-1, format.str(), args) < 0)
+  if (vsnprintf(buf, sizeof(buf)/sizeof(char)-1, format.str(), args) < 0)
 			throw ERROR_OUT_OF_MEMORY;
 	set(buf);
 	validate();
@@ -296,7 +302,7 @@ void AsciiString::format_va(const char* format, va_list args)
 {
 	validate();
 	char buf[MAX_FORMAT_BUF_LEN];
-  if (_vsnprintf(buf, sizeof(buf)/sizeof(char)-1, format, args) < 0)
+  if (vsnprintf(buf, sizeof(buf)/sizeof(char)-1, format, args) < 0)
 			throw ERROR_OUT_OF_MEMORY;
 	set(buf);
 	validate();

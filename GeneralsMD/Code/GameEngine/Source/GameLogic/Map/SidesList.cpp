@@ -85,7 +85,10 @@ SidesInfo::~SidesInfo(void)
 
 void SidesInfo::init(const Dict* d)
 {
-	m_pBuildList->deleteInstance();
+	if (m_pBuildList)
+	{
+		m_pBuildList->deleteInstance();
+	}
 	m_pBuildList = NULL;
 	m_dict.clear();
 	if (m_scripts) 
@@ -303,7 +306,10 @@ Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, v
 	for (i=0; i<count; i++) {
 		if (i<TheSidesList->getNumSides()) {
 			ScriptList *pSL = TheSidesList->getSideInfo(i)->getScriptList();
-			pSL->deleteInstance();
+			if (pSL)
+			{
+				pSL->deleteInstance();
+			}
 			TheSidesList->getSideInfo(i)->setScriptList(scripts[i]);
 			scripts[i] = NULL;
 		} else {
@@ -516,7 +522,7 @@ void SidesList::prepareForMP_or_Skirmish(void)
 		}
 	}
 	if (!gotScripts) {
-		AsciiString path = "data\\Scripts\\SkirmishScripts.scb";
+		AsciiString path = "Data\\Scripts\\SkirmishScripts.scb";
 		DEBUG_LOG(("Skirmish map using standard scripts\n"));
 		m_skirmishTeamrec.clear();
 		CachedFileInputStream theInputStream;
@@ -555,6 +561,9 @@ void SidesList::prepareForMP_or_Skirmish(void)
 				for (i=0; i<MAX_PLAYER_COUNT; i++) {
 					static_readPlayerNames[i].clear();
 				}
+		} else {
+			// Falling in here is what causes the skirmish AI to fail
+			DEBUG_LOG(("ERROR - Unable to open skirmish scripts.\n"));
 		}
 
 

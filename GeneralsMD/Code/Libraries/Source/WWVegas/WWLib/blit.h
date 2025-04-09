@@ -38,7 +38,7 @@
 #define BLIT_H
 
 #include	"blitter.h"
-#include	"buff.h"
+#include	"BUFF.H"
 #include	"trect.h"
 #include	"surface.h"
 

@@ -19,10 +19,12 @@
 // FILE: MilesAudioManager.h //////////////////////////////////////////////////////////////////////////
 // MilesAudioManager implementation
 // Author: John K. McDonald, July 2002
-
+#pragma once
 #include "Common/AsciiString.h"
 #include "Common/GameAudio.h"
-#include "MSS/MSS.h"
+#include "mss/mss.h"
+
+#include <mutex>
 
 class AudioEventRTS;
 
@@ -51,35 +53,6 @@ enum PlayingWhich
 	PW_INVALID
 };
 
-struct PlayingAudio
-{
-//	union
-//	{
-		HSAMPLE m_sample;
-		H3DSAMPLE m_3DSample;
-		HSTREAM m_stream;
-//	};
-
-	PlayingAudioType m_type;
-	volatile PlayingStatus m_status;	// This member is adjusted by another running thread.
-	AudioEventRTS *m_audioEventRTS;
-	void *m_file;		// The file that was opened to play this
-	Bool m_requestStop;
-	Bool m_cleanupAudioEventRTS;
-	Int m_framesFaded;
-	
-	PlayingAudio() : 
-		m_type(PAT_INVALID), 
-		m_audioEventRTS(NULL), 
-		m_requestStop(false), 
-		m_cleanupAudioEventRTS(true),
-		m_sample(0), 
-		m_3DSample(0),
-		m_stream(0),
-		m_framesFaded(0)
-	{ }
-};
-
 struct ProviderInfo
 {
   AsciiString name;
@@ -87,52 +60,8 @@ struct ProviderInfo
 	Bool m_isValid;
 };
 
-struct OpenAudioFile
-{
-	AILSOUNDINFO m_soundInfo;
-	void *m_file;
-	UnsignedInt m_openCount;
-	UnsignedInt m_fileSize;
-
-	Bool m_compressed;	// if the file was compressed, then we need to free it with a miles function.
-	
-	// Note: OpenAudioFile does not own this m_eventInfo, and should not delete it.
-	const AudioEventInfo *m_eventInfo;	// Not mutable, unlike the one on AudioEventRTS.
-};
-
-typedef std::hash_map< AsciiString, OpenAudioFile, rts::hash<AsciiString>, rts::equal_to<AsciiString> > OpenFilesHash;
-typedef OpenFilesHash::iterator OpenFilesHashIt;
-
-class AudioFileCache
-{
-	public:
-		AudioFileCache();
-		
-		// Protected by mutex
-		virtual ~AudioFileCache();
-		void *openFile( AudioEventRTS *eventToOpenFrom );
-		void closeFile( void *fileToClose );
-		void setMaxSize( UnsignedInt size );
-		// End Protected by mutex
-
-		// Note: These functions should be used for informational purposes only. For speed reasons,
-		// they are not protected by the mutex, so they are not guarenteed to be valid if called from
-		// outside the audio cache. They should be used as a rough estimate only.
-		UnsignedInt getCurrentlyUsedSize() const { return m_currentlyUsedSize; }
-		UnsignedInt getMaxSize() const { return m_maxSize; }
-
-	protected:
-		void releaseOpenAudioFile( OpenAudioFile *fileToRelease );
-
-		// This function will return TRUE if it was able to free enough space, and FALSE otherwise.
-		Bool freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNeedsSpace);
-		
-		OpenFilesHash m_openFiles;
-		UnsignedInt m_currentlyUsedSize;
-		UnsignedInt m_maxSize;
-		HANDLE m_mutex;
-		const char *m_mutexName;
-};
+struct PlayingAudio;
+struct MilesAudioFileCache;
 
 class MilesAudioManager : public AudioManager
 {
@@ -317,7 +246,7 @@ class MilesAudioManager : public AudioManager
 		// in the sound engine
 		std::list<PlayingAudio *> m_stoppedAudio;
 
-		AudioFileCache *m_audioCache;
+		MilesAudioFileCache *m_audioCache;
 		PlayingAudio *m_binkHandle;
 		UnsignedInt m_num2DSamples;
 		UnsignedInt m_num3DSamples;

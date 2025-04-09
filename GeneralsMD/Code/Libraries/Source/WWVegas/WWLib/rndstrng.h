@@ -41,7 +41,7 @@
 #define RNDSTRNG_H
 
 #include	"vector.h"
-#include	"random.h"
+#include	"RANDOM.H"
 
 class	StringClass;
 

@@ -40,8 +40,7 @@
 #ifndef _MONO_H
 #define _MONO_H
 
-#include	"mono.h"
-
+#include "MONO.H"
 
 /*
 **	This externs the global mono object. There can be only one.

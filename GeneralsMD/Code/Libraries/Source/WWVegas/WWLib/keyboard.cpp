@@ -58,7 +58,7 @@
 #include	"always.h"
 #include	"_xmouse.h"
 #include "keyboard.h"
-//#include	"mono.h"
+//#include	"MONO.H"
 #include	"msgloop.h"
 
 

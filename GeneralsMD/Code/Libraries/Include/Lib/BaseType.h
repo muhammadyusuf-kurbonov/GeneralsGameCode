@@ -92,6 +92,10 @@
 #define NULL 0						// C++ doesn't like casting void *'s into other pointers
 #endif
 
+#ifndef __forceinline
+#define __forceinline inline
+#endif
+
 // MSVC math.h defines overloaded functions with this name...
 //#ifndef abs
 //#define abs(x) (((x) < 0) ? -(x) : (x))
@@ -118,6 +122,8 @@
 #define ELEMENTS_OF( x ) ( sizeof( x ) / sizeof( x[0] ) )
 #endif
 
+#include <stdint.h>
+
 //--------------------------------------------------------------------
 // Fundamental type definitions
 //--------------------------------------------------------------------
@@ -131,8 +137,8 @@ typedef char							Byte;							// 1 byte		USED TO BE "SignedByte"
 typedef char							Char;							// 1 byte of text
 typedef bool							Bool;							// 
 // note, the types below should use "long long", but MSVC doesn't support it yet
-typedef __int64						Int64;							// 8 bytes 
-typedef unsigned __int64	UnsignedInt64;	  	// 8 bytes 
+typedef int64_t						Int64;							// 8 bytes 
+typedef uint64_t	UnsignedInt64;	  	// 8 bytes 
 
 #include "Lib/Trig.h"
 
@@ -169,7 +175,7 @@ inline Real deg2rad(Real rad) { return rad * (PI/180); }
 //-----------------------------------------------------------------------------
 // For twiddling bits
 //-----------------------------------------------------------------------------
-#define BitTest( x, i ) ( ( (x) & (i) ) != 0 )
+#define BitTestEA( x, i ) ( ( (x) & (i) ) != 0 )
 #define BitSet( x, i ) ( (x) |= (i) )
 #define BitClear( x, i ) ( (x ) &= ~(i) )
 #define BitToggle( x, i ) ( (x) ^= (i) )
@@ -183,30 +189,50 @@ __forceinline long fast_float2long_round(float f)
 {
 	long i;
 
-	__asm {
-		fld [f]
-		fistp [i]
-	}
-
+	// Use simple C code instead of inline assembly
+	i = lroundf(f);
+	
 	return i;
+}
+
+__forceinline unsigned int x86_shift_right_emu(unsigned int value, unsigned int shift, bool shift_ones)
+{
+	// This is what the CPU does
+	shift %= 32;
+	if (shift_ones)
+	{
+		// shift in ones
+		unsigned int ones = ((0xFFFFFFFFULL << (32 - shift)) & 0xFFFFFFFF);
+		return (value >> shift) | ones;
+	}
+	else
+	{
+		return value >> shift;
+	}
+	return value;
 }
 
 // super fast float trunc routine, works always (independent of any FPU modes)
 // code courtesy of Martin Hoffesommer (grin)
 __forceinline float fast_float_trunc(float f)
 {
-  _asm
-  {
-    mov ecx,[f]
-    shr ecx,23
-    mov eax,0xff800000
-    xor ebx,ebx
-    sub cl,127
-    cmovc eax,ebx
-    sar eax,cl
-    and [f],eax
-  }
-  return f;
+	unsigned int value_as_int = *(unsigned int *)&f;
+	// Mask to only keep exponent and sign
+	unsigned int mantissa_mask = 0xff800000;
+
+	unsigned int sign_and_exponent = value_as_int >> 23;
+	unsigned char exponent = sign_and_exponent & 0xff;
+	bool shift_ones = true;
+	if (exponent < 127)
+	{
+		mantissa_mask = 0;
+		shift_ones = false;
+	}
+	exponent -= 127;
+	// Arithmetic shift right
+	mantissa_mask = x86_shift_right_emu(mantissa_mask, exponent, shift_ones);
+	value_as_int &= mantissa_mask;
+	return *(float *)&value_as_int;
 }
 
 // same here, fast floor function

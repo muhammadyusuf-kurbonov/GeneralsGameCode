@@ -40,8 +40,9 @@
 
 
 #include "refcount.h"
+#ifdef _WIN32
 #include <windows.h>
-
+#endif
 
 #ifndef NDEBUG
 
@@ -174,7 +175,9 @@ void RefCountClass::Add_Ref(void) const
 
 	// See if programmer set break on for a specific address.
 	if (this == BreakOnReference) {
+		#ifdef _WIN32
 		DebugBreak();  // trigger the debugger
+		#endif
 	}
 	Inc_Total_Refs(this);
 }
@@ -201,7 +204,9 @@ void	RefCountClass::Dec_Total_Refs(const RefCountClass * obj)
 
 	// See if programmer set break on for a specific address.
 	if (obj == BreakOnReference) {
+		#ifdef _WIN32
 		 DebugBreak();  // trigger the debugger
+		#endif
 	}
 }
 

@@ -40,7 +40,7 @@
 #include "lightenvironment.h"
 #include "matrix3d.h"
 #include "camera.h"
-#include "light.h"
+#include "Light.h"
 #include "colorspace.h"
 
 /*
@@ -52,8 +52,8 @@ const float DIFFUSE_TO_AMBIENT_FRACTION = 1.0f;
 /*
 ** Static variables
 */
-static _LightingLODCutoff			= 0.5f;	
-static _LightingLODCutoff2			= 0.5f * 0.5f;
+static float _LightingLODCutoff			= 0.5f;	
+static float _LightingLODCutoff2			= 0.5f * 0.5f;
 
 
 /************************************************************************************************

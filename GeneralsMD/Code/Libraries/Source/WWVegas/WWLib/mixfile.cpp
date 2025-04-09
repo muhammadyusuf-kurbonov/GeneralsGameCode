@@ -37,9 +37,9 @@
 #include "mixfile.h"
 #include "wwdebug.h"
 #include "ffactory.h"
-#include "wwfile.h"
+#include "WWFILE.H"
 #include "realcrc.h"
-#include "rawfile.h"
+#include "RAWFILE.H"
 #include "win.h"
 #include "bittype.h"
 
@@ -132,7 +132,7 @@ MixFileFactoryClass::MixFileFactoryClass( const char * mix_filename, FileFactory
 		if ( IsValid ) {
 			BaseOffset	= 0;
 			NamesOffset	= header.names_offset;
-			WWDEBUG_SAY(( "MixFileFactory( %s ) loaded successfully  %d files\n", MixFilename, FileInfo.Length() ));
+			WWDEBUG_SAY(( "MixFileFactory( %s ) loaded successfully  %d files\n", MixFilename.Peek_Buffer(), FileInfo.Length() ));
 		} else {
 			FileInfo.Resize(0);
 		}	
@@ -318,9 +318,14 @@ MixFileFactoryClass::Flush_Changes (void)
 	//
 	//	Get the path of the mix file
 	//
+	#ifdef _WIN32
 	char drive[_MAX_DRIVE] = { 0 };
 	char dir[_MAX_DIR] = { 0 };
 	::_splitpath (MixFilename, drive, dir, NULL, NULL);
+	#else
+	char drive[255] = { 0 };
+	char dir[255] = { 0 };
+	#endif
 	StringClass path	= drive;
 	path					+= dir;
 
@@ -361,7 +366,7 @@ MixFileFactoryClass::Flush_Changes (void)
 		//
 		//	Add the new files that are pending
 		//
-		for (index = 0; index < PendingAddFileList.Count (); index ++) {
+		for (int index = 0; index < PendingAddFileList.Count (); index ++) {
 			new_mix_file.Add_File (PendingAddFileList[index].FullPath, PendingAddFileList[index].Filename);
 		}
 	}
@@ -369,8 +374,12 @@ MixFileFactoryClass::Flush_Changes (void)
 	//
 	//	Delete the old mix file and rename the new one
 	//
+#ifdef _WIN32
 	::DeleteFile (MixFilename);
 	::MoveFile (full_path, MixFilename);
+#else
+
+#endif
 
 	//
 	//	Reset the lists
@@ -397,10 +406,12 @@ MixFileFactoryClass::Get_Temp_Filename (const char *path, StringClass &full_path
 	//
 	for (int index = 0; index < 20; index ++) {
 		full_path.Format ("%s%.2d.dat", (const char *)temp_path, index + 1);
+	#ifdef _WIN32
 		if (GetFileAttributes (full_path) == 0xFFFFFFFF) {
 			retval = true;
 			break;
 		}
+	#endif
 	}
 
 	return retval;
@@ -454,7 +465,7 @@ bool	MixFileFactoryClass::Build_Ordered_Filename_List (DynamicVectorClass<String
 	// add names to output parameter
 	list.Clear();
 	list.Resize( name_list.Count());
-	for (i = 0; i < local_file_info.Count(); ++i) {
+	for (int i = 0; i < local_file_info.Count(); ++i) {
 		list.Add(local_file_info[i].Filename);
 	}
 
@@ -655,12 +666,13 @@ void	MixFileCreator::Add_File( const char * filename, FileClass *file )
 */
 void	Add_Files( const char * dir, MixFileCreator & mix )
 {
+#ifdef _WIN32
 	BOOL bcontinue = TRUE;
 	HANDLE hfile_find;
 	WIN32_FIND_DATA find_info = {0};
 	StringClass path;
 	path.Format( "data\\makemix\\%s*.*", dir );
-	WWDEBUG_SAY(( "Adding files from %s\n", path ));
+	WWDEBUG_SAY(( "Adding files from %s\n", path.Peek_Buffer() ));
 
 	for (hfile_find = ::FindFirstFile( path, &find_info);
 		 (hfile_find != INVALID_HANDLE_VALUE) && bcontinue;
@@ -675,11 +687,14 @@ void	Add_Files( const char * dir, MixFileCreator & mix )
 			StringClass name;
 			name.Format( "%s%s", dir, find_info.cFileName );
 			StringClass	source;
-			source.Format( "makemix\\%s", name );
+			source.Format( "makemix\\%s", name.Peek_Buffer() );
 			mix.Add_File( source, name );
 //			WWDEBUG_SAY(( "Adding file from %s %s\n", source, name ));
 		}
 	}
+#else
+
+#endif
 }
 
 void	Setup_Mix_File( void )

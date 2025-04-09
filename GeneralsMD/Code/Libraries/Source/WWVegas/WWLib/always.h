@@ -42,6 +42,13 @@
 
 #include <assert.h>
 
+// New needs to be included first to avoid collision with headers when building with Clang
+#include <new>
+#include "intrin_compat.h"
+#ifndef _WIN32
+#include "windows_compat.h"
+#endif
+
 // Disable warning about exception handling not being enabled. It's used as part of STL - in a part of STL we don't use.
 #pragma warning(disable : 4530)
 
@@ -78,23 +85,27 @@
 	#define _OPERATOR_NEW_DEFINED_
 
 	extern void * __cdecl operator new		(size_t size);
-	extern void __cdecl operator delete		(void *p);
+	extern void * __cdecl operator new		(size_t size, const std::nothrow_t&) noexcept;
+	extern void __cdecl operator delete		(void *p) noexcept;
 
 	extern void * __cdecl operator new[]	(size_t size);
-	extern void __cdecl operator delete[]	(void *p);
+	extern void * __cdecl operator new[]	(size_t size, const std::nothrow_t&) noexcept;
+	extern void __cdecl operator delete[]	(void *p) noexcept;
+
+	extern void __cdecl operator delete		(void *p, size_t sz) noexcept;
 
 	// additional overloads to account for VC/MFC funky versions
-	extern void* __cdecl operator new			(size_t nSize, const char *, int);
-	extern void __cdecl operator delete		(void *, const char *, int);
+	extern void* __cdecl operator new(size_t nSize, const char *, int);
+	extern void __cdecl operator delete(void *, const char *, int) noexcept;
 
-	extern void* __cdecl operator new[]		(size_t nSize, const char *, int);
-	extern void __cdecl operator delete[]	(void *, const char *, int);
+	extern void* __cdecl operator new[](size_t nSize, const char *, int);
+	extern void __cdecl operator delete[](void *, const char *, int) noexcept;
 
 	// additional overloads for 'placement new'
 	//inline void* __cdecl operator new							(size_t s, void *p) { return p; }
 	//inline void __cdecl operator delete						(void *, void *p)		{ }
-	inline void* __cdecl operator new[]						(size_t s, void *p) { return p; }
-	inline void __cdecl operator delete[]					(void *, void *p)		{ }
+	// inline void* __cdecl operator new[]						(size_t s, void *p) noexcept { return p; }
+	// inline void __cdecl operator delete[]					(void *, void *p) noexcept		{ }
 
 #endif
 
@@ -255,5 +266,9 @@ template <class T> T max(T a,T b)
 #define size_of(typ,id) sizeof(((typ*)0)->id)
 #endif
 
+// Register keyword is invalid in C++17
+#if __cplusplus >= 201703L
+#define register
+#endif
 
 #endif

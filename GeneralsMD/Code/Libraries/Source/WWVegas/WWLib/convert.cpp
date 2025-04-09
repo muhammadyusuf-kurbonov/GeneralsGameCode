@@ -36,11 +36,12 @@
 
 #include	"always.h"
 #include	"blitblit.h"
-#include	"convert.h"
-#include	"dsurface.h"
+#include	"Convert.h"
 #include	"hsv.h"
 #include	"rlerle.h"
-
+#ifdef _WIN32
+#include	"dsurface.h"
+#endif
 
 ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const & screenpalette, Surface const & surface) :
 	BBP(surface.Bytes_Per_Pixel()),
@@ -121,7 +122,9 @@ ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const &
 		*/
 		//assert(surface.Is_Direct_Draw());
 		Translator = W3DNEWARRAY unsigned short [256];
+	#ifdef _WIN32
 		((DSurface &)surface).Build_Remap_Table((unsigned short *)Translator, artpalette);
+
 
 		/*
 		**	Fetch the pixel mask values to be used for the various algorithmic
@@ -129,6 +132,10 @@ ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const &
 		*/
 		int maskhalf = ((DSurface &)surface).Get_Halfbright_Mask();
 		int maskquarter = ((DSurface &)surface).Get_Quarterbright_Mask();
+	#else
+		int maskhalf = 0x7BEF;
+		int maskquarter = 0x39E7;
+	#endif
 
 		/*
 		**	Construct all the blitter objects necessary to support the functionality
