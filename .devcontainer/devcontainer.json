@@ -1,37 +1,29 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
 {
-	"name": "Existing Dockerfile",
+	"name": "C++ Dev (vcpkg)",
 	"build": {
-		// Sets the run context to one level up instead of the .devcontainer folder.
-		"context": "..",
-		// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
-		"dockerfile": "../Dockerfile"
+	  "dockerfile": "Dockerfile",
+	  "context": "."
 	},
+	"settings": {
+	  "terminal.integrated.defaultProfile.linux": "bash",
+	  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+	  "cmake.generator": "Ninja"
+	},
+	"extensions": [
+		"ms-vscode.cpptools",
+		"ms-vscode.cmake-tools",
+		"ms-vscode.vscode-typescript-next",
+		"twxs.cmake",
+		"vector-of-bool.cmake-tools",
+		"ms-vscode.cpptools-extension-pack"
+	],
+	"postCreateCommand": "vcpkg install",
+	"remoteUser": "vscode",
+	"workspaceFolder": "/workspace",
+	"mounts": [
+	  "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+	],
 	"features": {
-		"ghcr.io/wxw-matt/devcontainer-features/command_runner:0": {},
-		"ghcr.io/devcontainers-extra/features/pass-apt-get:1": {}
-	},
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"ms-vscode.cpptools-extension-pack"
-			]
-		}
+	  "ghcr.io/devcontainers/features/git:1": {}
 	}
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-
-	// Uncomment the next line to run commands after the container is created.
-	// "postCreateCommand": "cat /etc/os-release",
-
-	// Configure tool-specific properties.
-	// "customizations": {},
-
-	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "devcontainer"
-}
+  }
