@@ -27,13 +27,23 @@ Bool OpenALAudioFileCache::decodeFFmpeg(OpenAudioFile* file)
 			return;
 		}
 
-		if (av_sample_fmt_is_planar(static_cast<AVSampleFormat>(frame->format))) {
-			return;
-		}
-
 		const int frame_data_size = file->m_ffmpegFile->getSizeForSamples(frame->nb_samples);
 		audioData.reserve(audioData.size() + frame_data_size);
-		audioData.insert(audioData.end(), frame->data[0], frame->data[0] + frame_data_size);
+
+		if (av_sample_fmt_is_planar(static_cast<AVSampleFormat>(frame->format))) {
+			// Convert planar audio to interleaved
+			int num_channels = file->m_ffmpegFile->getNumChannels();
+			int bytes_per_sample = file->m_ffmpegFile->getBytesPerSample();
+			for (int sample = 0; sample < frame->nb_samples; ++sample) {
+				for (int channel = 0; channel < num_channels; ++channel) {
+					const uint8_t* src = frame->data[channel] + sample * bytes_per_sample;
+					audioData.insert(audioData.end(), src, src + bytes_per_sample);
+				}
+			}
+		} else {
+			// Directly copy interleaved audio
+			audioData.insert(audioData.end(), frame->data[0], frame->data[0] + frame_data_size);
+		}
 		file->m_fileSize += frame_data_size;
 		file->m_totalSamples += frame->nb_samples;
 		};
