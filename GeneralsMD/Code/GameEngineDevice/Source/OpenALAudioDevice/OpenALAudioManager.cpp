@@ -233,6 +233,16 @@ void OpenALAudioManager::audioDebugDisplay(DebugDisplayInterface* dd, void*, FIL
 	{
 		dd->printf("-----------------------------------------------------Sounds\n");
 		channelCount = TheAudio->getNum2DSamples();
+		channel = 1;
+		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
+			playing = *it;
+			if (!playing) {
+				continue;
+			}
+
+			playingArray[channel] = playing;
+			channel++;
+		}
 
 		for (Int i = 1; i <= maxChannels && i <= channelCount; ++i) {
 			playing = playingArray[i];
@@ -286,6 +296,16 @@ void OpenALAudioManager::audioDebugDisplay(DebugDisplayInterface* dd, void*, FIL
 	{
 		dd->printf("--------------------------------------------------3D Sounds\n");
 		channelCount = TheAudio->getNum3DSamples();
+		channel = 1;
+		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
+			playing = *it;
+			if (!playing) {
+				continue;
+			}
+
+			playingArray[channel] = playing;
+			channel++;
+		}
 
 		for (Int i = 1; i <= maxChannels && i <= channelCount; ++i)
 		{
