@@ -91,8 +91,8 @@ D3DXLoadSurfaceFromSurface(
 	// Pick a compatible format
 	gli::format imageFormat = gli::format::FORMAT_RGBA8_UNORM_PACK8;
 
-	assert(descSrc.Format == D3DFMT_A8R8G8B8 || descSrc.Format == D3DFMT_A1R5G5B5);
-	if (descSrc.Format == D3DFMT_A8R8G8B8)
+	assert(descSrc.Format == D3DFMT_A8R8G8B8 || descSrc.Format == D3DFMT_A1R5G5B5 || descSrc.Format == D3DFMT_X8R8G8B8);
+	if (descSrc.Format == D3DFMT_A8R8G8B8 || descSrc.Format == D3DFMT_X8R8G8B8)
 	{
 		imageFormat = gli::format::FORMAT_RGBA8_UNORM_PACK8;	
 	}
