@@ -144,8 +144,8 @@ void SDL3Keyboard::getKey( KeyboardIO *key )
 
 	if(m_events.size() > 0)
 	{
-		SDL_Event event = m_events.front();
-		m_events.erase(m_events.begin());
+		auto eventToHandle = m_events.begin();
+		SDL_Event &event = *eventToHandle;
 		if (TheIMEManager && TheIMEManager->getWindow() && event.type == SDL_EVENT_TEXT_INPUT)
 		{
 			// Note that special characters may need additional keycode translation above.
@@ -172,6 +172,10 @@ void SDL3Keyboard::getKey( KeyboardIO *key )
 			key->key = ConvertSDLKey(event.key.key);
 			key->state = KEY_STATE_UP;
 		}
+
+		// Clear the handled event from the queue
+		deleteEvent(&event);
+		m_events.erase(eventToHandle);
 	}
 	else
 	{
@@ -270,10 +274,28 @@ Bool SDL3Keyboard::getCapsState( void )
 
 void SDL3Keyboard::addSDLEvent(SDL_Event *ev)
 {
-	m_events.push_back(*ev);
+	SDL_Event newEvent = *ev;
+	if (newEvent.type == SDL_EVENT_TEXT_INPUT)
+	{
+		newEvent.text.text = strdup(ev->text.text);
+	}
+	m_events.push_back(newEvent);
 	// Make sure to never have more than 256 events in the buffer
 	if (m_events.size() >= 256)
 	{
+		auto it = m_events.begin();
+		if (it != m_events.end())
+		{
+			deleteEvent(&(*it));
+		}
 		m_events.erase(m_events.begin());
+	}
+}
+
+void SDL3Keyboard::deleteEvent(SDL_Event *ev)
+{
+	if (ev->type == SDL_EVENT_TEXT_INPUT)
+	{
+		free((void*)ev->text.text);
 	}
 }

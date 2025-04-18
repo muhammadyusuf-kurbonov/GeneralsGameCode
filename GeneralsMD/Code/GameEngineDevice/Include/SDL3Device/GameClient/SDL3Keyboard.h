@@ -91,6 +91,7 @@ protected:
 	void closeKeyboard( void );  ///< release direct input keyboard
 
 private:
+	void deleteEvent(SDL_Event *ev);
 	std::vector<SDL_Event> m_events;
  
 };  // end class SDL3Keyboard
