@@ -1459,7 +1459,7 @@ Bool OpenALAudioManager::hasMusicTrackCompleted(const AsciiString& trackName, In
 		if (playing && playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music) {
 			if (playing->m_audioEventRTS->getEventName() == trackName) {
 				//if (INFINITE_LOOP_COUNT - AIL_stream_loop_count(playing->m_stream) >= numberOfTimes) {
-				return TRUE;
+				// return TRUE;
 				//}
 			}
 		}
