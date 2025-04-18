@@ -303,7 +303,7 @@ void DisconnectMenu::updateVotes(Int slot, Int votes) {
 	GameWindow *control = TheWindowManager->winGetWindowFromId(NULL, id);
 
 	if (control != NULL) {
-		char votestr[16];
+		char votestr[33];
 		itoa(votes, votestr, 10);
 		AsciiString asciivotes;
 		asciivotes.set(votestr);

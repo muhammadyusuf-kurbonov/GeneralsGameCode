@@ -965,7 +965,7 @@ void OpenContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor )
 		Coord3D endPosition;
 		if( numberExits > 1 )
 		{
-			char suffix[8];
+			char suffix[33];
 			itoa(m_whichExitPath, suffix, 10);
 			if( m_whichExitPath < 10 )
 			{
@@ -1084,7 +1084,7 @@ void OpenContain::exitObjectInAHurry( Object *exitObj )
 		Coord3D endPosition;
 		if( numberExits > 1 )
 		{
-			char suffix[8];
+			char suffix[33];
 			itoa(m_whichExitPath, suffix, 10);
 			if( m_whichExitPath < 10 )
 			{
@@ -1265,7 +1265,7 @@ void OpenContain::putObjAtNextFirePoint( Object *obj )
 	{
 		// If our passengers are in our turret, we need to recompute the Matrix.
 		AsciiString firepoint("FIREPOINT");
-		char suffix[8];
+		char suffix[33];
 		itoa( m_firePointNext + 1, suffix, 10 );//+1 from bone names starting at 1, not zero like my array
 		if( m_firePointNext < 10 )
 		{
