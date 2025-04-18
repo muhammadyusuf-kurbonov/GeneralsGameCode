@@ -861,7 +861,6 @@ Bool GameTextManager::getStringCount( const char *filename, Int& textCount )
 		}
 	}
 
-	textCount += 500;
 	file->close();
 	file = NULL;
 	return TRUE;
