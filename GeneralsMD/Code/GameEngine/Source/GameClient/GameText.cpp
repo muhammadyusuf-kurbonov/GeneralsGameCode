@@ -364,9 +364,13 @@ void GameTextManager::init( void )
 	// If it fails, it's not that big of a deal
 	if ( parseStringFile( "Data\\Patch.str", tempExtra ) )
 	{
-		// Copy tempExtra to m_stringInfo
-		std::copy(tempExtra.begin(), tempExtra.end(), std::back_inserter(m_stringInfo));
+		// Add the extra strings to the existing list
+		for (const StringInfo& item : tempExtra)
+		{
+			m_stringInfo.push_back(item);
+		}
 	}
+	// In case extra string have been added, textCount must be updated
 	m_textCount = m_stringInfo.size();
 
 	m_stringLUT = NEW StringLookUp[m_textCount];
