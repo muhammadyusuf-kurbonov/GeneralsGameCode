@@ -151,9 +151,9 @@ void SDL3Keyboard::getKey( KeyboardIO *key )
 			// Note that special characters may need additional keycode translation above.
 
 			std::string utf8Str(event.text.text);
-			std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
-			std::u16string utf16Str = converter.from_bytes(utf8Str);
-			UnicodeString uStr(reinterpret_cast<const WideChar*>(utf16Str.c_str()));
+			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+			std::wstring wideStr = converter.from_bytes(utf8Str);
+			UnicodeString uStr(wideStr.c_str());
 
 			int len = uStr.getLength();
 			for (int i = 0; i < len; i++)
