@@ -114,6 +114,7 @@ void DoCompressTest( void );
 // window ids -------------------------------------------------------------------------------------
 static NameKeyType mainMenuID = NAMEKEY_INVALID;
 static NameKeyType skirmishID = NAMEKEY_INVALID;
+static NameKeyType customMissionID = NAMEKEY_INVALID;
 static NameKeyType onlineID = NAMEKEY_INVALID;
 static NameKeyType networkID = NAMEKEY_INVALID;
 static NameKeyType optionsID = NAMEKEY_INVALID;
@@ -152,6 +153,7 @@ static GameWindow *parentMainMenu = NULL;
 static GameWindow *buttonSinglePlayer = NULL;
 static GameWindow *buttonMultiPlayer = NULL;
 static GameWindow *buttonSkirmish = NULL;
+static GameWindow *buttonCustom = NULL;
 static GameWindow *buttonOnline = NULL;
 static GameWindow *buttonNetwork = NULL;
 static GameWindow *buttonOptions = NULL;
@@ -470,6 +472,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	mainMenuID = TheNameKeyGenerator->nameToKey( AsciiString( "MainMenu.wnd:MainMenuParent" ) );
 //	campaignID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonCampaign") );
 	skirmishID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonSkirmish") );
+	customMissionID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonCustomMission") );
 	onlineID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonOnline") );
 	networkID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonNetwork") );
 	optionsID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonOptions") );
@@ -510,6 +513,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	buttonSinglePlayer = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonSinglePlayerID );
 	buttonMultiPlayer = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonMultiPlayerID );
 	buttonSkirmish = TheWindowManager->winGetWindowFromId( parentMainMenu, skirmishID );
+	buttonCustom = TheWindowManager->winGetWindowFromId( parentMainMenu, customMissionID );
 	buttonOnline = TheWindowManager->winGetWindowFromId( parentMainMenu, onlineID );
 	buttonNetwork = TheWindowManager->winGetWindowFromId( parentMainMenu, networkID );
 	buttonOptions = TheWindowManager->winGetWindowFromId( parentMainMenu, optionsID );
@@ -1131,7 +1135,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 
 				//showSelectiveButtons(SHOW_NONE);
 			}
-*/			else if(controlID == skirmishID)
+*/			else if(controlID == skirmishID || controlID == customMissionID)
 			{
 				if(dontAllowTransitions && !campaignSelected)
 				{
@@ -1249,7 +1253,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				
 				//showSelectiveButtons(SHOW_NONE);
 			}
-*/			else if(controlID == skirmishID)
+*/			else if(controlID == skirmishID || controlID == customMissionID)
 			{
 				if(dontAllowTransitions && !campaignSelected && showLogo)
 				{
@@ -1465,6 +1469,18 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 #endif
 				TheShell->push( AsciiString("Menus/SkirmishGameOptionsMenu.wnd") );
 				TheScriptEngine->signalUIInteract(TheShellHookNames[SHELL_SCRIPT_HOOK_MAIN_MENU_SKIRMISH_SELECTED]);
+			}
+			else if( controlID == customMissionID)
+			{
+				if(campaignSelected || dontAllowTransitions)
+					break;
+				buttonPushed = TRUE;
+				campaignSelected = TRUE;
+				dropDownWindows[DROPDOWN_SINGLE]->winHide(FALSE);
+				TheTransitionHandler->remove("MainMenuFactionSkirmish");
+
+				TheTransitionHandler->reverse("MainMenuSinglePlayerMenuBackSkirmish");
+				TheShell->push(AsciiString( "Menus/MapSelectMenu.wnd" ));
 			}
 			else if( controlID == onlineID )
 			{
