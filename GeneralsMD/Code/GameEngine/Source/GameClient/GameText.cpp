@@ -251,7 +251,6 @@ GameTextInterface* CreateGameTextInterface( void )
 GameTextManager::GameTextManager()
 :	m_textCount(0),
 	m_maxLabelLen(0),
-	m_stringInfo(NULL),
 	m_stringLUT(NULL),
 	m_initialized(FALSE),
 	m_noStringList(NULL),
