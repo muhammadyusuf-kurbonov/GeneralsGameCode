@@ -365,7 +365,7 @@ void GameTextManager::init( void )
 		}
 	}
 
-	StringInfo tempExtra[extraCount] = {};
+	StringInfo tempExtra[extraCount];
 	StringInfo *pOriginal = m_stringInfo;
 	m_stringInfo = &tempExtra[0];
 	// Currently contains only two extra strings for Steam version
