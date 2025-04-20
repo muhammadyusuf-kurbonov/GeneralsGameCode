@@ -23,10 +23,12 @@
 #include "MPU.H"
 #pragma warning (disable : 4201)	// Nonstandard extension - nameless struct
 #ifdef _WIN32
-#include <windows.h>
+	#include <windows.h>
 #elif defined(_UNIX)
-#include <time.h>  // for time(), localtime() and timezone variable.
-#include <cpuid.h>
+	#include <time.h>  // for time(), localtime() and timezone variable.
+	#if defined(__i386__) || defined(__x86_64__)
+		#include <cpuid.h>
+	#endif
 #endif
 #include "systimer.h"
 
@@ -835,7 +837,7 @@ void CPUDetectClass::Init_CPUID_Instruction()
       popfd
       pop ebx
    }
-#elif defined(_UNIX)
+#elif defined(_UNIX) && (defined(__i386__) || defined(__x86_64__))
 	 unsigned int eax, ebx, ecx, edx;
 	cpuid_available = __get_cpuid(0, &eax, &ebx, &ecx, &edx) != 0;
 #endif
@@ -933,7 +935,7 @@ bool CPUDetectClass::CPUID(
       mov	[u_edx], edx
       popad
    }
-#elif defined(_UNIX)
+#elif defined(_UNIX) && (defined(__i386__) || defined(__x86_64__))
 	__get_cpuid(cpuid_type, &u_eax, &u_ebx, &u_ecx, &u_edx);
 #else
 #pragma message("CPUID() not implemented for this platform")
