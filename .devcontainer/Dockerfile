@@ -1,8 +1,10 @@
 # Use slim Debian for a minimal and stable base
-FROM mcr.microsoft.com/devcontainers/base:debian
+FROM ubuntu
 
 # Avoid interactive prompts during apt install
 ENV DEBIAN_FRONTEND=noninteractive
+
+RUN echo $(ip a)
 
 # Install core tools and dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -26,6 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpulse-dev \
     yasm \
     nasm \
+    automake \
     autoconf \
     libtool \
     python3-jinja2 \
@@ -33,7 +36,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Optional: Set up user for non-root dev environment (improves Git integration)
 ARG USERNAME=vscode
-ARG USER_UID=1000
+ARG USER_UID=1001
 ARG USER_GID=$USER_UID
 
 # Check if group exists; if not, create it
@@ -49,6 +52,8 @@ RUN git clone https://github.com/microsoft/vcpkg.git && \
     cd vcpkg && ./bootstrap-vcpkg.sh -disableMetrics
 
 ENV PATH="/home/$USERNAME/vcpkg:${PATH}"
+ENV VCPKG_ROOT="/home/$USERNAME/vcpkg}"
+ENV CMAKE_TOOLCHAIN_FILE="/home/$USERNAME/vcpkg/scripts/buildsystems/vcpkg.cmake"
 
 # Default workdir for devcontainer
 WORKDIR /workspace
