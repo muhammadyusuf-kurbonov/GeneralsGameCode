@@ -4,8 +4,6 @@ FROM ubuntu
 # Avoid interactive prompts during apt install
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN echo $(ip a)
-
 # Install core tools and dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
