@@ -40,6 +40,9 @@
 
 #include <SDL3/SDL.h>
 
+#include <locale>
+#include <codecvt>
+
 // DEFINES ////////////////////////////////////////////////////////////////////////////////////////
 enum { KEYBOARD_BUFFER_SIZE = 256 };
 
@@ -116,6 +119,10 @@ static KeyDefType ConvertSDLKey(SDL_Keycode keycode)
 			return KEY_LEFT;
 		case SDLK_RIGHT:
 			return KEY_RIGHT;
+		case SDLK_PERIOD:
+			return KEY_PERIOD;
+		case SDLK_PLUS:
+			return KEY_KPPLUS;
 		default:
 			break;
 	}
@@ -137,30 +144,38 @@ void SDL3Keyboard::getKey( KeyboardIO *key )
 
 	if(m_events.size() > 0)
 	{
-		SDL_Event event = m_events.front();
-		m_events.erase(m_events.begin());
-		if(event.type == SDL_EVENT_KEY_DOWN)
+		auto eventToHandle = m_events.begin();
+		SDL_Event &event = *eventToHandle;
+		if (TheIMEManager && TheIMEManager->getWindow() && event.type == SDL_EVENT_TEXT_INPUT)
+		{
+			// Note that special characters may need additional keycode translation above.
+
+			std::string utf8Str(event.text.text);
+			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+			std::wstring wideStr = converter.from_bytes(utf8Str);
+			UnicodeString uStr(wideStr.c_str());
+
+			int len = uStr.getLength();
+			for (int i = 0; i < len; i++)
+			{
+				WideChar wc = uStr.getCharAt(i);
+				TheWindowManager->winSendInputMsg(TheIMEManager->getWindow(), GWM_IME_CHAR, wc, 0);
+			}
+		}
+		else if(event.type == SDL_EVENT_KEY_DOWN)
 		{
 			key->key = ConvertSDLKey(event.key.key);
 			key->state = KEY_STATE_DOWN;
-
-			if (TheIMEManager && TheIMEManager->getWindow())
-			{
-				SDL_Keycode sym = event.key.key;
-
-				// Only inject if it's a printable ASCII character
-				if (sym >= 32 && sym <= 126)
-				{
-					WideChar wchar = static_cast<WideChar>(sym);
-					TheWindowManager->winSendInputMsg(TheIMEManager->getWindow(), GWM_IME_CHAR, wchar, 0);
-				}
-			}
 		}
 		else if(event.type == SDL_EVENT_KEY_UP)
 		{
 			key->key = ConvertSDLKey(event.key.key);
 			key->state = KEY_STATE_UP;
 		}
+
+		// Clear the handled event from the queue
+		deleteEvent(&event);
+		m_events.erase(eventToHandle);
 	}
 	else
 	{
@@ -259,10 +274,28 @@ Bool SDL3Keyboard::getCapsState( void )
 
 void SDL3Keyboard::addSDLEvent(SDL_Event *ev)
 {
-	m_events.push_back(*ev);
+	SDL_Event newEvent = *ev;
+	if (newEvent.type == SDL_EVENT_TEXT_INPUT)
+	{
+		newEvent.text.text = strdup(ev->text.text);
+	}
+	m_events.push_back(newEvent);
 	// Make sure to never have more than 256 events in the buffer
 	if (m_events.size() >= 256)
 	{
+		auto it = m_events.begin();
+		if (it != m_events.end())
+		{
+			deleteEvent(&(*it));
+		}
 		m_events.erase(m_events.begin());
+	}
+}
+
+void SDL3Keyboard::deleteEvent(SDL_Event *ev)
+{
+	if (ev->type == SDL_EVENT_TEXT_INPUT)
+	{
+		free((void*)ev->text.text);
 	}
 }

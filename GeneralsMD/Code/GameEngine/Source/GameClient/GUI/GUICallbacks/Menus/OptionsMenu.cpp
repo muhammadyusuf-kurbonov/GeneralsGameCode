@@ -2111,7 +2111,7 @@ WindowMsgHandledType OptionsMenuSystem( GameWindow *window, UnsignedInt msg,
 			{
 				// setting the behavior to unknown will force the firewall helper to detect the firewall behavior
 				// the next time we log into gamespy/WOL/whatever.
-				char num[16];
+				char num[33];
 				num[0] = 0;
 				TheWritableGlobalData->m_firewallBehavior = FirewallHelperClass::FIREWALL_TYPE_UNKNOWN;
 				itoa(TheGlobalData->m_firewallBehavior, num, 10);

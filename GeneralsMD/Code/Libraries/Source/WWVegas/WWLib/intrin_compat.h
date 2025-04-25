@@ -28,6 +28,10 @@ static inline uint64_t _rdtsc()
     return __builtin_readcyclecounter();
 #elif defined(__has_builtin) && __has_builtin(__builtin_ia32_rdtsc)
     return __builtin_ia32_rdtsc();
+#elif defined(__ARM_ARCH_ISA_A64)
+    uint64_t counter;
+    __asm__ volatile("mrs %0, cntvct_el0" : "=r" (counter));
+    return counter;
 #else
 #error "No implementation for _rdtsc"
 #endif

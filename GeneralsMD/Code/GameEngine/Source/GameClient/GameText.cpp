@@ -171,7 +171,7 @@ class GameTextManager : public GameTextInterface
 		Char						m_buffer3[MAX_UITEXT_LENGTH];
 		WideChar				m_tbuffer[MAX_UITEXT_LENGTH*2];
 		
-		StringInfo			*m_stringInfo;
+		std::vector<StringInfo>	m_stringInfo;
 		StringLookUp		*m_stringLUT;
 		Bool						m_initialized;
 #if defined(_DEBUG) || defined(_INTERNAL)
@@ -199,7 +199,7 @@ class GameTextManager : public GameTextInterface
 		Bool						getStringCount( const Char *filename, Int& textCount );
 		Bool						getCSFInfo ( const Char *filename );
 		Bool						parseCSF(  const Char *filename );
-		Bool						parseStringFile( const char *filename );
+		Bool						parseStringFile( const char *filename, std::vector<StringInfo> &vecStringInfo);
 		Bool						parseMapStringFile( const char *filename );
 		Bool						readLine( char *buffer, Int max, File *file );
 		Char						readChar( File *file );
@@ -251,7 +251,6 @@ GameTextInterface* CreateGameTextInterface( void )
 GameTextManager::GameTextManager()
 :	m_textCount(0),
 	m_maxLabelLen(0),
-	m_stringInfo(NULL),
 	m_stringLUT(NULL),
 	m_initialized(FALSE),
 	m_noStringList(NULL),
@@ -334,19 +333,16 @@ void GameTextManager::init( void )
 		return;
 	}
 
+	Int extraCount = 0;
+	getStringCount( "Data\\Patch.str", extraCount );
+
 	//Allocate StringInfo Array
 
-	m_stringInfo = NEW StringInfo[m_textCount];
-
-	if( m_stringInfo == NULL )
-	{
-		deinit();
-		return;
-	}
+	m_stringInfo.resize(m_textCount);
 
 	if ( format == STRING_FILE )
 	{
-		if( parseStringFile( g_strFile ) == FALSE )
+		if( parseStringFile( g_strFile, m_stringInfo ) == FALSE )
 		{
 			deinit();
 			return;
@@ -361,10 +357,25 @@ void GameTextManager::init( void )
 		}
 	}
 
+	std::vector<StringInfo> tempExtra;
+	tempExtra.resize(extraCount);
+	// Currently contains only two extra strings for Steam version
+	// If it fails, it's not that big of a deal
+	if ( parseStringFile( "Data\\Patch.str", tempExtra ) )
+	{
+		// Add the extra strings to the existing list
+		for (const StringInfo& item : tempExtra)
+		{
+			m_stringInfo.push_back(item);
+		}
+	}
+	// In case extra string have been added, textCount must be updated
+	m_textCount = m_stringInfo.size();
+
 	m_stringLUT = NEW StringLookUp[m_textCount];
 
 	StringLookUp *lut = m_stringLUT;
-	StringInfo *info = m_stringInfo;
+	StringInfo *info = m_stringInfo.data();
 
 	for ( Int i = 0; i < m_textCount; i++ )
 	{
@@ -397,12 +408,6 @@ void GameTextManager::init( void )
 
 void GameTextManager::deinit( void )
 {
-
-	if( m_stringInfo != NULL )
-	{
-		delete [] m_stringInfo;
-		m_stringInfo = NULL;
-	}
 
 	if( m_stringLUT != NULL )
 	{
@@ -861,7 +866,6 @@ Bool GameTextManager::getStringCount( const char *filename, Int& textCount )
 		}
 	}
 
-	textCount += 500;
 	file->close();
 	file = NULL;
 	return TRUE;
@@ -1051,7 +1055,7 @@ quit:
 // GameTextManager::parseStringFile
 //============================================================================
 
-Bool GameTextManager::parseStringFile( const char *filename )
+Bool GameTextManager::parseStringFile( const char *filename, std::vector<StringInfo> &outStringInfo)
 {
 	Int listCount = 0;
 	Int ok = TRUE;
@@ -1080,13 +1084,13 @@ Bool GameTextManager::parseStringFile( const char *filename )
 
 		for ( Int i = 0; i < listCount; i++ )
 		{
-			if ( !stricmp ( m_stringInfo[i].label.str(), m_buffer ))
+			if ( !stricmp ( outStringInfo[i].label.str(), m_buffer ))
 			{
 				DEBUG_ASSERTCRASH ( FALSE, ("String label '%s' multiply defined!", m_buffer ));
 			}
 		}
 
-		m_stringInfo[listCount].label = m_buffer;
+		outStringInfo[listCount].label = m_buffer;
 		len = strlen ( m_buffer );
 
 
@@ -1118,7 +1122,7 @@ Bool GameTextManager::parseStringFile( const char *filename )
 				if ( readString )
 				{
 					// only one string per label allows
-						DEBUG_ASSERTCRASH ( FALSE, ("String label '%s' has more than one string defined!", m_stringInfo[listCount].label.str()));
+						DEBUG_ASSERTCRASH ( FALSE, ("String label '%s' has more than one string defined!", outStringInfo[listCount].label.str()));
 				}
 				else
 				{
@@ -1126,8 +1130,8 @@ Bool GameTextManager::parseStringFile( const char *filename )
 					translateCopy( m_tbuffer, m_buffer2 );
 					stripSpaces ( m_tbuffer );
 					
-					m_stringInfo[listCount].text = m_tbuffer ;
-					m_stringInfo[listCount].speech = m_buffer3;
+					outStringInfo[listCount].text = m_tbuffer ;
+					outStringInfo[listCount].speech = m_buffer3;
 					readString = TRUE;
 				}
 			}
@@ -1291,7 +1295,7 @@ UnicodeString GameTextManager::fetch( const Char *label, Bool *exists )
 {
 	DEBUG_ASSERTCRASH ( m_initialized, ("String Manager has not been m_initialized") );
 
-	if( m_stringInfo == NULL )
+	if( m_stringInfo.empty() )
 	{
 		if( exists )
 			*exists = FALSE;

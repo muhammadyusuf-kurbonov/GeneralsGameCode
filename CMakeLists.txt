@@ -107,8 +107,8 @@ endif()
 if(SAGE_USE_MILES)
   FetchContent_Declare(
     miles
-    GIT_REPOSITORY https://github.com/Fighter19/miles-sdk-stub.git
-    GIT_TAG a4a0da4d6083f71357080e4a8021ad77ba2c62bf)
+    GIT_REPOSITORY https://github.com/TheSuperHackers/miles-sdk-stub.git
+    GIT_TAG 0fef646a85c822475d55f19e3ca185263fb4a967)
   FetchContent_MakeAvailable(miles)
 endif()
 
@@ -136,7 +136,7 @@ if(SAGE_USE_LZHL)
 endif()
 
 if(NOT MSVC)
-  add_compile_options(-Wuninitialized)
+  add_compile_options(-Wuninitialized -Werror=vexing-parse)
   set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG" )
 endif()
 

@@ -72,23 +72,6 @@ D3DXLoadSurfaceFromSurface(
 		return D3DERR_INVALIDCALL;
 	}
 
-	// Pick a compatible format
-	gli::format imageFormat = gli::format::FORMAT_RGBA8_UNORM_PACK8;
-	
-	assert(descSrc.Format == D3DFMT_A8R8G8B8 || descSrc.Format == D3DFMT_A1R5G5B5);
-	if (descSrc.Format == D3DFMT_A8R8G8B8)
-	{
-		imageFormat = gli::format::FORMAT_RGBA8_UNORM_PACK8;	
-	}
-	else if (descSrc.Format == D3DFMT_A1R5G5B5)
-	{
-		imageFormat = gli::format::FORMAT_A1RGB5_UNORM_PACK16;
-	}
-	else
-	{
-		return D3DERR_INVALIDCALL;
-	}
-
 	D3DLOCKED_RECT srcRect;
 	pSrcSurface->LockRect(&srcRect, NULL, 0);
 
@@ -103,6 +86,23 @@ D3DXLoadSurfaceFromSurface(
 		pDestSurface->UnlockRect();
 		pSrcSurface->UnlockRect();
 		return D3D_OK;
+	}
+
+	// Pick a compatible format
+	gli::format imageFormat = gli::format::FORMAT_RGBA8_UNORM_PACK8;
+
+	assert(descSrc.Format == D3DFMT_A8R8G8B8 || descSrc.Format == D3DFMT_A1R5G5B5 || descSrc.Format == D3DFMT_X8R8G8B8);
+	if (descSrc.Format == D3DFMT_A8R8G8B8 || descSrc.Format == D3DFMT_X8R8G8B8)
+	{
+		imageFormat = gli::format::FORMAT_RGBA8_UNORM_PACK8;	
+	}
+	else if (descSrc.Format == D3DFMT_A1R5G5B5)
+	{
+		imageFormat = gli::format::FORMAT_A1RGB5_UNORM_PACK16;
+	}
+	else
+	{
+		return D3DERR_INVALIDCALL;
 	}
 
 	// Create two levels of mips, 0 and 1

@@ -589,11 +589,10 @@ void GameEngine::init( int argc, char *argv[] )
 		// for fingerprinting, we need to ensure the presence of these files
 
 
-#if !defined(_INTERNAL) && !defined(_DEBUG)
 		AsciiString dirName;
-    dirName = TheArchiveFileSystem->getArchiveFilenameForFile("generalsbzh.sec");
+		dirName = TheArchiveFileSystem->getArchiveFilenameForFile("generalsbzh.sec");
 
-    if (dirName.compareNoCase("genseczh.big") != 0 && dirName.compareNoCase("./genseczh.big") != 0)
+		if (dirName.compareNoCase("genseczh.big") != 0 && dirName.compareNoCase("./genseczh.big") != 0 && dirName.compareNoCase(".\\gensecZH.big"))
 		{
 			DEBUG_LOG(("generalsbzh.sec was not found in genseczh.big - it was in '%s'\n", dirName.str()));
 			m_quitting = TRUE;
@@ -605,12 +604,11 @@ void GameEngine::init( int argc, char *argv[] )
 			dirName = noPath + 1;
 		}
 
-		if (dirName.compareNoCase("musiczh.big") != 0 && dirName.compareNoCase("./musiczh.big") != 0)
+		if (dirName.compareNoCase("musiczh.big") != 0 && dirName.compareNoCase("./musiczh.big") != 0 && dirName.compareNoCase(".\\MusicZH.big"))
 		{
 			DEBUG_LOG(("generalsazh.sec was not found in musiczh.big - it was in '%s'\n", dirName.str()));
 			m_quitting = TRUE;
 		}
-#endif
 
 
 		// initialize the MapCache

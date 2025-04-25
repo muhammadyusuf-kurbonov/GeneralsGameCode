@@ -518,7 +518,7 @@ void FirewallHelperClass::writeFirewallBehavior(void)
 {
 	OptionPreferences pref;
 
-	char num[16];
+	char num[33];
 	num[0] = 0;
 	itoa(TheGlobalData->m_firewallBehavior, num, 10);
 	AsciiString numstr;

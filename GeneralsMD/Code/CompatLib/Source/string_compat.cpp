@@ -8,7 +8,7 @@ char* itoa(int value, char* str, int base)
 {
   // Create stringbuf from str
   std::stringbuf buf;
-  buf.pubsetbuf(str, 32);
+  buf.pubsetbuf(str, 33);
   std::ostream os(&buf);
   os << value;
   // Null terminate, just in case

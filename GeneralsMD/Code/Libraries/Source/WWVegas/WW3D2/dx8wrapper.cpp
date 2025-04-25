@@ -3166,10 +3166,11 @@ SurfaceClass * DX8Wrapper::_Get_DX8_Back_Buffer(unsigned int num)
 {
 	DX8_THREAD_ASSERT();
 
-	IDirect3DSurface8 * bb;
+	IDirect3DSurface8 * bb=NULL;
 	SurfaceClass *surf=NULL;
-	DX8CALL(GetBackBuffer(num,D3DBACKBUFFER_TYPE_MONO,&bb));
-	if (bb)
+	HRESULT hres = S_FALSE;
+	DX8CALL_HRES(GetBackBuffer(num,D3DBACKBUFFER_TYPE_MONO,&bb), hres);
+	if (hres==D3D_OK && bb)
 	{
 		surf=NEW_REF(SurfaceClass,(bb));
 		bb->Release();
