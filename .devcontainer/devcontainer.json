@@ -25,5 +25,19 @@
 	],
 	"features": {
 	  "ghcr.io/devcontainers/features/git:1": {}
-	}
+	},
+	"runArgs": [
+    // 1) forward the DISPLAY value (e.g. ":0")
+    "--env", "DISPLAY=${env:DISPLAY}",
+
+    // 2) mount the XWayland socket directory
+    "--volume", "/tmp/.X11-unix:/tmp/.X11-unix:rw",
+
+    // 3) (optional but recommended) share your Xauthority file
+    "--volume", "${env:HOME}/.Xauthority:/home/vscode/.Xauthority:ro"
+  ],
+  "containerEnv": {
+    // point clients inside the container to that file
+    "XAUTHORITY": "/home/vscode/.Xauthority"
   }
+}

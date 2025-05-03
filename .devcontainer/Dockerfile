@@ -1,5 +1,5 @@
 # Use slim Debian for a minimal and stable base
-FROM ubuntu
+FROM debian
 
 # Avoid interactive prompts during apt install
 ENV DEBIAN_FRONTEND=noninteractive
@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     ninja-build \
     curl \
+    zip \
     unzip \
     pkg-config \
     python3 \
@@ -24,6 +25,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libvulkan-dev \
     libasound2-dev \
     libpulse-dev \
+    libltdl-dev \
     yasm \
     nasm \
     automake \
@@ -50,7 +52,7 @@ RUN git clone https://github.com/microsoft/vcpkg.git && \
     cd vcpkg && ./bootstrap-vcpkg.sh -disableMetrics
 
 ENV PATH="/home/$USERNAME/vcpkg:${PATH}"
-ENV VCPKG_ROOT="/home/$USERNAME/vcpkg}"
+ENV VCPKG_ROOT="/home/$USERNAME/vcpkg"
 ENV CMAKE_TOOLCHAIN_FILE="/home/$USERNAME/vcpkg/scripts/buildsystems/vcpkg.cmake"
 
 # Default workdir for devcontainer
